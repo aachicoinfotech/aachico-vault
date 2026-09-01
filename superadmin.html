@@ -14,7 +14,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen">
 
-  <!-- ================= AUTH SCREEN ================= -->
+  <!-- ================= AUTH SCREEN (LOCKED BY DEFAULT) ================= -->
   <div id="authScreen" class="min-h-screen flex items-center justify-center p-4">
     <div class="glass-panel w-full max-w-md p-8 rounded-3xl border border-amber-500/30 space-y-6 shadow-2xl">
       <div class="text-center space-y-2">
@@ -30,16 +30,16 @@
           <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Master Security Key</label>
           <input type="password" id="masterKeyInput" placeholder="Enter Master Key" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500 font-mono" />
         </div>
-        <button onclick="verifyMasterAccess()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition flex items-center justify-center space-x-2">
+        <button id="unlockMasterBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition flex items-center justify-center space-x-2">
           <i data-lucide="shield" class="w-4 h-4"></i>
           <span>Secure Master Unlock</span>
         </button>
       </div>
-      <p class="text-center text-[10px] text-slate-500 font-mono">Default Key: AACHICO2026</p>
+      <p class="text-center text-[10px] text-slate-500 font-mono">Master Key: AACHICO2026</p>
     </div>
   </div>
 
-  <!-- ================= MAIN CONTROLLER DASHBOARD ================= -->
+  <!-- ================= MAIN CONTROLLER DASHBOARD (HIDDEN UNTIL AUTHENTICATED) ================= -->
   <div id="dashboardScreen" class="hidden min-h-screen flex flex-col">
     <!-- Navbar -->
     <header class="glass-panel border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
@@ -55,7 +55,7 @@
           </p>
         </div>
       </div>
-      <button onclick="logoutMaster()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 px-3.5 py-1.5 rounded-xl transition flex items-center space-x-1.5">
+      <button id="logoutMasterBtn" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 px-3.5 py-1.5 rounded-xl transition flex items-center space-x-1.5">
         <i data-lucide="log-out" class="w-3.5 h-3.5 text-rose-400"></i>
         <span>Logout</span>
       </button>
@@ -67,11 +67,11 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="glass-panel p-5 rounded-2xl border border-slate-800">
           <p class="text-xs text-slate-400">कुल रजिस्टर्ड कंपनियाँ</p>
-          <p id="totalCompaniesCount" class="text-2xl font-black text-white font-mono mt-1">--</p>
+          <p id="totalCompaniesCount" class="text-2xl font-black text-white font-mono mt-1">0</p>
         </div>
         <div class="glass-panel p-5 rounded-2xl border border-slate-800">
           <p class="text-xs text-slate-400">सक्रिय सब्सक्रिप्शन (Active)</p>
-          <p id="activeSubsCount" class="text-2xl font-black text-emerald-400 font-mono mt-1">--</p>
+          <p id="activeSubsCount" class="text-2xl font-black text-emerald-400 font-mono mt-1">0</p>
         </div>
         <div class="glass-panel p-5 rounded-2xl border border-slate-800">
           <p class="text-xs text-slate-400">डायनामिक प्राइस स्टेटस</p>
@@ -89,14 +89,14 @@
             <h3 class="font-extrabold text-base text-white">Dynamic Pricing Manager (वेबसाइट के दाम यहाँ से बदलें)</h3>
             <p class="text-xs text-slate-400">यहाँ जो भी बदलाव करेंगे, वो सीधे मुख्य वेबसाइट (<code class="text-amber-400">index.html</code>) पर तुरंत दिखने लगेगा।</p>
           </div>
-          <button onclick="savePricingMatrixToCloud()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition flex items-center space-x-1.5 self-start sm:self-auto">
+          <button id="savePricesBtn" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition flex items-center space-x-1.5 self-start sm:self-auto">
             <i data-lucide="save" class="w-4 h-4"></i>
             <span>Save & Publish Live Prices</span>
           </button>
         </div>
 
         <div id="pricingEditorGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <!-- Dynamic Form Inputs will load here -->
+          <!-- Dynamic Form Inputs -->
         </div>
       </div>
 
@@ -107,7 +107,7 @@
             <h3 class="font-extrabold text-base text-white">Registered Companies Directory</h3>
             <p class="text-xs text-slate-400">सभी कंपनियों का डेटा मॉनिटर करें और आवश्यकता पड़ने पर 1-क्लिक में खाता लॉक करें।</p>
           </div>
-          <button onclick="loadAllCompanies()" class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold px-3.5 py-2 rounded-xl text-xs transition flex items-center space-x-1.5">
+          <button id="refreshCompaniesBtn" class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold px-3.5 py-2 rounded-xl text-xs transition flex items-center space-x-1.5">
             <i data-lucide="refresh-cw" class="w-4 h-4 text-amber-400"></i>
             <span>Refresh Companies List</span>
           </button>
@@ -160,24 +160,31 @@
       { id: "enterprise", name: "Enterprise", cars: "Unlimited", monthly: 199, firstMonth: 199, yearly: 1990, badge: "VIP Support", isFeatured: false, ads: false }
     ];
 
-    window.verifyMasterAccess = function() {
+    // Master Authentication Check
+    function verifyMasterAccess() {
       const key = document.getElementById('masterKeyInput').value.trim();
       if(key === "AACHICO2026") {
-        document.getElementById('authScreen').classList.add('hidden');
-        document.getElementById('dashboardScreen').classList.remove('hidden');
-        lucide.createIcons();
-        loadPricingEditor();
-        loadAllCompanies();
+        sessionStorage.setItem('aachico_master_logged', 'true');
+        unlockDashboard();
       } else {
-        alert("गलत मास्टर की! केवल एडमिन के लिए अधिकृत है।");
+        alert("गलत मास्टर पासवर्ड! कृपया सही पासवर्ड दर्ज करें।");
       }
-    };
+    }
 
-    window.logoutMaster = function() {
+    function unlockDashboard() {
+      document.getElementById('authScreen').classList.add('hidden');
+      document.getElementById('dashboardScreen').classList.remove('hidden');
+      lucide.createIcons();
+      loadPricingEditor();
+      loadAllCompanies();
+    }
+
+    function logoutMaster() {
+      sessionStorage.removeItem('aachico_master_logged');
       document.getElementById('masterKeyInput').value = "";
       document.getElementById('dashboardScreen').classList.add('hidden');
       document.getElementById('authScreen').classList.remove('hidden');
-    };
+    }
 
     async function loadPricingEditor() {
       try {
@@ -187,7 +194,7 @@
           activePricingTiers = docSnap.data().tiers;
         }
       } catch (err) {
-        console.log("Using baseline pricing tier array:", err);
+        console.log("Using local pricing array:", err);
       }
 
       const container = document.getElementById('pricingEditorGrid');
@@ -211,7 +218,7 @@
       `).join('');
     }
 
-    window.savePricingMatrixToCloud = async function() {
+    async function savePricingMatrixToCloud() {
       activePricingTiers.forEach((t, idx) => {
         const m = parseFloat(document.getElementById(`monthly_${idx}`).value) || 0;
         const y = parseFloat(document.getElementById(`yearly_${idx}`).value) || 0;
@@ -225,13 +232,13 @@
           tiers: activePricingTiers,
           lastUpdated: new Date().toISOString()
         });
-        alert("सफलतापूर्वक पब्लिश हुआ! अब मुख्य वेबसाइट (index.html) पर यही नए दाम दिखेंगे।");
+        alert("सफलतापूर्वक पब्लिश हुआ! अब मुख्य वेबसाइट पर नए दाम लाइव हो गए हैं।");
       } catch (err) {
         alert("एरर: " + err.message);
       }
-    };
+    }
 
-    window.loadAllCompanies = async function() {
+    async function loadAllCompanies() {
       const tbody = document.getElementById('companiesTableBody');
       tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">डेटा लोड हो रहा है...</td></tr>`;
 
@@ -264,20 +271,29 @@
               </span>
             </td>
             <td class="p-3.5 text-right">
-              <button onclick="toggleCompanyAccess('${c.id}', '${c.status || 'active'}')" class="px-3 py-1 rounded-lg text-[11px] font-bold transition ${c.status === 'active' ? 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
+              <button data-id="${c.id}" data-status="${c.status || 'active'}" class="companyToggleBtn px-3 py-1 rounded-lg text-[11px] font-bold transition ${c.status === 'active' ? 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
                 ${c.status === 'active' ? 'Freeze / Lock' : 'Reactivate'}
               </button>
             </td>
           </tr>
         `).join('');
 
+        // Attach action listeners
+        document.querySelectorAll('.companyToggleBtn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const compId = e.currentTarget.getAttribute('data-id');
+            const compStatus = e.currentTarget.getAttribute('data-status');
+            toggleCompanyAccess(compId, compStatus);
+          });
+        });
+
         lucide.createIcons();
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">कंपनियाँ लोड नहीं हो सकीं या अभी तक डेटाबेस नया है।</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">कंपनियाँ लोड नहीं हो सकीं।</td></tr>`;
       }
-    };
+    }
 
-    window.toggleCompanyAccess = async function(companyId, currentStatus) {
+    async function toggleCompanyAccess(companyId, currentStatus) {
       const newStatus = currentStatus === 'active' ? 'frozen' : 'active';
       const actionConfirm = confirm(`क्या आप इस कंपनी का स्टेटस बदलकर '${newStatus}' करना चाहते हैं?`);
       if(!actionConfirm) return;
@@ -291,10 +307,25 @@
       } catch (err) {
         alert("अपडेट एरर: " + err.message);
       }
-    };
+    }
 
+    // Initialize Event Listeners
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
+
+      document.getElementById('unlockMasterBtn').addEventListener('click', verifyMasterAccess);
+      document.getElementById('masterKeyInput').addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') verifyMasterAccess();
+      });
+
+      document.getElementById('logoutMasterBtn').addEventListener('click', logoutMaster);
+      document.getElementById('savePricesBtn').addEventListener('click', savePricingMatrixToCloud);
+      document.getElementById('refreshCompaniesBtn').addEventListener('click', loadAllCompanies);
+
+      // Check session
+      if(sessionStorage.getItem('aachico_master_logged') === 'true') {
+        unlockDashboard();
+      }
     });
   </script>
 </body>
