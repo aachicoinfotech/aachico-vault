@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aachico Vault - Company Fleet Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .glass-card { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- ================= COMPANY LOGIN SCREEN ================= -->
+  <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-md p-8 rounded-3xl border border-amber-500/30 space-y-6 shadow-2xl">
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black text-2xl border border-amber-500/40">
+          A
+        </div>
+        <h1 class="text-xl font-extrabold text-white">Company Admin Login</h1>
+        <p class="text-xs text-slate-400">अपनी ट्रेवल कंपनी का कोड और पासवर्ड दर्ज करें</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Company Code</label>
+          <input type="text" id="loginCompanyCode" placeholder="उदा. RJ27-FLEET" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white uppercase focus:outline-none focus:border-amber-500 font-mono" />
+        </div>
+        <div>
+          <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Admin Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500" />
+        </div>
+        <button onclick="handleCompanyLogin()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition flex items-center justify-center space-x-2 shadow-lg shadow-amber-500/20">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          <span>Dashboard में प्रवेश करें</span>
+        </button>
+      </div>
+
+      <div class="text-center pt-2">
+        <a href="index.html" class="text-xs text-slate-400 hover:text-amber-400">← मुख्य वेबसाइट पर लौटें</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= LOCKED / SUSPENDED SCREEN ================= -->
+  <div id="lockedScreen" class="hidden min-h-screen flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-md p-8 rounded-3xl border border-rose-500/40 text-center space-y-4 shadow-2xl">
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-black text-2xl border border-rose-500/40">
+        <i data-lucide="lock" class="w-7 h-7"></i>
+      </div>
+      <h2 class="text-xl font-extrabold text-white">Account Inactive / Expired</h2>
+      <p class="text-xs text-slate-400 leading-relaxed">
+        आपकी कंपनी का सब्सक्रिप्शन समाप्त हो चुका है या सुपर-एडमिन द्वारा होल्ड पर है। खाता चालू कराने के लिए संपर्क करें।
+      </p>
+      <a href="https://wa.me/919166381579?text=Hello%20Aachico%20Vault,%20Please%20reactivate%20my%20company%20account." target="_blank" class="inline-flex items-center space-x-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-2.5 rounded-xl text-xs transition">
+        <i data-lucide="message-square" class="w-4 h-4"></i>
+        <span>WhatsApp पर संपर्क करें (+91 9166381579)</span>
+      </a>
+      <div class="pt-2">
+        <button onclick="handleLogout()" class="text-xs text-slate-500 hover:text-slate-300">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN ADMIN PORTAL ================= -->
+  <div id="adminPortal" class="hidden min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="glass-card border-b border-slate-800 px-6 py-3.5 flex items-center justify-between sticky top-0 z-40">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-base border border-amber-500/30">
+          A
+        </div>
+        <div>
+          <h2 id="displayCompanyName" class="font-extrabold text-sm text-white tracking-wider">FLEET ADMIN</h2>
+          <p id="displayCompanyCode" class="text-[10px] text-amber-400 font-mono">RJ27-FLEET</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <button onclick="openModal('addCarModal')" class="hidden sm:inline-flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 text-amber-400 border border-amber-500/30 font-bold px-3 py-1.5 rounded-xl text-xs transition">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span>Add Car</span>
+        </button>
+        <button onclick="openModal('addDriverModal')" class="hidden sm:inline-flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-emerald-500/30 font-bold px-3 py-1.5 rounded-xl text-xs transition">
+          <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+          <span>Add Driver</span>
+        </button>
+        <button onclick="handleLogout()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-xl transition flex items-center space-x-1">
+          <i data-lucide="log-out" class="w-3.5 h-3.5 text-rose-400"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+      
+      <!-- TOP DOCUMENT EXPIRY ALERTS NOTIFICATION BANNER -->
+      <div id="documentAlertBanner" class="hidden glass-card border border-rose-500/40 bg-rose-950/20 rounded-2xl p-4 flex items-start space-x-3">
+        <div class="p-2 rounded-xl bg-rose-500/20 text-rose-400 shrink-0">
+          <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+        </div>
+        <div class="space-y-1 flex-1">
+          <h4 class="font-bold text-xs text-rose-300">दस्तावेज़ एक्सपायरी चेतावनी (Document Guard Alert)</h4>
+          <p id="documentAlertText" class="text-xs text-slate-300 leading-relaxed"></p>
+        </div>
+      </div>
+
+      <!-- Financial Metric Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-card p-4 rounded-2xl border border-slate-800">
+          <p class="text-[11px] text-slate-400">कुल गाड़ियाँ (Cars)</p>
+          <p id="statCarsCount" class="text-xl font-black text-white font-mono mt-1">0</p>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-800">
+          <p class="text-[11px] text-slate-400">कुल ड्राइवर्स (Drivers)</p>
+          <p id="statDriversCount" class="text-xl font-black text-white font-mono mt-1">0</p>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-800">
+          <p class="text-[11px] text-slate-400">पेन्डिंग ऑडिट ट्रिप्स</p>
+          <p id="statPendingTrips" class="text-xl font-black text-amber-400 font-mono mt-1">0</p>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-800">
+          <p class="text-[11px] text-slate-400">नेट लेज़र बैलेंस (All)</p>
+          <p id="statNetLedger" class="text-xl font-black text-emerald-400 font-mono mt-1">₹0</p>
+        </div>
+      </div>
+
+      <!-- SECTION 1: LIVE TRIP AUDIT & ABNORMAL MILEAGE DETECTOR -->
+      <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+          <div>
+            <h3 class="font-bold text-base text-white">Live Trip Audits & Approval (ट्रिप सत्यापन)</h3>
+            <p class="text-xs text-slate-400">ड्राइवर द्वारा सबमिट की गई ट्रिप, मीटर फोटो और माइलेज का मिलान करें</p>
+          </div>
+          <button onclick="exportTripsToCSV()" class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold px-3 py-1.5 rounded-xl text-xs transition flex items-center space-x-1.5 self-start sm:self-auto">
+            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-400"></i>
+            <span>Export to Excel (CSV)</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-900/80 text-slate-400 uppercase font-mono text-[10px]">
+              <tr>
+                <th class="p-3">गाड़ी व ड्राइवर</th>
+                <th class="p-3">KM रीडिंग (Start/End)</th>
+                <th class="p-3">डीज़ल व माइलेज अलर्ट</th>
+                <th class="p-3">कैश व बिल राशि</th>
+                <th class="p-3">मीटर फोटो</th>
+                <th class="p-3 text-right">कार्रवाई</th>
+              </tr>
+            </thead>
+            <tbody id="tripsAuditTableBody" class="divide-y divide-slate-800 font-medium">
+              <!-- Dynamically populated trips -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECTION 2: FLEET & DRIVER DIRECTORY WITH DOCUMENT GUARD -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Cars Directory -->
+        <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+          <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+            <h3 class="font-bold text-sm text-white">फ्लीट डायरेक्टरी (Registered Cars)</h3>
+            <button onclick="openModal('addCarModal')" class="text-xs text-amber-400 hover:underline font-bold">+ Add Car</button>
+          </div>
+          <div id="carsListContainer" class="space-y-2 max-h-72 overflow-y-auto pr-1">
+            <!-- Cars list with insurance badge -->
+          </div>
+        </div>
+
+        <!-- Drivers Directory -->
+        <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+          <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+            <h3 class="font-bold text-sm text-white">ड्राइवर डायरेक्टरी (Driver PINs)</h3>
+            <button onclick="openModal('addDriverModal')" class="text-xs text-emerald-400 hover:underline font-bold">+ Add Driver</button>
+          </div>
+          <div id="driversListContainer" class="space-y-2 max-h-72 overflow-y-auto pr-1">
+            <!-- Drivers list with PIN and license badge -->
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ================= ADD CAR MODAL ================= -->
+  <div id="addCarModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-sm text-white">नई गाड़ी जोड़ें (Add New Vehicle)</h3>
+        <button onclick="closeModal('addCarModal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-400 block mb-1">गाड़ी नंबर (उदा. RJ-27-TA-1234)</label>
+          <input type="text" id="newCarNumber" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white uppercase font-mono" />
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">गाड़ी का मॉडल (उदा. Innova Crysta / Dzire)</label>
+          <input type="text" id="newCarModel" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white" />
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">इंश्योरेंस एक्सपायरी डेट (Insurance Expiry)</label>
+          <input type="date" id="newCarInsurance" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-mono" />
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">फिटनेस / PUC एक्सपायरी डेट</label>
+          <input type="date" id="newCarPUC" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-mono" />
+        </div>
+        <button onclick="saveNewCar()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs mt-2">गाड़ी सेव करें</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ADD DRIVER MODAL ================= -->
+  <div id="addDriverModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-sm text-white">नया ड्राइवर जोड़ें (Add New Driver)</h3>
+        <button onclick="closeModal('addDriverModal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-400 block mb-1">ड्राइवर का नाम</label>
+          <input type="text" id="newDriverName" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white" />
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">मोबाइल नंबर</label>
+          <input type="tel" id="newDriverPhone" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-mono" />
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">4-डिजिट लॉगिन PIN (ड्राइवर ऐप के लिए)</label>
+          <input type="password" maxlength="4" id="newDriverPIN" placeholder="1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-mono text-center tracking-widest text-base" />
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">ड्राइविंग लाइसेंस एक्सपायरी डेट</label>
+          <input type="date" id="newDriverLicense" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-mono" />
+        </div>
+        <button onclick="saveNewDriver()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs mt-2">ड्राइवर रजिस्टर करें</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PHOTO AUDIT INSPECTOR MODAL ================= -->
+  <div id="photoModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-5 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+        <h3 class="font-bold text-xs text-white" id="photoModalTitle">Meter Photo Audit</h3>
+        <button onclick="closeModal('photoModal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div class="flex items-center justify-center min-h-64 bg-slate-950 rounded-xl overflow-hidden">
+        <img id="inspectedPhotoImg" src="" alt="Meter Audit" class="max-h-96 w-auto object-contain rounded-lg" />
+      </div>
+      <p class="text-[11px] text-slate-400 text-center">Anti-Tamper Digital Audit Verified</p>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT & FIREBASE ENGINE ================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDOIEKyvSwfpRybZBmNuImzdJ3hdlEO3hI",
+      authDomain: "aachico-vault.firebaseapp.com",
+      projectId: "aachico-vault",
+      storageBucket: "aachico-vault.firebasestorage.app",
+      messagingSenderId: "766953520082",
+      appId: "1:766953520082:web:481f1aab82b74d78aae60b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let currentCompany = null;
+    let cachedTrips = [];
+    let cachedCars = [];
+    let cachedDrivers = [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      const savedCompany = localStorage.getItem('aachico_company_session');
+      if(savedCompany) {
+        currentCompany = JSON.parse(savedCompany);
+        verifyCompanyStatusAndLoad();
+      }
+    });
+
+    window.handleCompanyLogin = async function() {
+      const code = document.getElementById('loginCompanyCode').value.trim().toUpperCase();
+      const pass = document.getElementById('loginPassword').value.trim();
+
+      if(!code || !pass) {
+        alert("कृपया Company Code और पासवर्ड दर्ज करें!");
+        return;
+      }
+
+      try {
+        const docRef = doc(db, "companies", code);
+        const docSnap = await getDoc(docRef);
+
+        if(docSnap.exists()) {
+          const compData = docSnap.data();
+          if(compData.password && compData.password !== pass) {
+            alert("गलत पासवर्ड!");
+            return;
+          }
+          currentCompany = { id: code, ...compData };
+        } else {
+          // Auto-Provision demo / new company
+          currentCompany = {
+            id: code,
+            name: code + " Travels",
+            status: "active",
+            fleetLimit: "10 Cars",
+            password: pass
+          };
+          await setDoc(doc(db, "companies", code), currentCompany);
+        }
+
+        localStorage.setItem('aachico_company_session', JSON.stringify(currentCompany));
+        verifyCompanyStatusAndLoad();
+      } catch (err) {
+        alert("लॉगिन एरर: " + err.message);
+      }
+    };
+
+    async function verifyCompanyStatusAndLoad() {
+      // Remote License Kill-Switch Check
+      try {
+        const docSnap = await getDoc(doc(db, "companies", currentCompany.id));
+        if(docSnap.exists() && docSnap.data().status === 'frozen') {
+          document.getElementById('loginScreen').classList.add('hidden');
+          document.getElementById('adminPortal').classList.add('hidden');
+          document.getElementById('lockedScreen').classList.remove('hidden');
+          return;
+        }
+      } catch (e) {
+        console.log("Offline mode active");
+      }
+
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('lockedScreen').classList.add('hidden');
+      document.getElementById('adminPortal').classList.remove('hidden');
+
+      document.getElementById('displayCompanyName').innerText = currentCompany.name || currentCompany.id;
+      document.getElementById('displayCompanyCode').innerText = currentCompany.id;
+
+      loadCars();
+      loadDrivers();
+      loadTrips();
+    }
+
+    window.handleLogout = function() {
+      localStorage.removeItem('aachico_company_session');
+      location.reload();
+    };
+
+    // Load Cars & Check Document Expiry (15 Days Rule)
+    async function loadCars() {
+      const container = document.getElementById('carsListContainer');
+      try {
+        const querySnapshot = await getDocs(collection(db, "companies", currentCompany.id, "cars"));
+        cachedCars = [];
+        querySnapshot.forEach(d => cachedCars.push({ id: d.id, ...d.data() }));
+
+        document.getElementById('statCarsCount').innerText = cachedCars.length;
+
+        // Check document expiry
+        let alertMessages = [];
+        const today = new Date();
+
+        cachedCars.forEach(c => {
+          if(c.insuranceExpiry) {
+            const exp = new Date(c.insuranceExpiry);
+            const diffDays = Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
+            if(diffDays <= 15 && diffDays >= 0) {
+              alertMessages.push(`⚠️ गाड़ी ${c.number} का Insurance ${diffDays} दिन में समाप्त हो रहा है!`);
+            } else if(diffDays < 0) {
+              alertMessages.push(`🚨 गाड़ी ${c.number} का Insurance एक्सपायर हो चुका है!`);
+            }
+          }
+        });
+
+        const alertBanner = document.getElementById('documentAlertBanner');
+        if(alertMessages.length > 0) {
+          alertBanner.classList.remove('hidden');
+          document.getElementById('documentAlertText').innerHTML = alertMessages.join('<br>');
+        } else {
+          alertBanner.classList.add('hidden');
+        }
+
+        if(cachedCars.length === 0) {
+          container.innerHTML = `<p class="text-xs text-slate-500 py-4 text-center">कोई गाड़ी दर्ज नहीं है। ऊपर + Add Car से जोड़ें।</p>`;
+          return;
+        }
+
+        container.innerHTML = cachedCars.map(c => `
+          <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+            <div>
+              <p class="font-bold text-white font-mono">${c.number}</p>
+              <p class="text-[10px] text-slate-400">${c.model || 'Standard'}</p>
+            </div>
+            <div class="text-right">
+              <span class="text-[9px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">Ins: ${c.insuranceExpiry || 'N/A'}</span>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (err) {
+        container.innerHTML = `<p class="text-xs text-slate-500">कार लिस्ट लोड नहीं हो सकी</p>`;
+      }
+    }
+
+    // Load Drivers
+    async function loadDrivers() {
+      const container = document.getElementById('driversListContainer');
+      try {
+        const querySnapshot = await getDocs(collection(db, "companies", currentCompany.id, "drivers"));
+        cachedDrivers = [];
+        querySnapshot.forEach(d => cachedDrivers.push({ id: d.id, ...d.data() }));
+
+        document.getElementById('statDriversCount').innerText = cachedDrivers.length;
+
+        if(cachedDrivers.length === 0) {
+          container.innerHTML = `<p class="text-xs text-slate-500 py-4 text-center">कोई ड्राइवर दर्ज नहीं है। ऊपर + Add Driver से जोड़ें।</p>`;
+          return;
+        }
+
+        container.innerHTML = cachedDrivers.map(d => `
+          <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+            <div>
+              <p class="font-bold text-white">${d.name}</p>
+              <p class="text-[10px] text-slate-400">${d.phone || 'No phone'}</p>
+            </div>
+            <div class="text-right font-mono">
+              <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">PIN: ${d.pin || '1234'}</span>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (err) {
+        container.innerHTML = `<p class="text-xs text-slate-500">ड्राइवर लिस्ट लोड नहीं हो सकी</p>`;
+      }
+    }
+
+    // Load Trips & Run Mileage Fraud Detection
+    async function loadTrips() {
+      const tbody = document.getElementById('tripsAuditTableBody');
+      try {
+        const querySnapshot = await getDocs(collection(db, "companies", currentCompany.id, "trips"));
+        cachedTrips = [];
+        querySnapshot.forEach(d => cachedTrips.push({ id: d.id, ...d.data() }));
+
+        document.getElementById('statPendingTrips').innerText = cachedTrips.filter(t => t.status !== 'approved').length;
+
+        let totalBalance = 0;
+        cachedTrips.forEach(t => {
+          totalBalance += (parseFloat(t.cashCollected) || 0) - (parseFloat(t.expenses) || 0);
+        });
+        document.getElementById('statNetLedger').innerText = `₹${totalBalance.toLocaleString('en-IN')}`;
+
+        if(cachedTrips.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">कोई ट्रिप रिकॉर्ड नहीं मिला।</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = cachedTrips.map(t => {
+          const totalKm = (parseFloat(t.endKm) || 0) - (parseFloat(t.startKm) || 0);
+          const dieselLitres = parseFloat(t.dieselLitres) || 0;
+          let mileage = dieselLitres > 0 && totalKm > 0 ? (totalKm / dieselLitres).toFixed(1) : null;
+          
+          // Mileage Theft Flag (less than 8 km/l for standard fleets)
+          const isSuspicious = mileage !== null && parseFloat(mileage) < 8.0;
+
+          return `
+            <tr class="hover:bg-slate-900/50 transition">
+              <td class="p-3">
+                <p class="font-bold text-white font-mono">${t.carNumber || 'N/A'}</p>
+                <p class="text-[10px] text-slate-400">${t.driverName || 'Driver'}</p>
+              </td>
+              <td class="p-3 font-mono">
+                <p>${t.startKm || 0} → ${t.endKm || 0}</p>
+                <span class="text-[10px] text-amber-400 font-bold">${totalKm > 0 ? totalKm + ' KM' : 'Running'}</span>
+              </td>
+              <td class="p-3">
+                <p class="font-mono text-slate-300">${dieselLitres > 0 ? dieselLitres + ' L' : '0 L'}</p>
+                ${isSuspicious ? `
+                  <span class="inline-flex items-center space-x-1 text-[9px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded font-bold">
+                    <i data-lucide="alert-circle" class="w-3 h-3"></i>
+                    <span>कम माइलेज (${mileage} km/l)</span>
+                  </span>
+                ` : mileage ? `<span class="text-[10px] text-emerald-400 font-mono">${mileage} km/l</span>` : ''}
+              </td>
+              <td class="p-3 font-mono">
+                <p class="text-emerald-400 font-bold">₹${t.cashCollected || 0}</p>
+                <p class="text-[10px] text-slate-500">खर्च: ₹${t.expenses || 0}</p>
+              </td>
+              <td class="p-3">
+                ${t.meterPhotoUrl ? `
+                  <button onclick="inspectPhoto('${t.meterPhotoUrl}')" class="text-[11px] text-amber-400 hover:underline flex items-center space-x-1">
+                    <i data-lucide="image" class="w-3.5 h-3.5"></i>
+                    <span>देखें</span>
+                  </button>
+                ` : '<span class="text-slate-600 text-[10px]">No Photo</span>'}
+              </td>
+              <td class="p-3 text-right space-x-1">
+                <button onclick="shareTripWhatsApp('${t.id}')" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 px-2 py-1 rounded-lg text-[10px] font-bold">
+                  WhatsApp
+                </button>
+                ${t.status !== 'approved' ? `
+                  <button onclick="approveTrip('${t.id}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-2 py-1 rounded-lg text-[10px] font-bold">
+                    Approve
+                  </button>
+                ` : '<span class="text-[10px] text-slate-500">✓ Approved</span>'}
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        lucide.createIcons();
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">ट्रिप्स लोड नहीं हो सकीं।</td></tr>`;
+      }
+    }
+
+    // Save Car
+    window.saveNewCar = async function() {
+      const num = document.getElementById('newCarNumber').value.trim().toUpperCase();
+      const model = document.getElementById('newCarModel').value.trim();
+      const ins = document.getElementById('newCarInsurance').value;
+      const puc = document.getElementById('newCarPUC').value;
+
+      if(!num) { alert("गाड़ी नंबर अनिवार्य है!"); return; }
+
+      try {
+        await setDoc(doc(db, "companies", currentCompany.id, "cars", num), {
+          number: num,
+          model: model,
+          insuranceExpiry: ins,
+          pucExpiry: puc,
+          createdAt: new Date().toISOString()
+        });
+        closeModal('addCarModal');
+        loadCars();
+      } catch(e) { alert("एरर: " + e.message); }
+    };
+
+    // Save Driver
+    window.saveNewDriver = async function() {
+      const name = document.getElementById('newDriverName').value.trim();
+      const phone = document.getElementById('newDriverPhone').value.trim();
+      const pin = document.getElementById('newDriverPIN').value.trim();
+      const lic = document.getElementById('newDriverLicense').value;
+
+      if(!name || pin.length !== 4) { alert("नाम और 4-डिजिट पिन अनिवार्य हैं!"); return; }
+
+      const driverId = phone || ("DRV_" + Date.now().toString().slice(-4));
+
+      try {
+        await setDoc(doc(db, "companies", currentCompany.id, "drivers", driverId), {
+          name: name,
+          phone: phone,
+          pin: pin,
+          licenseExpiry: lic,
+          createdAt: new Date().toISOString()
+        });
+        closeModal('addDriverModal');
+        loadDrivers();
+      } catch(e) { alert("एरर: " + e.message); }
+    };
+
+    // Approve Trip
+    window.approveTrip = async function(tripId) {
+      try {
+        await updateDoc(doc(db, "companies", currentCompany.id, "trips", tripId), {
+          status: "approved",
+          approvedAt: new Date().toISOString()
+        });
+        loadTrips();
+      } catch(e) { alert(e.message); }
+    };
+
+    // Share WhatsApp Trip Sheet
+    window.shareTripWhatsApp = function(tripId) {
+      const t = cachedTrips.find(x => x.id === tripId);
+      if(!t) return;
+      const totalKm = (parseFloat(t.endKm) || 0) - (parseFloat(t.startKm) || 0);
+      const text = `*TRIP DUTY SLIP - ${currentCompany.name}*\n` +
+                   `🚗 गाड़ी: ${t.carNumber}\n` +
+                   `👤 ड्राइवर: ${t.driverName}\n` +
+                   `📍 KM: ${t.startKm} से ${t.endKm} (कुल: ${totalKm} KM)\n` +
+                   `💰 कलेक्टेड राशि: ₹${t.cashCollected || 0}\n` +
+                   `धन्यवाद! Safe Journey.`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    };
+
+    // Export to Excel CSV
+    window.exportTripsToCSV = function() {
+      if(cachedTrips.length === 0) { alert("एक्सपोर्ट करने के लिए कोई ट्रिप डेटा नहीं है!"); return; }
+      let csv = "Trip ID,Car Number,Driver Name,Start KM,End KM,Total KM,Diesel Litres,Cash Collected,Expenses,Status\n";
+      cachedTrips.forEach(t => {
+        const totalKm = (parseFloat(t.endKm) || 0) - (parseFloat(t.startKm) || 0);
+        csv += `"${t.id}","${t.carNumber || ''}","${t.driverName || ''}",${t.startKm || 0},${t.endKm || 0},${totalKm},${t.dieselLitres || 0},${t.cashCollected || 0},${t.expenses || 0},"${t.status || 'pending'}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', `Trips_${currentCompany.id}.csv`);
+      a.click();
+    };
+
+    window.inspectPhoto = function(url) {
+      document.getElementById('inspectedPhotoImg').src = url;
+      openModal('photoModal');
+    };
+
+    window.openModal = function(id) { document.getElementById(id).classList.remove('hidden'); };
+    window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); };
+  </script>
+</body>
+</html>
