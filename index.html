@@ -1,586 +1,550 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aachico Vault - Company Admin Panel</title>
+  <title>Aachico Vault - भारत का #1 स्मार्ट फ़्लीट व ट्रेवल मैनेजमेंट इकोसिस्टम</title>
+  
+  <!-- Meta & SEO -->
+  <meta name="description" content="Aachico Vault: ऑल-इन-वन फ़्लीट मैनेजमेंट, ट्रिप ऑडिट, डिजिटल मीटर फोटो, ड्राइवर कैश लेज़र, ऑटो डीज़ल माइलेज और WhatsApp इनवॉइसिंग सॉफ्टवेयर।" />
+  <meta name="theme-color" content="#020617" />
   
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   
   <style>
-    body { -webkit-tap-highlight-color: transparent; }
-    .nav-active { background-color: #1e293b; color: #f59e0b; border-left: 3px solid #f59e0b; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glass-card-hover:hover { border-color: rgba(245, 158, 11, 0.4); transform: translateY(-3px); }
+    .glow-amber { box-shadow: 0 0 50px -10px rgba(245, 158, 11, 0.25); }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col md:flex-row">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
 
-  <!-- SIDEBAR NAVIGATION -->
-  <aside class="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between">
-    <div>
-      <!-- Brand Header -->
-      <div class="p-5 border-b border-slate-800 flex items-center space-x-3">
-        <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xl border border-amber-500/30">
+  <!-- ================= NAVBAR ================= -->
+  <header class="sticky top-0 z-50 glass-card border-b border-slate-800/80 bg-slate-950/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#hero" class="flex items-center space-x-3 group">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black text-xl border border-amber-500/40 group-hover:scale-105 transition-transform shadow-lg shadow-amber-500/10">
           A
         </div>
         <div>
-          <h1 id="sidebarCoName" class="font-bold text-sm tracking-wide text-white leading-tight uppercase">AACHICO VAULT</h1>
-          <span id="planBadge" class="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1.5 py-0.5 rounded font-mono">STARTER (FREE)</span>
+          <span class="font-extrabold text-base tracking-wider text-white flex items-center space-x-1">
+            <span>AACHICO</span>
+            <span class="text-amber-400">VAULT</span>
+          </span>
+          <p class="text-[10px] text-slate-400 tracking-wider">FLEET OS & SAAS</p>
         </div>
-      </div>
+      </a>
 
-      <!-- Nav Links -->
-      <nav class="p-3 space-y-1 text-sm font-medium">
-        <button onclick="switchTab('trips')" id="tabBtn-trips" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 nav-active">
-          <i data-lucide="route" class="w-4 h-4"></i>
-          <span>ट्रिप अप्रूवल (Trips)</span>
-        </button>
-        <button onclick="switchTab('fleet')" id="tabBtn-fleet" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800">
-          <i data-lucide="car" class="w-4 h-4"></i>
-          <span>गाड़ियाँ (Fleet)</span>
-        </button>
-        <button onclick="switchTab('drivers')" id="tabBtn-drivers" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800">
-          <i data-lucide="users" class="w-4 h-4"></i>
-          <span>ड्राइवर्स व पिन (Drivers)</span>
-        </button>
-        <button onclick="switchTab('ledger')" id="tabBtn-ledger" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800">
-          <i data-lucide="wallet" class="w-4 h-4"></i>
-          <span>कैश लेज़र (Cash Ledger)</span>
-        </button>
-        <button onclick="switchTab('subscription')" id="tabBtn-subscription" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-amber-400 hover:bg-amber-500/10 border border-amber-500/20 mt-4">
-          <i data-lucide="crown" class="w-4 h-4 text-amber-400"></i>
-          <span>सब्सक्रिप्शन प्लान (Upgrade)</span>
-        </button>
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden md:flex items-center space-x-6 text-xs font-semibold text-slate-300">
+        <a href="#features" class="hover:text-amber-400 transition">फीचर्स (Features)</a>
+        <a href="#calculator" class="hover:text-amber-400 transition">बचत कैलकुलेटर (ROI)</a>
+        <a href="#pricing" class="hover:text-amber-400 transition">प्लान्स व ऑफर्स (Pricing)</a>
+        <a href="#roadmap" class="hover:text-amber-400 transition">रोडमैप (Roadmap)</a>
+        <a href="#downloads" class="hover:text-amber-400 transition">डाउनलोड हब</a>
       </nav>
-    </div>
 
-    <!-- Company Details Bottom Bar -->
-    <div class="p-4 border-t border-slate-800 text-xs text-slate-400 space-y-1">
-      <p>Company Code: <b id="displayCompCode" class="text-amber-400 font-mono">AACHICO</b></p>
-      <p class="text-[11px] text-slate-500">Aachico Tech Ecosystem</p>
-    </div>
-  </aside>
-
-  <!-- MAIN DASHBOARD CONTENT AREA -->
-  <main class="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto">
-
-    <!-- AD BANNER -->
-    <div id="googleAdSlot" class="bg-slate-900 border border-dashed border-amber-500/30 rounded-2xl p-3 flex items-center justify-between text-xs text-slate-400">
-      <div class="flex items-center space-x-2">
-        <span class="bg-amber-500 text-slate-950 font-bold px-1.5 py-0.5 rounded text-[10px]">AD</span>
-        <span>Google Ad Slot (Free Tier Monetization)</span>
-      </div>
-      <button onclick="switchTab('subscription')" class="text-amber-400 font-medium hover:underline text-[11px]">Remove Ads (Upgrade Pro)</button>
-    </div>
-
-    <!-- TOP SUMMARY METRICS -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-      <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-        <div class="flex items-center space-x-2 text-slate-400 text-xs mb-1">
-          <i data-lucide="car" class="w-4 h-4 text-blue-400"></i>
-          <span>कुल गाड़ियाँ (Fleet)</span>
-        </div>
-        <p id="metricTotalCars" class="text-xl font-bold text-white">0 / 5</p>
-      </div>
-
-      <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-        <div class="flex items-center space-x-2 text-slate-400 text-xs mb-1">
-          <i data-lucide="users" class="w-4 h-4 text-emerald-400"></i>
-          <span>सक्रिय ड्राइवर्स</span>
-        </div>
-        <p id="metricTotalDrivers" class="text-xl font-bold text-white">0 / 10</p>
-      </div>
-
-      <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-        <div class="flex items-center space-x-2 text-slate-400 text-xs mb-1">
-          <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
-          <span>पेंडिंग ट्रिप्स</span>
-        </div>
-        <p id="metricPendingTrips" class="text-xl font-bold text-amber-400">0</p>
-      </div>
-
-      <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-        <div class="flex items-center space-x-2 text-slate-400 text-xs mb-1">
-          <i data-lucide="badge-indian-rupee" class="w-4 h-4 text-rose-400"></i>
-          <span>मार्केट ड्यू (Driver Bal)</span>
-        </div>
-        <p id="metricNetCash" class="text-xl font-bold text-rose-400">₹0</p>
+      <!-- Action Buttons -->
+      <div class="flex items-center space-x-3">
+        <a href="admin.html" class="hidden sm:inline-flex items-center space-x-1.5 text-xs font-bold text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 border border-slate-700 px-3.5 py-2 rounded-xl transition">
+          <i data-lucide="lock" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>Company Login</span>
+        </a>
+        <a href="#pricing" class="inline-flex items-center space-x-1.5 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl transition shadow-md shadow-amber-500/20">
+          <span>1-Month Free Trial</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
       </div>
     </div>
+  </header>
 
-    <!-- TAB 1: TRIP APPROVAL -->
-    <section id="view-trips" class="space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold flex items-center space-x-2">
-          <span>ट्रिप अप्रूवल व ऑडिट (Pending Trips)</span>
-        </h2>
-        <span class="text-xs text-slate-400">ड्राइवर द्वारा भेजी गई पर्चियों की जाँच करें</span>
+  <!-- ================= HERO SECTION ================= -->
+  <section id="hero" class="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden">
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+      <div class="inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/30 px-3.5 py-1.5 rounded-full text-xs text-amber-300 font-medium">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>नया ऑफर: 1 महीना पे करें + 1 महीना बिल्कुल फ़्री (Buy 1 Get 1 Free)</span>
       </div>
 
-      <div id="pendingTripsContainer" class="space-y-3"></div>
-    </section>
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight max-w-4xl mx-auto">
+        टैक्सी व ट्रेवल कंपनियों का <br class="hidden sm:block" />
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-500">
+          स्मार्ट डिजिटल फ़्लीट मैनेजमेंट
+        </span>
+      </h1>
 
-    <!-- TAB 2: FLEET MANAGEMENT -->
-    <section id="view-fleet" class="hidden space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold">गाड़ी मैनेजमेंट (Company Vehicles)</h2>
-        <button onclick="openAddCarModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center space-x-1">
-          <i data-lucide="plus" class="w-4 h-4"></i>
-          <span>नई गाड़ी जोड़ें</span>
-        </button>
+      <p class="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        गाड़ी के मीटर फ़ोटो ऑडिट, डीज़ल चोरी डिटेक्शन, ड्राइवर कैश लेज़र और ऑटोमैटिक WhatsApp इनवॉइसिंग—अब सब कुछ एक ही सुपर-फ़ास्ट इकोसिस्टम में।
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+        <a href="#pricing" class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-xl text-sm transition shadow-lg shadow-amber-500/25">
+          <i data-lucide="zap" class="w-4 h-4 fill-slate-950"></i>
+          <span>फ्री में शुरू करें (Start 1-Month Trial)</span>
+        </a>
+        <a href="driver.html" target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold px-6 py-3 rounded-xl text-sm transition">
+          <i data-lucide="smartphone" class="w-4 h-4 text-amber-400"></i>
+          <span>ड्राइवर ऐप टेस्ट करें (Driver Companion)</span>
+        </a>
       </div>
 
-      <div id="fleetList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-    </section>
+      <div class="pt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto text-xs text-slate-400">
+        <div class="flex items-center justify-center space-x-2">
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+          <span>100% डेटा सुरक्षा</span>
+        </div>
+        <div class="flex items-center justify-center space-x-2">
+          <i data-lucide="wifi-off" class="w-4 h-4 text-amber-400"></i>
+          <span>ऑफ़लाइन-फर्स्ट ऐप</span>
+        </div>
+        <div class="flex items-center justify-center space-x-2">
+          <i data-lucide="image" class="w-4 h-4 text-blue-400"></i>
+          <span>ऑटो इमेज कम्प्रेशन</span>
+        </div>
+        <div class="flex items-center justify-center space-x-2">
+          <i data-lucide="file-spreadsheet" class="w-4 h-4 text-purple-400"></i>
+          <span>1-क्लिक लेज़र एक्सेल</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <!-- TAB 3: DRIVER MASTER & PIN RESET -->
-    <section id="view-drivers" class="hidden space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold">ड्राइवर मास्टर व PIN कंट्रोल</h2>
-        <button onclick="openAddDriverModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center space-x-1">
-          <i data-lucide="user-plus" class="w-4 h-4"></i>
-          <span>नया ड्राइवर जोड़ें</span>
-        </button>
+  <!-- ================= CORE FEATURES ================= -->
+  <section id="features" class="py-16 bg-slate-900/40 border-y border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div class="text-center space-y-3">
+        <h2 class="text-xs uppercase tracking-widest text-amber-400 font-bold">Comprehensive Capabilities</h2>
+        <p class="text-2xl sm:text-3xl font-extrabold text-white">एक संपूर्ण ट्रांसपोर्ट मैनेजमेंट सिस्टम</p>
+        <p class="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">पुराने रजिस्टर और कागज़ी डायरियों को कहें अलविदा, अपनाएँ हाई-टेक ऑटोमेशन।</p>
       </div>
 
-      <div id="driversList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-    </section>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="glass-card p-6 rounded-2xl space-y-3 transition glass-card-hover">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
+            <i data-lucide="camera" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-bold text-base text-white">डिजिटल मीटर फोटो व टाइमस्टैम्प</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            ड्राइवर ट्रिप शुरू और खत्म करते समय ओडोमीटर की लाइव फोटो लेगा। सिस्टम उस पर तारीख और टाइम वाटरमार्क लगाकर फर्जीवाड़े को रोकता है।
+          </p>
+        </div>
 
-    <!-- TAB 4: CASH LEDGER & SETTLEMENT -->
-    <section id="view-ledger" class="hidden space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold">ड्राइवर कैश लेज़र (Financial Balancing)</h2>
-        <span class="text-xs text-slate-400">Pocket Advance व Customer Cash मिलान</span>
+        <div class="glass-card p-6 rounded-2xl space-y-3 transition glass-card-hover">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+            <i data-lucide="wallet" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-bold text-base text-white">4-कार्ड लाइव ड्राइवर कैश लेज़र</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            पॉकेट एडवांस, ग्राहक से वसूला गया कैश, रास्ते के डीजल/टोल खर्चे और नेट बैलेंस (Due/Claim) का ऑटोमैटिक लाइव मिलान।
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl space-y-3 transition glass-card-hover">
+          <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center border border-rose-500/20">
+            <i data-lucide="fuel" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-bold text-base text-white">डीज़ल चोरी व असामान्य माइलेज अलर्ट</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            सिस्टम कुल किलोमीटर और डीज़ल पर्ची को डिवाइड करके माइलेज निकालता है। असामान्य एवरेज आने पर एडमिन को तुरंत चेतावनी मिलती है।
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl space-y-3 transition glass-card-hover">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-bold text-base text-white">दस्तावेज़ एक्सपायरी गार्ड (Alerts)</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            इंश्योरेंस, फिटनेस, पॉल्यूशन (PUC) और ड्राइवर लाइसेंस खत्म होने से 15 दिन पहले रेड अलर्ट ताकि बिना चालान गाड़ियाँ सुरक्षित चलें।
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl space-y-3 transition glass-card-hover">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center border border-purple-500/20">
+            <i data-lucide="message-square" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-bold text-base text-white">1-क्लिक WhatsApp ट्रिप शीट</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            ट्रिप पूरी होते ही कस्टमर के WhatsApp पर स्टार्ट/एंड KM, रूट, टोल और नेट बिल की पेशेवर ट्रिप शीट 1-टैप में शेयर करें।
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl space-y-3 transition glass-card-hover">
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/20">
+            <i data-lucide="mic" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-bold text-base text-white">ड्राइवर वॉइस टाइपिंग व ऑफ़लाइन मोड</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            कम पढ़े-लिखे ड्राइवरों के लिए बोलकर रूट और खर्चे दर्ज करने की सुविधा। बिना इंटरनेट के भी ऐप पूरी तरह काम करता है।
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= INTERACTIVE ROI CALCULATOR ================= -->
+  <section id="calculator" class="py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="glass-card border border-amber-500/30 rounded-3xl p-6 sm:p-10 space-y-8 glow-amber">
+        <div class="text-center space-y-2">
+          <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">ROI & Savings Calculator</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">आप हर महीने कितना पैसा बचाएँगे?</h2>
+          <p class="text-xs text-slate-400">अपनी गाड़ियों की संख्या चुनें और देखें कि Aachico Vault से आपकी कितनी बचत होगी</p>
+        </div>
+
+        <div class="space-y-4 max-w-xl mx-auto">
+          <div class="flex justify-between items-center text-sm font-bold">
+            <span class="text-slate-300">आपकी कुल गाड़ियाँ (Fleet Size):</span>
+            <span id="sliderValue" class="text-amber-400 text-lg font-mono">10 Cars</span>
+          </div>
+          <input type="range" id="carSlider" min="2" max="50" value="10" step="1" 
+                 class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500" 
+                 oninput="calculateSavings(this.value)" />
+          <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+            <span>2 Cars</span>
+            <span>25 Cars</span>
+            <span>50+ Cars</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center pt-4 border-t border-slate-800">
+          <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+            <p class="text-[11px] text-slate-400 mb-1">डीज़ल लीकेज बचत</p>
+            <p id="fuelSavings" class="text-xl font-black text-emerald-400 font-mono">₹12,000</p>
+            <span class="text-[10px] text-slate-500">प्रति माह अनुमानित</span>
+          </div>
+          <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+            <p class="text-[11px] text-slate-400 mb-1">कैश गड़बड़ी व समय की बचत</p>
+            <p id="ledgerSavings" class="text-xl font-black text-amber-400 font-mono">₹6,000</p>
+            <span class="text-[10px] text-slate-500">अकाउंटिंग व ऑडिटिंग</span>
+          </div>
+          <div class="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/30">
+            <p class="text-[11px] text-amber-300 font-bold mb-1">कुल मासिक शुद्ध बचत</p>
+            <p id="totalSavings" class="text-2xl font-black text-amber-400 font-mono">₹18,000</p>
+            <span class="text-[10px] text-amber-300/80 font-medium">सीधा आपकी जेब में</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DYNAMIC PRICING TIERS ================= -->
+  <section id="pricing" class="py-16 bg-slate-900/50 border-t border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div class="text-center space-y-3">
+        <span class="text-xs uppercase tracking-widest text-amber-400 font-bold">Transparent & Flexible Plans</span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-white">किफायती प्लान्स, आपकी फ्लीट की जरूरत अनुसार</h2>
+        <p class="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">
+          विशेष लॉन्च ऑफर: 1 महीना पे करें + 1 महीना बिल्कुल फ़्री (Buy 1 Month, Get 1 Month Free)!
+        </p>
+
+        <div id="pricingSyncBadge" class="inline-flex items-center space-x-1.5 text-[10px] bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-full border border-slate-700">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <span>Dynamic Super-Admin Pricing Active</span>
+        </div>
       </div>
 
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto">
-        <table class="w-full text-left text-xs text-slate-300">
-          <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
-            <tr>
-              <th class="p-3">ड्राइवर</th>
-              <th class="p-3">Pocket Adv.</th>
-              <th class="p-3">Cust. Cash</th>
-              <th class="p-3">Expenses Claim</th>
-              <th class="p-3">Net Balance</th>
-              <th class="p-3 text-right">Action</th>
-            </tr>
-          </thead>
-          <tbody id="ledgerTableBody" class="divide-y divide-slate-800"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- TAB 5: SUBSCRIPTION PLANS & MONETIZATION -->
-    <section id="view-subscription" class="hidden space-y-5">
-      <div>
-        <h2 class="text-lg font-bold text-white">सब्सक्रिप्शन व फ़्लीट लिमिट प्लान</h2>
-        <p class="text-xs text-slate-400 mt-0.5">अपनी गाड़ियों की संख्या के अनुसार सबसे किफायती प्लान चुनें</p>
+      <div id="pricingCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <!-- Rendered via JS -->
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-3">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+          <span>कोई छुपा हुआ चार्ज नहीं • कभी भी कैंसल करें • 100% डेटा बैकअप</span>
+        </div>
+        <a href="https://wa.me/919166381579?text=Hello%20Aachico%20Vault,%20I%20want%20to%20register%20my%20fleet." target="_blank" class="text-amber-400 hover:underline font-bold flex items-center space-x-1">
+          <span>कस्टम फ्लीट के लिए संपर्क करें</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PRODUCT ROADMAP ================= -->
+  <section id="roadmap" class="py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div class="text-center space-y-2">
+        <span class="text-xs uppercase tracking-widest text-amber-400 font-bold">Continuous Innovation</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">प्रोडक्ट रोडमैप (क्या लाइव है और क्या आ रहा है)</h2>
+        <p class="text-xs text-slate-400">हम लगातार आपके फ्लीट ऑपरेशन्स को और भी सरल बना रहे हैं</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="glass-card p-6 rounded-2xl border-t-4 border-emerald-500 space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="font-bold text-sm text-white">Phase 1 (Live Now)</h3>
+            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded">V1.0 LIVE</span>
+          </div>
+          <ul class="text-xs space-y-2.5 text-slate-300">
+            <li class="flex items-start space-x-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i><span>मल्टी-टेनेंट कंपनी कोड व PIN सिक्योरिटी</span></li>
+            <li class="flex items-start space-x-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i><span>2-फेज डिजिटल ओडोमीटर फोटो ऑडिट</span></li>
+            <li class="flex items-start space-x-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i><span>4-कार्ड ड्राइवर लाइव कैश लेज़र</span></li>
+            <li class="flex items-start space-x-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i><span>ऑटो इमेज कम्प्रेशन (200KB WebP)</span></li>
+            <li class="flex items-start space-x-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i><span>सुपर-एडमिन डायनामिक प्राइस कंट्रोल</span></li>
+          </ul>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl border-t-4 border-amber-500 space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="font-bold text-sm text-white">Phase 2 (In Progress)</h3>
+            <span class="text-[10px] bg-amber-500/20 text-amber-400 font-bold px-2 py-0.5 rounded">Q3 2026</span>
+          </div>
+          <ul class="text-xs space-y-2.5 text-slate-300">
+            <li class="flex items-start space-x-2"><i data-lucide="sparkles" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i><span>AI डीजल पर्ची OCR ऑटो-स्कैनर</span></li>
+            <li class="flex items-start space-x-2"><i data-lucide="sparkles" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i><span>दस्तावेज़ (Insurance, PUC) ऑटो-अलर्ट्स</span></li>
+            <li class="flex items-start space-x-2"><i data-lucide="sparkles" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i><span>1-क्लिक ड्राइवर सैलरी व दैनिक भत्ता निपटान</span></li>
+            <li class="flex items-start space-x-2"><i data-lucide="sparkles" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i><span>WhatsApp PDF ड्यूटी स्लिप जनरेटर</span></li>
+          </ul>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl border-t-4 border-blue-500 space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="font-bold text-sm text-white">Phase 3 (Coming Soon)</h3>
+            <span class="text-[10px] bg-blue-500/20 text-blue-400 font-bold px-2 py-0.5 rounded">V2.0</span>
+          </div>
+          <ul class="text-xs space-y-2.5 text-slate-300">
+            <li class="flex items-start space-x-2"><i data-lucide="clock" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i><span>लाइव GPS फ्लीट व रूट ट्रैकिंग</span></li>
+            <li class="flex items-start space-x-2"><i data-lucide="clock" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i><span>ऑटोमैटिक फास्टैग (FASTag) API सिंक</span></li>
+            <li class="flex items-start space-x-2"><i data-lucide="clock" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i><span>व्हीकल सर्विसिंग व मेंटेनेंस शेड्यूलर</span></li>
+            <li class="flex items-start space-x-2"><i data-lucide="clock" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i><span>GST ई-वे बिल व बी2बी इनवॉइसिंग</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CENTRAL DOWNLOAD HUB ================= -->
+  <section id="downloads" class="py-16 bg-slate-900/60 border-t border-slate-800/80">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div class="text-center space-y-2">
+        <span class="text-xs uppercase tracking-widest text-amber-400 font-bold">Central App Hub</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">सभी डिवाइसों के लिए तैयार</h2>
+        <p class="text-xs text-slate-400">अपने कंप्यूटर, टैबलेट या मोबाइल पर 1-क्लिक में शुरू करें</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="glass-card p-6 rounded-2xl space-y-5 border border-slate-800">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
+              <i data-lucide="monitor" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-white">Company Admin Dashboard</h3>
+              <p class="text-xs text-slate-400">मालिक व ऑफिस मैनेजर्स के लिए (Desktop & Web)</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            गाड़ियों की लिस्ट, ड्राइवर पिन रिसेट, ट्रिप अप्रूवल, लेज़र बैलेंस और एक्सेल रिपोर्ट्स का पूरा कंट्रोल।
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+            <a href="admin.html" class="flex items-center justify-center space-x-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">
+              <i data-lucide="globe" class="w-4 h-4"></i>
+              <span>Launch Web Admin</span>
+            </a>
+            <button onclick="downloadDesktopInstaller()" class="flex items-center justify-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold py-2.5 rounded-xl text-xs transition">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>Windows App (.exe)</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl space-y-5 border border-slate-800">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+              <i data-lucide="smartphone" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-white">Driver Companion App</h3>
+              <p class="text-xs text-slate-400">ड्राइवरों के लिए (Android & iOS Universal)</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            आसान 2-फेज ट्रिप एंट्री, मीटर फोटो कैमरा, वॉइस टाइपिंग, और बिना इंटरनेट काम करने वाला लेज़र।
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+            <a href="driver.html" class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs transition">
+              <i data-lucide="play" class="w-4 h-4"></i>
+              <span>Open Mobile Web App</span>
+            </a>
+            <button onclick="downloadAndroidAPK()" class="flex items-center justify-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold py-2.5 rounded-xl text-xs transition">
+              <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i>
+              <span>Download Android APK</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="mt-auto bg-slate-950 border-t border-slate-800 py-10 text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-base border border-amber-500/30">
+            A
+          </div>
+          <span class="font-bold text-slate-200 tracking-wider">AACHICO VAULT SAAS ECOSYSTEM</span>
+        </div>
         
-        <!-- FREE / STARTER -->
-        <div class="bg-slate-900 border-2 border-slate-800 p-5 rounded-2xl space-y-4 flex flex-col justify-between">
-          <div class="space-y-3">
-            <div class="flex justify-between items-center">
-              <h3 class="font-bold text-base text-slate-200">Starter Free</h3>
-              <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-semibold">Active</span>
-            </div>
-            <div>
-              <p class="text-2xl font-bold text-white">₹0 <span class="text-xs text-slate-400 font-normal">/ लाइफटाइम</span></p>
-              <p class="text-[11px] text-amber-400 mt-1">Google Ads इनबिल्ट</p>
-            </div>
-            <ul class="text-xs space-y-2 text-slate-300 border-t border-slate-800 pt-3">
-              <li>✓ अधिकतम 5 गाड़ियाँ (Up to 5 Cars)</li>
-              <li>✓ अधिकतम 10 ड्राइवर्स</li>
-              <li>✓ बेसिक ट्रिप ट्रैकिंग</li>
-              <li>✕ Ad-Free सुविधा नहीं</li>
-            </ul>
-          </div>
-          <button class="w-full bg-slate-800 text-slate-400 font-bold py-2 rounded-xl text-xs cursor-default">
-            Current Plan
-          </button>
-        </div>
-
-        <!-- PRO TIER 1 (10 CARS) -->
-        <div class="bg-slate-900 border-2 border-amber-500/50 p-5 rounded-2xl space-y-4 relative shadow-lg shadow-amber-500/5 flex flex-col justify-between">
-          <span class="absolute -top-2.5 right-4 bg-amber-500 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">10 Cars Offer</span>
-          <div class="space-y-3">
-            <div class="flex justify-between items-center">
-              <h3 class="font-bold text-base text-amber-400">Pro-10</h3>
-              <span class="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded font-semibold">1 Mo Free Trial</span>
-            </div>
-            <div>
-              <p class="text-2xl font-bold text-white">₹99 <span class="text-xs text-slate-400 font-normal">/ 4 महीने</span></p>
-              <p class="text-[11px] text-emerald-400 font-semibold mt-1">+1 महीना एक्स्ट्रा फ़्री (कुल 5 माह)</p>
-            </div>
-            <ul class="text-xs space-y-2 text-slate-300 border-t border-slate-800 pt-3">
-              <li>✓ अधिकतम 10 गाड़ियाँ (Up to 10 Cars)</li>
-              <li>✓ 100% No Ads (विज्ञापन मुक्त)</li>
-              <li>✓ इनवॉइसिंग व लेज़र एक्सेल एक्सपोर्ट</li>
-              <li>✓ 1 महीना फ़्री ट्रायल शामिल</li>
-            </ul>
-          </div>
-          <button onclick="requestUpgrade('PRO 10 CARS (₹99 / 4+1 Mo)')" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs shadow">
-            Upgrade to Pro-10
-          </button>
-        </div>
-
-        <!-- PRO TIER 2 (20 CARS) -->
-        <div class="bg-slate-900 border-2 border-emerald-500/50 p-5 rounded-2xl space-y-4 relative shadow-lg shadow-emerald-500/5 flex flex-col justify-between">
-          <span class="absolute -top-2.5 right-4 bg-emerald-500 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Best Value</span>
-          <div class="space-y-3">
-            <div class="flex justify-between items-center">
-              <h3 class="font-bold text-base text-emerald-400">Pro-20</h3>
-              <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-semibold">1 Mo Free Trial</span>
-            </div>
-            <div>
-              <p class="text-2xl font-bold text-white">₹199 <span class="text-xs text-slate-400 font-normal">/ 4 महीने</span></p>
-              <p class="text-[11px] text-emerald-400 font-semibold mt-1">+1 महीना एक्स्ट्रा फ़्री (कुल 5 माह)</p>
-            </div>
-            <ul class="text-xs space-y-2 text-slate-300 border-t border-slate-800 pt-3">
-              <li>✓ अधिकतम 20 गाड़ियाँ (Up to 20 Cars)</li>
-              <li>✓ 100% No Ads (विज्ञापन मुक्त)</li>
-              <li>✓ इनवॉइसिंग व लेज़र एक्सेल एक्सपोर्ट</li>
-              <li>✓ 1 महीना फ़्री ट्रायल शामिल</li>
-            </ul>
-          </div>
-          <button onclick="requestUpgrade('PRO 20 CARS (₹199 / 4+1 Mo)')" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs shadow">
-            Upgrade to Pro-20
-          </button>
-        </div>
-
-        <!-- ENTERPRISE (UNLIMITED) -->
-        <div class="bg-slate-900 border-2 border-slate-800 p-5 rounded-2xl space-y-4 flex flex-col justify-between">
-          <div class="space-y-3">
-            <div class="flex justify-between items-center">
-              <h3 class="font-bold text-base text-blue-400">Enterprise</h3>
-              <span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded font-semibold">Unlimited</span>
-            </div>
-            <div>
-              <p class="text-2xl font-bold text-white">₹999+ <span class="text-xs text-slate-400 font-normal">/ 6 महीने</span></p>
-              <p class="text-[11px] text-blue-400 mt-1">हाई-वॉल्यूम फ़्लीट व बड़ी कंपनियाँ</p>
-            </div>
-            <ul class="text-xs space-y-2 text-slate-300 border-t border-slate-800 pt-3">
-              <li>✓ अनलिमिटेड गाड़ियाँ व अनलिमिटेड ड्राइवर्स</li>
-              <li>✓ कस्टमाइज़्ड लेटरहेड व ब्रांडिंग</li>
-              <li>✓ ऑटो-डीजल OCR रीडिंग व रिपोर्ट्स</li>
-              <li>✓ 24/7 फ़ोन व WhatsApp सपोर्ट</li>
-            </ul>
-          </div>
-          <button onclick="requestUpgrade('ENTERPRISE (₹999+ / 6 Mo)')" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 rounded-xl text-xs border border-slate-700">
-            Get Enterprise
-          </button>
-        </div>
-
-      </div>
-    </section>
-
-  </main>
-
-  <!-- MODAL: ADD VEHICLE -->
-  <div id="addCarModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 space-y-4">
-      <div class="flex justify-between items-center">
-        <h3 class="font-bold text-sm">नई गाड़ी जोड़ें (Add Vehicle)</h3>
-        <button onclick="closeModal('addCarModal')" class="text-slate-400"><i data-lucide="x" class="w-4 h-4"></i></button>
-      </div>
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="text-slate-300 font-semibold">गाड़ी नंबर (Vehicle Number)</label>
-          <input type="text" id="newCarNumber" placeholder="उदा. RJ-27-TA-1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 uppercase mt-1 focus:border-amber-500 focus:outline-none" />
-        </div>
-        <div>
-          <label class="text-slate-300 font-semibold">मॉडल / कार नाम (Car Model)</label>
-          <input type="text" id="newCarModel" placeholder="उदा. Innova Crysta / Dzire" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 mt-1 focus:border-amber-500 focus:outline-none" />
+        <div class="flex items-center space-x-6 text-slate-400">
+          <a href="#features" class="hover:text-amber-400">Features</a>
+          <a href="#pricing" class="hover:text-amber-400">Plans</a>
+          <a href="superadmin.html" class="hover:text-amber-400 text-slate-600">Master Control</a>
+          <a href="mailto:aachicoinfotech@gmail.com" class="hover:text-amber-400">Support Email</a>
+          <a href="javascript:void(0)" onclick="openModal('privacyModal')" class="hover:text-amber-400">Privacy & Terms</a>
         </div>
       </div>
-      <button onclick="saveNewCar()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs">
-        गाड़ी सेव करें
+
+      <div class="border-t border-slate-900 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-slate-500 text-[11px]">
+        <p>© 2026 Aachico Vault Inc. All rights reserved. Designed for Transport & Fleet Operators across India.</p>
+        <p class="flex items-center space-x-1">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
+          <span>Encrypted Cloud Storage Powered by Firebase</span>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= PRIVACY & TERMS MODAL ================= -->
+  <div id="privacyModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-sm text-white">Terms of Service & Privacy Policy</h3>
+        <button onclick="closeModal('privacyModal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+        <p><b>1. Data Ownership:</b> All fleet, driver, and trip data entered into Aachico Vault belongs strictly to the respective registered company.</p>
+        <p><b>2. Privacy & Security:</b> No passenger or financial data is shared with third parties. Odometer photos are stored securely using cloud encryption.</p>
+        <p><b>3. Subscription Terms:</b> Monthly and annual subscriptions are activated upon payment verification. 1-Month Buy + 1 Free applies on initial registration.</p>
+      </div>
+      <button onclick="closeModal('privacyModal')" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-xl text-xs">
+        Close Window
       </button>
     </div>
   </div>
 
-  <!-- MODAL: ADD DRIVER -->
-  <div id="addDriverModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 space-y-4">
-      <div class="flex justify-between items-center">
-        <h3 class="font-bold text-sm">नया ड्राइवर जोड़ें (Auto-ID & PIN)</h3>
-        <button onclick="closeModal('addDriverModal')" class="text-slate-400"><i data-lucide="x" class="w-4 h-4"></i></button>
-      </div>
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="text-slate-300 font-semibold">ड्राइवर का नाम</label>
-          <input type="text" id="newDriverName" placeholder="उदा. रमेश कुमार" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 mt-1 focus:border-amber-500 focus:outline-none" />
-        </div>
-        <div>
-          <label class="text-slate-300 font-semibold">मोबाइल नंबर (10 Digit)</label>
-          <input type="tel" id="newDriverPhone" placeholder="9876543210" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 mt-1 focus:border-amber-500 focus:outline-none" />
-        </div>
-        <div>
-          <label class="text-slate-300 font-semibold">4-अंकों का लॉगिन PIN</label>
-          <input type="text" maxlength="4" id="newDriverPin" placeholder="1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 text-center tracking-widest text-sm mt-1 focus:border-amber-500 focus:outline-none" />
-        </div>
-      </div>
-      <button onclick="saveNewDriver()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs">
-        ड्राइवर कोड जनरेट करें
-      </button>
-    </div>
-  </div>
-
-  <!-- FIREBASE DATA ENGINE (SDK v12.18.0) -->
+  <!-- ================= SCRIPTS & DYNAMIC DATA ENGINE ================= -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
+    // Your Exact Live Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyDOIEKyvSwfpRybZBmNuImzdJ3hdlEO3hI",
       authDomain: "aachico-vault.firebaseapp.com",
       projectId: "aachico-vault",
-      storageBucket: "aachico-vault.appspot.com",
-      messagingSenderId: "367140813959",
-      appId: "1:367140813959:web:35552eb0bc03e2fc3ba5d0"
+      storageBucket: "aachico-vault.firebasestorage.app",
+      messagingSenderId: "766953520082",
+      appId: "1:766953520082:web:481f1aab82b74d78aae60b"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const COMPANY_CODE = "AACHICO";
-    let fleetData = JSON.parse(localStorage.getItem('aachico_fleet') || '[]');
-    let driverData = JSON.parse(localStorage.getItem('aachico_drivers_list') || '[]');
-    let pendingTrips = JSON.parse(localStorage.getItem('aachico_trips_history') || '[]');
+    const defaultTiers = [
+      { id: "starter", name: "Starter", cars: "1 - 2 Cars", monthly: 0, firstMonth: 0, yearly: 0, badge: "Free Tier", isFeatured: false, ads: true },
+      { id: "micro5", name: "Micro-5", cars: "Up to 5 Cars", monthly: 29, firstMonth: 29, yearly: 290, badge: "Buy 1+1 Free", isFeatured: false, ads: false },
+      { id: "pro10", name: "Pro-10", cars: "Up to 10 Cars", monthly: 49, firstMonth: 49, yearly: 490, badge: "Most Popular", isFeatured: true, ads: false },
+      { id: "pro15", name: "Pro-15", cars: "Up to 15 Cars", monthly: 79, firstMonth: 79, yearly: 790, badge: "Best Value", isFeatured: false, ads: false },
+      { id: "fleet25", name: "Fleet-25", cars: "Up to 25 Cars", monthly: 119, firstMonth: 119, yearly: 1190, badge: "Growth", isFeatured: false, ads: false },
+      { id: "enterprise", name: "Enterprise", cars: "Unlimited", monthly: 199, firstMonth: 199, yearly: 1990, badge: "VIP Support", isFeatured: false, ads: false }
+    ];
 
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
       lucide.createIcons();
-      renderDashboard();
+      renderPricingCards(defaultTiers);
+      syncDynamicPricingFromFirebase();
+      calculateSavings(10);
     });
 
-    window.switchTab = function(tabName) {
-      const tabs = ['trips', 'fleet', 'drivers', 'ledger', 'subscription'];
-      tabs.forEach(t => {
-        document.getElementById(`view-${t}`).classList.add('hidden');
-        document.getElementById(`tabBtn-${t}`).classList.remove('nav-active');
-      });
-      document.getElementById(`view-${tabName}`).classList.remove('hidden');
-      document.getElementById(`tabBtn-${tabName}`).classList.add('nav-active');
-    };
-
-    function renderDashboard() {
-      document.getElementById('displayCompCode').innerText = COMPANY_CODE;
-      document.getElementById('metricTotalCars').innerText = `${fleetData.length} / 5`;
-      document.getElementById('metricTotalDrivers').innerText = `${driverData.length} / 10`;
-      document.getElementById('metricPendingTrips').innerText = pendingTrips.filter(t => t.status === "PENDING_APPROVAL").length;
-
-      renderFleet();
-      renderDrivers();
-      renderPendingTrips();
-      renderLedger();
-    }
-
-    function renderFleet() {
-      const container = document.getElementById('fleetList');
-      if(fleetData.length === 0) {
-        container.innerHTML = `<div class="p-4 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-500">कोई गाड़ी नहीं जोड़ी गई है। "नई गाड़ी जोड़ें" पर क्लिक करें।</div>`;
-        return;
-      }
-      container.innerHTML = fleetData.map((car, idx) => `
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex items-center justify-between">
-          <div>
-            <h4 class="font-bold text-sm text-white font-mono">${car.number}</h4>
-            <p class="text-xs text-slate-400">${car.model}</p>
-          </div>
-          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">Active</span>
-        </div>
-      `).join('');
-    }
-
-    window.openAddCarModal = function() {
-      if(fleetData.length >= 5) {
-        alert("Starter Plan की लिमिट (5 गाड़ियाँ) पूरी हो चुकी है। और गाड़ियाँ जोड़ने के लिए Pro Plan में अपग्रेड करें!");
-        switchTab('subscription');
-        return;
-      }
-      document.getElementById('addCarModal').classList.remove('hidden');
-    };
-
-    window.saveNewCar = function() {
-      const num = document.getElementById('newCarNumber').value.trim().toUpperCase();
-      const model = document.getElementById('newCarModel').value.trim();
-      if(!num || !model) return alert("कृपया सही नंबर और मॉडल भरें");
-
-      fleetData.push({ number: num, model: model });
-      localStorage.setItem('aachico_fleet', JSON.stringify(fleetData));
-      closeModal('addCarModal');
-      renderDashboard();
-    };
-
-    function renderDrivers() {
-      const container = document.getElementById('driversList');
-      if(driverData.length === 0) {
-        container.innerHTML = `<div class="p-4 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-500">कोई ड्राइवर नहीं मिला। "नया ड्राइवर जोड़ें" पर क्लिक करें।</div>`;
-        return;
-      }
-      container.innerHTML = driverData.map((d, idx) => `
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex items-center justify-between">
-          <div>
-            <div class="flex items-center space-x-2">
-              <h4 class="font-bold text-sm text-white">${d.name}</h4>
-              <span class="text-[10px] bg-slate-800 text-amber-400 px-1.5 py-0.5 rounded font-mono border border-slate-700">${d.driverCode}</span>
-            </div>
-            <p class="text-xs text-slate-400 mt-0.5">Phone: ${d.phone} • PIN: <b class="text-amber-400 font-mono">${d.pin}</b></p>
-          </div>
-          <button onclick="resetDriverPin(${idx})" class="text-[11px] text-amber-400 border border-amber-500/30 px-2 py-1 rounded-lg hover:bg-amber-500/10">
-            Reset PIN
-          </button>
-        </div>
-      `).join('');
-    }
-
-    window.openAddDriverModal = function() {
-      if(driverData.length >= 10) {
-        alert("Starter Plan की लिमिट (10 ड्राइवर्स) पूरी हो चुकी है। अनलिमिटेड ड्राइवर्स के लिए Pro Plan में अपग्रेड करें!");
-        switchTab('subscription');
-        return;
-      }
-      document.getElementById('addDriverModal').classList.remove('hidden');
-    };
-
-    window.saveNewDriver = function() {
-      const name = document.getElementById('newDriverName').value.trim();
-      const phone = document.getElementById('newDriverPhone').value.trim();
-      const pin = document.getElementById('newDriverPin').value.trim();
-
-      if(!name || phone.length < 10 || pin.length !== 4) {
-        return alert("कृपया नाम, सही मोबाइल नंबर और 4-अंकों का पिन भरें");
-      }
-
-      const driverCode = `DRV-${101 + driverData.length}`;
-      driverData.push({ name, phone, pin, driverCode, pocketAdvance: 0, customerCashCollected: 0, expensesClaim: 0 });
-      localStorage.setItem('aachico_drivers_list', JSON.stringify(driverData));
-      closeModal('addDriverModal');
-      renderDashboard();
-    };
-
-    window.resetDriverPin = function(idx) {
-      const newPin = prompt(`ड्राइवर ${driverData[idx].name} के लिए नया 4-अंकों का PIN दर्ज करें:`, "1234");
-      if(newPin && newPin.length === 4) {
-        driverData[idx].pin = newPin;
-        localStorage.setItem('aachico_drivers_list', JSON.stringify(driverData));
-        renderDrivers();
-        alert("PIN सफलतापूर्वक रीसेट हो गया!");
-      }
-    };
-
-    function renderPendingTrips() {
-      const container = document.getElementById('pendingTripsContainer');
-      const pending = pendingTrips.filter(t => t.status === "PENDING_APPROVAL");
-
-      if(pending.length === 0) {
-        container.innerHTML = `<div class="p-6 bg-slate-900 border border-slate-800 rounded-2xl text-center text-xs text-slate-500">कोई पेंडिंग ट्रिप नहीं है। सभी ट्रिप्स ऑडिट हो चुकी हैं।</div>`;
-        return;
-      }
-
-      container.innerHTML = pending.map((t, idx) => `
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3">
-          <div class="flex justify-between items-start">
-            <div>
-              <span class="text-xs font-mono font-bold bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20">${t.vehicleNo}</span>
-              <h3 class="font-bold text-sm text-white mt-1">${t.route}</h3>
-              <p class="text-[11px] text-slate-400">Driver: ${t.driverName || t.driverCode} • Date: ${new Date(t.endTime || t.startTime).toLocaleDateString()}</p>
-            </div>
-            <div class="text-right">
-              <span class="text-xs font-bold text-emerald-400">${t.totalKm || 0} KM</span>
-              <p class="text-[11px] text-slate-400">Start: ${t.startKm} | End: ${t.endKm}</p>
-            </div>
-          </div>
-
-          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800/80 grid grid-cols-3 gap-2 text-xs">
-            <div>
-              <span class="text-slate-500 text-[10px]">ग्राहक से कैश</span>
-              <p class="font-bold text-amber-400">₹${t.customerCash || 0}</p>
-            </div>
-            <div>
-              <span class="text-slate-500 text-[10px]">कुल खर्चे (Fuel+Toll)</span>
-              <p class="font-bold text-rose-400">₹${t.expenses?.total || 0}</p>
-            </div>
-            <div>
-              <span class="text-slate-500 text-[10px]">रसीदें अपलोड</span>
-              <p class="font-bold text-blue-400">${t.receiptCount || 0} Bills</p>
-            </div>
-          </div>
-
-          <div class="flex space-x-2 pt-1">
-            <button onclick="approveTrip(${idx})" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl text-xs shadow">
-              ✓ Approve Trip
-            </button>
-            <button onclick="rejectTrip(${idx})" class="bg-slate-800 hover:bg-rose-500/20 text-rose-400 border border-slate-700 px-4 py-2 rounded-xl text-xs">
-              Reject
-            </button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    window.approveTrip = function(idx) {
-      pendingTrips[idx].status = "APPROVED";
-      localStorage.setItem('aachico_trips_history', JSON.stringify(pendingTrips));
-      renderDashboard();
-      alert("ट्रिप अप्रूव हो गई और लेज़र में जुड़ गई!");
-    };
-
-    window.rejectTrip = function(idx) {
-      if(confirm("क्या आप इस ट्रिप को रिजेक्ट करना चाहते हैं?")) {
-        pendingTrips[idx].status = "REJECTED";
-        localStorage.setItem('aachico_trips_history', JSON.stringify(pendingTrips));
-        renderDashboard();
-      }
-    };
-
-    function renderLedger() {
-      const tbody = document.getElementById('ledgerTableBody');
-      if(driverData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">कोई डेटा उपलब्ध नहीं है</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = driverData.map((d, idx) => {
-        const net = (d.pocketAdvance + d.customerCashCollected) - d.expensesClaim;
+    function renderPricingCards(tiers) {
+      const container = document.getElementById('pricingCardsGrid');
+      container.innerHTML = tiers.map(t => {
+        const isFree = t.monthly === 0;
         return `
-          <tr class="hover:bg-slate-800/40">
-            <td class="p-3 font-semibold text-white">${d.name} (${d.driverCode})</td>
-            <td class="p-3 text-slate-300">₹${d.pocketAdvance}</td>
-            <td class="p-3 text-amber-400 font-semibold">₹${d.customerCashCollected}</td>
-            <td class="p-3 text-rose-400 font-semibold">₹${d.expensesClaim}</td>
-            <td class="p-3 font-bold ${net >= 0 ? 'text-amber-400' : 'text-emerald-400'}">
-              ₹${Math.abs(net)} ${net >= 0 ? '(Due)' : '(Claim)'}
-            </td>
-            <td class="p-3 text-right">
-              <button onclick="addAdvanceCash(${idx})" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-2 py-1 rounded">
-                + Advance दें
-              </button>
-            </td>
-          </tr>
+          <div class="glass-card rounded-2xl p-4 flex flex-col justify-between space-y-4 relative transition glass-card-hover ${t.isFeatured ? 'border-2 border-amber-500 ring-4 ring-amber-500/10' : 'border border-slate-800'}">
+            ${t.isFeatured ? `<span class="absolute -top-2.5 right-3 bg-amber-500 text-slate-950 font-black text-[9px] px-2 py-0.5 rounded-full uppercase tracking-wide">Popular</span>` : ''}
+            
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <h3 class="font-bold text-sm ${t.isFeatured ? 'text-amber-400' : 'text-white'}">${t.name}</h3>
+                <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-mono">${t.badge}</span>
+              </div>
+
+              <div>
+                <p class="text-xl font-black text-white font-mono">
+                  ${isFree ? '₹0' : '₹' + t.monthly}
+                  <span class="text-[10px] text-slate-400 font-normal">/माह</span>
+                </p>
+                <p class="text-[10px] ${isFree ? 'text-slate-500' : 'text-emerald-400 font-semibold'} mt-0.5">
+                  ${isFree ? 'Google Ads इनबिल्ट' : '1 Mo Pay = 2 Mo Access'}
+                </p>
+              </div>
+
+              <ul class="text-[11px] space-y-1.5 text-slate-300 border-t border-slate-800 pt-3">
+                <li class="font-semibold text-white">✓ ${t.cars}</li>
+                <li>✓ ${t.ads ? 'बेसिक ट्रिप लॉगिंग' : '100% No Ads (विज्ञापन मुक्त)'}</li>
+                <li>✓ ${t.ads ? 'वेब एक्सेस' : 'WhatsApp इनवॉइसिंग + लेज़र'}</li>
+                ${!isFree ? `<li class="text-amber-300/90">✓ सालाना: ₹${t.yearly}/yr (2 माह फ़्री)</li>` : ''}
+              </ul>
+            </div>
+
+            <a href="https://wa.me/919166381579?text=Hello%20Aachico%20Vault,%20I%20want%20to%20activate%20${encodeURIComponent(t.name)}%20Plan%20(${encodeURIComponent(t.cars)})." 
+               target="_blank" 
+               class="w-full text-center py-2 px-3 rounded-xl text-xs font-bold transition ${t.isFeatured ? 'bg-amber-500 hover:bg-amber-400 text-slate-950' : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'}">
+              ${isFree ? 'Start Free' : 'Get Offer (1+1 Free)'}
+            </a>
+          </div>
         `;
       }).join('');
+      lucide.createIcons();
     }
 
-    window.addAdvanceCash = function(idx) {
-      const amount = Number(prompt(`ड्राइवर ${driverData[idx].name} को कितना Pocket Advance देना है (₹):`, "2000"));
-      if(amount > 0) {
-        driverData[idx].pocketAdvance += amount;
-        localStorage.setItem('aachico_drivers_list', JSON.stringify(driverData));
-        renderDashboard();
-        alert(`₹${amount} का Advance सफलतापूर्वक दर्ज हुआ!`);
+    async function syncDynamicPricingFromFirebase() {
+      try {
+        const docRef = doc(db, "system_config", "pricing_matrix");
+        const docSnap = await getDoc(docRef);
+        if(docSnap.exists() && docSnap.data().tiers) {
+          renderPricingCards(docSnap.data().tiers);
+          const badge = document.getElementById('pricingSyncBadge');
+          if(badge) badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span>Cloud Prices Synced</span>`;
+        }
+      } catch (err) {
+        console.log("Using default fallback pricing structure:", err);
       }
+    }
+
+    window.calculateSavings = function(cars) {
+      document.getElementById('sliderValue').innerText = `${cars} Cars`;
+      const fuelSave = cars * 1200;
+      const ledgerSave = cars * 600;
+      const total = fuelSave + ledgerSave;
+
+      document.getElementById('fuelSavings').innerText = `₹${fuelSave.toLocaleString('en-IN')}`;
+      document.getElementById('ledgerSavings').innerText = `₹${ledgerSave.toLocaleString('en-IN')}`;
+      document.getElementById('totalSavings').innerText = `₹${total.toLocaleString('en-IN')}`;
     };
 
-    window.requestUpgrade = function(tier) {
-      alert(`Aachico Vault ${tier} Plan अपग्रेड करने के लिए धन्यवाद! आपकी पेमेंट और इनवॉइसिंग प्रोसेस शुरू कर दी गई है।`);
+    window.downloadDesktopInstaller = function() {
+      alert("Aachico Vault Desktop (.exe) पैकेजिंग प्रोसेस जारी है। आप तत्काल 'Launch Web Admin' बटन दबाकर वेब वर्शन चला सकते हैं!");
     };
 
-    window.closeModal = function(id) {
-      document.getElementById(id).classList.add('hidden');
+    window.downloadAndroidAPK = function() {
+      alert("Aachico Vault Driver Companion Android APK डाउनलोड तैयार हो रहा है। आप अभी 'Open Mobile Web App' से सीधे इस्तेमाल कर सकते हैं!");
     };
+
+    window.openModal = function(id) { document.getElementById(id).classList.remove('hidden'); };
+    window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); };
   </script>
 </body>
 </html>
