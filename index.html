@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en" class="dark h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aachico Vault - Fleet Management & Driver Entry</title>
+  <meta name="description" content="Fleet Management & Driver Entry System by Aachico Infotech with real-time Firebase Firestore sync, mileage calculation, and expense tracking." />
+  <meta property="og:title" content="Aachico Vault - Fleet Management & Driver Entry" />
+  <meta property="og:description" content="Fleet Management & Driver Entry System by Aachico Infotech with real-time Firebase Firestore sync, mileage calculation, and expense tracking." />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            vault: {
+              bg: '#0f172a',
+              card: '#1e293b',
+              border: '#334155',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #6366f1;
+    }
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.8);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="bg-[#0f172a] text-slate-100 font-sans min-h-screen antialiased flex flex-col selection:bg-indigo-500/30 selection:text-indigo-300">
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="border-b border-slate-700/50 bg-[#0f172a]/95 backdrop-blur sticky top-0 z-30 px-4 sm:px-6 lg:px-8 py-3.5">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      <!-- Brand & Title -->
+      <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0">
+            <span class="text-xl font-black italic tracking-tighter text-white">AV</span>
+          </div>
+          <div>
+            <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+              <span>AACHICO VAULT</span>
+            </h1>
+            <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Fleet & Driver Management System</p>
+          </div>
+        </div>
+
+        <!-- Mobile quick status pill -->
+        <div class="sm:hidden flex items-center gap-1.5 bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-700 text-[10px]">
+          <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span class="text-slate-300 font-medium">Live</span>
+        </div>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+        <!-- Firestore Status Badge -->
+        <div id="firestore-status" class="hidden sm:flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-700">
+          <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span id="status-text" class="text-xs font-medium text-slate-300">Firestore: Connected</span>
+        </div>
+
+        <!-- Quick Demo Fill Button -->
+        <button id="btn-quick-demo" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 bg-slate-800/80 hover:bg-slate-700 hover:text-white border border-slate-700 rounded-full transition-colors cursor-pointer" title="Populate form with realistic test trip">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-400"></i>
+          <span>Sample Data</span>
+        </button>
+
+        <!-- Current Date & Time Pill -->
+        <div class="hidden md:flex items-center gap-2 text-xs text-slate-400 bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-700 font-mono">
+          <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i>
+          <span id="live-clock">--:--:--</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN DASHBOARD CONTENT -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- LEFT COLUMN: TRIP ENTRY FORM -->
+      <section class="lg:col-span-5 flex flex-col gap-4">
+        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-5 shadow-xl flex-1 flex flex-col">
+          
+          <!-- Form Header -->
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-700/60">
+            <div class="flex items-center gap-2">
+              <i data-lucide="chevrons-right" class="w-5 h-5 text-indigo-400"></i>
+              <h2 class="font-bold text-slate-200 tracking-wide uppercase text-sm">Driver Trip Entry</h2>
+            </div>
+            
+            <button id="btn-reset-form" type="button" class="text-[11px] text-slate-400 hover:text-slate-200 uppercase font-semibold flex items-center gap-1 transition-colors" title="Clear form">
+              <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+              Reset
+            </button>
+          </div>
+
+          <!-- The Entry Form -->
+          <form id="trip-entry-form" class="space-y-4 flex-1 flex flex-col justify-between" autocomplete="off">
+            <div class="space-y-3.5">
+              
+              <!-- Vehicle Number & Driver Name -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- Vehicle Selector -->
+                <div class="space-y-1">
+                  <label for="vehicleNumber" class="text-[11px] uppercase font-bold text-slate-400 ml-1 flex items-center justify-between">
+                    <span>Vehicle No.</span>
+                    <span class="text-indigo-400 text-[10px] lowercase">fleet</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    id="vehicleNumber" 
+                    name="vehicleNumber" 
+                    required 
+                    list="fleet-vehicles"
+                    placeholder="KA-01-MT-4521" 
+                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 font-mono uppercase focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  />
+                  <datalist id="fleet-vehicles">
+                    <option value="KA-01-MT-4521">BharatBenz 2823 (Heavy Hauler)</option>
+                    <option value="MH-12-RS-9902">Tata Prima 4028 (Interstate)</option>
+                    <option value="DL-04-VC-7712">Eicher Pro 3015 (Express)</option>
+                    <option value="GJ-06-XZ-7764">Ashok Leyland Captain</option>
+                    <option value="TN-09-BK-5520">Mahindra Bolero Maxi Truck</option>
+                  </datalist>
+                </div>
+
+                <!-- Driver Name -->
+                <div class="space-y-1">
+                  <label for="driverName" class="text-[11px] uppercase font-bold text-slate-400 ml-1">
+                    Driver Name
+                  </label>
+                  <input 
+                    type="text" 
+                    id="driverName" 
+                    name="driverName" 
+                    required 
+                    list="fleet-drivers"
+                    placeholder="Ravi Shankar" 
+                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition capitalize"
+                  />
+                  <datalist id="fleet-drivers">
+                    <option value="Ravi Shankar"></option>
+                    <option value="Ahmed Khan"></option>
+                    <option value="Gurpreet Singh"></option>
+                    <option value="Rajesh Sharma"></option>
+                    <option value="Sunil Kumar"></option>
+                  </datalist>
+                </div>
+              </div>
+
+              <!-- Trip Date & Time -->
+              <div class="space-y-1">
+                <label for="tripDateTime" class="text-[11px] uppercase font-bold text-slate-400 ml-1">
+                  Trip Date & Time
+                </label>
+                <input 
+                  type="datetime-local" 
+                  id="tripDateTime" 
+                  name="tripDateTime" 
+                  required 
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                />
+              </div>
+
+              <!-- Odometer Readings (Start & End) -->
+              <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-1">
+                  <label for="startKm" class="text-[11px] uppercase font-bold text-slate-400 ml-1">
+                    Start KM
+                  </label>
+                  <input 
+                    type="number" 
+                    id="startKm" 
+                    name="startKm" 
+                    min="0" 
+                    step="0.1" 
+                    required 
+                    placeholder="12450" 
+                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 font-mono placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  />
+                </div>
+
+                <div class="space-y-1">
+                  <label for="endKm" class="text-[11px] uppercase font-bold text-slate-400 ml-1">
+                    End KM
+                  </label>
+                  <input 
+                    type="number" 
+                    id="endKm" 
+                    name="endKm" 
+                    min="0" 
+                    step="0.1" 
+                    required 
+                    placeholder="12585" 
+                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 font-mono placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  />
+                </div>
+              </div>
+
+              <!-- Km validation alert -->
+              <div id="km-alert" class="hidden p-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+                <span>End KM reading cannot be less than Start KM.</span>
+              </div>
+
+              <!-- Total Calculated Distance Card -->
+              <div class="bg-indigo-900/20 border border-indigo-500/30 rounded-lg p-3 text-center relative overflow-hidden">
+                <span class="text-xs uppercase font-semibold text-indigo-300">Total Calculated Distance</span>
+                <p class="text-2xl font-black text-indigo-400 font-mono mt-0.5" id="display-total-km">
+                  0 <span class="text-sm font-normal text-indigo-300/80">KM</span>
+                </p>
+                <!-- Hidden compatibility badge for legacy selector -->
+                <span id="distance-badge" class="hidden">Distance: 0 KM</span>
+              </div>
+
+              <!-- Expenses Grid: Fuel, Toll, Other -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] uppercase font-bold text-slate-400 ml-1">Expense Breakdown (₹)</span>
+                  <span id="total-expense-badge" class="text-[11px] font-mono text-indigo-300 font-bold">Total: ₹0.00</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                  <div class="space-y-1">
+                    <label for="fuelAmount" class="text-[10px] uppercase font-bold text-slate-500 block">Fuel (₹)</label>
+                    <input 
+                      type="number" 
+                      id="fuelAmount" 
+                      name="fuelAmount" 
+                      min="0" 
+                      step="0.01" 
+                      placeholder="0.00" 
+                      class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-slate-100 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div class="space-y-1">
+                    <label for="tollCharges" class="text-[10px] uppercase font-bold text-slate-500 block">Toll (₹)</label>
+                    <input 
+                      type="number" 
+                      id="tollCharges" 
+                      name="tollCharges" 
+                      min="0" 
+                      step="0.01" 
+                      placeholder="0.00" 
+                      class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-slate-100 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div class="space-y-1">
+                    <label for="otherExpenses" class="text-[10px] uppercase font-bold text-slate-500 block">Other (₹)</label>
+                    <input 
+                      type="number" 
+                      id="otherExpenses" 
+                      name="otherExpenses" 
+                      min="0" 
+                      step="0.01" 
+                      placeholder="0.00" 
+                      class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-slate-100 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Remarks / Notes -->
+              <div class="space-y-1">
+                <label for="remarks" class="text-[11px] uppercase font-bold text-slate-400 ml-1">
+                  Trip Remarks / Route Notes
+                </label>
+                <textarea 
+                  id="remarks" 
+                  name="remarks" 
+                  rows="2" 
+                  placeholder="Cargo details, highway route notes or maintenance observations..." 
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none"
+                ></textarea>
+              </div>
+
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-3">
+              <button 
+                type="submit" 
+                id="btn-submit-trip" 
+                class="w-full bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-lg shadow-indigo-900/30 transition-all uppercase tracking-widest text-xs flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+                <span>Submit Trip Entry</span>
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: STATS & LEDGER ENTRIES -->
+      <section class="lg:col-span-7 flex flex-col gap-4">
+        
+        <!-- KPI Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <!-- Total Trips -->
+          <div class="bg-slate-800/30 border border-slate-700 rounded-xl p-3.5 flex flex-col justify-between">
+            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Total Trips</span>
+            <p id="stat-total-trips" class="text-xl font-bold text-slate-100 font-mono mt-1">0</p>
+            <span class="text-[10px] text-slate-400 mt-1">Firestore sync</span>
+          </div>
+
+          <!-- Total Kilometers -->
+          <div class="bg-slate-800/30 border border-slate-700 rounded-xl p-3.5 flex flex-col justify-between">
+            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Total Distance</span>
+            <p id="stat-total-km" class="text-xl font-bold text-indigo-400 font-mono mt-1">0 KM</p>
+            <span class="text-[10px] text-slate-400 mt-1">Odometer net</span>
+          </div>
+
+          <!-- Total Expenses -->
+          <div class="bg-slate-800/30 border border-slate-700 rounded-xl p-3.5 flex flex-col justify-between">
+            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Total Expenses</span>
+            <p id="stat-total-expenses" class="text-xl font-bold text-rose-400 font-mono mt-1">₹0</p>
+            <span class="text-[10px] text-slate-400 mt-1">Fuel + tolls + misc</span>
+          </div>
+
+          <!-- Fleet Avg Cost/KM -->
+          <div class="bg-slate-800/30 border border-slate-700 rounded-xl p-3.5 flex flex-col justify-between">
+            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Cost / KM</span>
+            <p id="stat-avg-cost-km" class="text-xl font-bold text-emerald-400 font-mono mt-1">₹0.00</p>
+            <span class="text-[10px] text-slate-400 mt-1">Efficiency metric</span>
+          </div>
+        </div>
+
+        <!-- Ledger Entries Table Container -->
+        <div class="bg-slate-800/50 border border-slate-700 rounded-xl flex-1 shadow-xl flex flex-col overflow-hidden">
+          
+          <!-- Table Controls Header -->
+          <div class="p-4 border-b border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-850">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="font-bold text-slate-200 tracking-wide uppercase text-sm">Recent Ledger Entries</h2>
+                <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-[10px] uppercase font-bold">Live Sync</span>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Real-time synchronized trip records from collection 'trips'</p>
+            </div>
+
+            <!-- Search, Filter & CSV Export -->
+            <div class="flex items-center gap-2 flex-wrap">
+              <!-- Search -->
+              <div class="relative">
+                <input 
+                  type="text" 
+                  id="search-filter" 
+                  placeholder="Search vehicle / driver..." 
+                  class="bg-slate-900 border border-slate-700 rounded-lg pl-7 pr-2.5 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-44"
+                />
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-500 absolute left-2 top-2 pointer-events-none"></i>
+              </div>
+
+              <!-- Vehicle Dropdown Filter -->
+              <select id="vehicle-filter" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="ALL">All Vehicles</option>
+              </select>
+
+              <!-- CSV Export -->
+              <button id="btn-export-csv" type="button" class="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer" title="Export Ledger as CSV">
+                <i data-lucide="download" class="w-3.5 h-3.5 text-indigo-400"></i>
+                <span class="hidden sm:inline">CSV</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Desktop Table -->
+          <div class="overflow-x-auto overflow-y-auto max-h-[460px] hidden md:block">
+            <table class="w-full text-left border-collapse">
+              <thead class="sticky top-0 bg-slate-800 border-b border-slate-700 z-10">
+                <tr class="text-[10px] text-slate-500 uppercase font-bold">
+                  <th class="px-4 py-3">Date / Time</th>
+                  <th class="px-4 py-3">Vehicle</th>
+                  <th class="px-4 py-3">Driver</th>
+                  <th class="px-4 py-3 text-right">Distance</th>
+                  <th class="px-4 py-3 text-right">Expense</th>
+                  <th class="px-4 py-3">Status</th>
+                  <th class="px-4 py-3 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="trips-table-body" class="text-xs text-slate-300 divide-y divide-slate-700/50">
+                <!-- Loading State -->
+                <tr id="table-loading-row">
+                  <td colspan="7" class="py-12 text-center text-slate-400">
+                    <div class="flex flex-col items-center justify-center space-y-2">
+                      <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-500"></div>
+                      <p class="text-xs font-mono text-slate-400">Syncing with Firestore ledger...</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Cards List -->
+          <div id="mobile-trips-list" class="md:hidden p-3 space-y-3 overflow-y-auto max-h-[440px]">
+            <!-- Dynamic Mobile Trip Items -->
+          </div>
+
+          <!-- Empty State -->
+          <div id="empty-state" class="hidden py-12 text-center px-4">
+            <div class="w-10 h-10 mx-auto rounded-lg bg-slate-800/80 border border-slate-700 flex items-center justify-center text-slate-500 mb-2">
+              <i data-lucide="inbox" class="w-5 h-5"></i>
+            </div>
+            <p class="text-xs font-semibold text-slate-300">No Trips Found</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">Submit a trip using the entry form or click 'Sample Data' to test.</p>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-auto border-t border-slate-800/80 py-4 px-4 text-center text-[10px] text-slate-500 uppercase tracking-[0.2em] font-medium bg-[#0f172a]/80">
+    System Secured by Aachico Infotech Encryption Standards © 2026
+  </footer>
+
+  <!-- TRIP DETAILS VOUCHER MODAL -->
+  <div id="trip-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-lg w-full p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400">
+            <i data-lucide="receipt" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">Trip Voucher Breakdown</h3>
+            <p id="modal-trip-id" class="text-[10px] font-mono text-slate-400">ID: --</p>
+          </div>
+        </div>
+        <button id="btn-close-modal" type="button" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Voucher Content -->
+      <div id="modal-content" class="space-y-3 text-xs"></div>
+
+      <div class="pt-2 flex justify-end gap-2 border-t border-slate-800">
+        <button id="btn-modal-done" type="button" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow transition cursor-pointer">
+          Close Voucher
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div id="delete-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-rose-500/30 rounded-xl max-w-md w-full p-5 shadow-2xl space-y-4">
+      <div class="flex items-center gap-3 text-rose-400">
+        <div class="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20">
+          <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-slate-100">Delete Trip Record?</h3>
+          <p class="text-xs text-slate-400">This action will remove the document from Firestore.</p>
+        </div>
+      </div>
+
+      <p id="delete-warning-text" class="text-xs text-slate-300 bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+        Are you sure you want to delete this trip record?
+      </p>
+
+      <div class="flex items-center justify-end gap-2 pt-1">
+        <button id="btn-cancel-delete" type="button" class="px-3.5 py-2 text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg cursor-pointer">
+          Cancel
+        </button>
+        <button id="btn-confirm-delete" type="button" class="px-3.5 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-500 rounded-lg shadow-lg shadow-rose-600/30 cursor-pointer">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- FIREBASE & CORE APPLICATION LOGIC -->
+  <script type="module">
+    // Firebase JS SDK v11 (Modular)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      onSnapshot, 
+      query, 
+      serverTimestamp, 
+      deleteDoc, 
+      doc 
+    } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+    // Firebase Configuration from user
+    const firebaseConfig = {
+      apiKey: "AIzaSyDOIEKyvSwfpRybZBmNuImzdJ3hdlEO3hI",
+      authDomain: "aachico-vault.firebaseapp.com",
+      projectId: "aachico-vault",
+      storageBucket: "aachico-vault.firebasestorage.app",
+      messagingSenderId: "95363663554",
+      appId: "1:95363663554:web:65ff0e8e50ebdb7ce5ba16"
+    };
+
+    let app, db;
+    let trips = [];
+    let activeDeleteId = null;
+    let isOfflineFallback = false;
+
+    // Toast Notification System
+    function showToast(message, type = "success") {
+      const container = document.getElementById("toast-container");
+      const toast = document.createElement("div");
+      
+      const icons = {
+        success: `<svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`,
+        error: `<svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`,
+        info: `<svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
+      };
+
+      const bgColors = {
+        success: "border-emerald-500/40 bg-slate-900/95 text-emerald-300",
+        error: "border-rose-500/40 bg-slate-900/95 text-rose-300",
+        info: "border-indigo-500/40 bg-slate-900/95 text-indigo-300"
+      };
+
+      toast.className = `flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg border shadow-2xl backdrop-blur text-xs font-medium transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto ${bgColors[type] || bgColors.success}`;
+      toast.innerHTML = `
+        <span>${icons[type] || icons.success}</span>
+        <span class="text-slate-100">${message}</span>
+      `;
+
+      container.appendChild(toast);
+      
+      requestAnimationFrame(() => {
+        toast.classList.remove("translate-y-2", "opacity-0");
+      });
+
+      setTimeout(() => {
+        toast.classList.add("translate-y-2", "opacity-0");
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Initialize Firebase
+    try {
+      app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      updateConnectionStatus(true);
+    } catch (err) {
+      console.error("Firebase init error:", err);
+      updateConnectionStatus(false, "Offline / Local Mode");
+      isOfflineFallback = true;
+    }
+
+    function updateConnectionStatus(isConnected, message = "Firestore: Connected") {
+      const badge = document.getElementById("firestore-status");
+      const text = document.getElementById("status-text");
+      if (text) text.textContent = message;
+      if (badge) {
+        if (isConnected) {
+          badge.className = "hidden sm:flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-700";
+          badge.querySelector(".rounded-full").className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+        } else {
+          badge.className = "hidden sm:flex items-center gap-2 bg-amber-950/40 px-3 py-1.5 rounded-full border border-amber-500/30 text-amber-400";
+          badge.querySelector(".rounded-full").className = "w-2 h-2 rounded-full bg-amber-500";
+        }
+      }
+    }
+
+    // Live Clock Helper
+    function updateClock() {
+      const clockEl = document.getElementById("live-clock");
+      if (clockEl) {
+        const now = new Date();
+        const dateFormatted = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+        const timeFormatted = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        clockEl.textContent = `${dateFormatted} | ${timeFormatted}`;
+      }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Default Date Time Input to Now
+    function setDefaultDateTime() {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      const formatted = now.toISOString().slice(0, 16);
+      const dateInput = document.getElementById("tripDateTime");
+      if (dateInput && !dateInput.value) {
+        dateInput.value = formatted;
+      }
+    }
+    setDefaultDateTime();
+
+    // Real-time calculations for KM and Expenses
+    const startKmInput = document.getElementById("startKm");
+    const endKmInput = document.getElementById("endKm");
+    const displayTotalKm = document.getElementById("display-total-km");
+    const kmAlert = document.getElementById("km-alert");
+
+    const tollInput = document.getElementById("tollCharges");
+    const fuelInput = document.getElementById("fuelAmount");
+    const otherExpInput = document.getElementById("otherExpenses");
+    const totalExpenseBadge = document.getElementById("total-expense-badge");
+
+    function calculateKm() {
+      const start = parseFloat(startKmInput.value) || 0;
+      const end = parseFloat(endKmInput.value) || 0;
+
+      if (endKmInput.value && end < start) {
+        kmAlert.classList.remove("hidden");
+        displayTotalKm.innerHTML = `0 <span class="text-sm font-normal text-rose-400/80">KM (Invalid)</span>`;
+        return 0;
+      } else {
+        kmAlert.classList.add("hidden");
+        const total = (endKmInput.value && startKmInput.value) ? Math.max(0, end - start) : 0;
+        const formattedTotal = total % 1 === 0 ? total.toFixed(0) : total.toFixed(1);
+        displayTotalKm.innerHTML = `${formattedTotal} <span class="text-sm font-normal text-indigo-300/80">KM</span>`;
+        return total;
+      }
+    }
+
+    function calculateExpenses() {
+      const toll = parseFloat(tollInput.value) || 0;
+      const fuel = parseFloat(fuelInput.value) || 0;
+      const other = parseFloat(otherExpInput.value) || 0;
+      const total = toll + fuel + other;
+      totalExpenseBadge.textContent = `Total: ₹${total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      return total;
+    }
+
+    startKmInput.addEventListener("input", calculateKm);
+    endKmInput.addEventListener("input", calculateKm);
+    tollInput.addEventListener("input", calculateExpenses);
+    fuelInput.addEventListener("input", calculateExpenses);
+    otherExpInput.addEventListener("input", calculateExpenses);
+
+    // Populate Sample Test Trip for Rapid Validation
+    document.getElementById("btn-quick-demo").addEventListener("click", () => {
+      const sampleVehicles = ["KA-01-MT-4521", "MH-12-RS-9902", "DL-04-VC-7712", "GJ-06-XZ-7764"];
+      const sampleDrivers = ["Ravi Shankar", "Ahmed Khan", "Gurpreet Singh", "Rajesh Sharma"];
+      const sampleNotes = [
+        "Express logistics run: Bangalore Electronic City to Chennai Guindy Hub.",
+        "Pune Chakan MIDC to Mumbai JNPT Container Port. All cargo seals checked.",
+        "Delhi NCR to Jaipur highway transit. Tolls cleared via FastTag.",
+        "Ahmedabad to Surat container delivery. Road construction near Vadodara."
+      ];
+
+      const randIdx = Math.floor(Math.random() * sampleVehicles.length);
+      const baseKm = Math.floor(12400 + Math.random() * 6000);
+      const tripDistance = Math.floor(115 + Math.random() * 210);
+
+      document.getElementById("vehicleNumber").value = sampleVehicles[randIdx];
+      document.getElementById("driverName").value = sampleDrivers[randIdx];
+      setDefaultDateTime();
+      document.getElementById("startKm").value = baseKm;
+      document.getElementById("endKm").value = baseKm + tripDistance;
+      document.getElementById("fuelAmount").value = (tripDistance * 9.5).toFixed(2);
+      document.getElementById("tollCharges").value = (Math.floor(2 + Math.random() * 4) * 110);
+      document.getElementById("otherExpenses").value = (Math.floor(Math.random() * 2) * 150);
+      document.getElementById("remarks").value = sampleNotes[randIdx];
+
+      calculateKm();
+      calculateExpenses();
+      showToast("Populated sample trip entry!", "info");
+    });
+
+    // Reset Form
+    document.getElementById("btn-reset-form").addEventListener("click", () => {
+      document.getElementById("trip-entry-form").reset();
+      setDefaultDateTime();
+      calculateKm();
+      calculateExpenses();
+      showToast("Form cleared", "info");
+    });
+
+    // Submit Trip Entry into Firebase Firestore
+    const form = document.getElementById("trip-entry-form");
+    const submitBtn = document.getElementById("btn-submit-trip");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const vehicleNumber = document.getElementById("vehicleNumber").value.trim().toUpperCase();
+      const driverName = document.getElementById("driverName").value.trim();
+      const tripDateTime = document.getElementById("tripDateTime").value;
+      const startKm = parseFloat(document.getElementById("startKm").value) || 0;
+      const endKm = parseFloat(document.getElementById("endKm").value) || 0;
+      const tollCharges = parseFloat(document.getElementById("tollCharges").value) || 0;
+      const fuelAmount = parseFloat(document.getElementById("fuelAmount").value) || 0;
+      const otherExpenses = parseFloat(document.getElementById("otherExpenses").value) || 0;
+      const remarks = document.getElementById("remarks").value.trim();
+
+      if (endKm < startKm) {
+        showToast("End KM must be greater than Start KM", "error");
+        kmAlert.classList.remove("hidden");
+        return;
+      }
+
+      const totalKm = parseFloat((endKm - startKm).toFixed(2));
+      const totalExpenses = parseFloat((tollCharges + fuelAmount + otherExpenses).toFixed(2));
+
+      const tripData = {
+        vehicleNumber,
+        driverName,
+        tripDateTime: tripDateTime || new Date().toISOString(),
+        startKm,
+        endKm,
+        totalKm,
+        tollCharges,
+        fuelAmount,
+        otherExpenses,
+        totalExpenses,
+        remarks: remarks || "Standard Logistics Route",
+        createdAt: new Date().toISOString()
+      };
+
+      // Button loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <div class="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white"></div>
+        <span>Writing to Firestore...</span>
+      `;
+
+      try {
+        if (db && !isOfflineFallback) {
+          const docRef = await addDoc(collection(db, "trips"), {
+            ...tripData,
+            serverTimestamp: serverTimestamp()
+          });
+          showToast(`Trip logged to Firestore! Ref: #${docRef.id.slice(0, 5)}`, "success");
+        } else {
+          // Local storage fallback
+          const localTrips = JSON.parse(localStorage.getItem("aachico_vault_trips") || "[]");
+          const localEntry = { id: "local_" + Date.now(), ...tripData };
+          localTrips.unshift(localEntry);
+          localStorage.setItem("aachico_vault_trips", JSON.stringify(localTrips));
+          trips = localTrips;
+          renderTrips();
+          showToast("Saved to local offline cache", "info");
+        }
+
+        // Reset form
+        form.reset();
+        setDefaultDateTime();
+        calculateKm();
+        calculateExpenses();
+
+      } catch (error) {
+        console.error("Firestore Write Error:", error);
+        
+        const localTrips = JSON.parse(localStorage.getItem("aachico_vault_trips") || "[]");
+        const localEntry = { id: "trip_" + Date.now(), ...tripData };
+        localTrips.unshift(localEntry);
+        localStorage.setItem("aachico_vault_trips", JSON.stringify(localTrips));
+        trips = localTrips;
+        renderTrips();
+        
+        showToast("Saved locally (Firestore rules check)", "info");
+        updateConnectionStatus(false, "Firestore: Local Cache");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+          <span>Submit Trip Entry</span>
+        `;
+      }
+    });
+
+    // Real-Time Firestore Snapshot Listener
+    function listenToTrips() {
+      if (!db) {
+        loadFromLocalStorage();
+        return;
+      }
+
+      try {
+        const tripsQuery = query(collection(db, "trips"));
+        
+        onSnapshot(tripsQuery, (snapshot) => {
+          const fetchedTrips = [];
+          snapshot.forEach((docSnap) => {
+            fetchedTrips.push({
+              id: docSnap.id,
+              ...docSnap.data()
+            });
+          });
+
+          // Sort by tripDateTime or createdAt descending (newest first)
+          fetchedTrips.sort((a, b) => {
+            const dateA = new Date(a.tripDateTime || a.createdAt || 0);
+            const dateB = new Date(b.tripDateTime || b.createdAt || 0);
+            return dateB - dateA;
+          });
+
+          trips = fetchedTrips;
+          localStorage.setItem("aachico_vault_trips", JSON.stringify(trips));
+          updateConnectionStatus(true, "Firestore: Connected");
+          renderTrips();
+        }, (error) => {
+          console.warn("Firestore snapshot error:", error);
+          updateConnectionStatus(false, "Firestore: Local Mode");
+          loadFromLocalStorage();
+        });
+      } catch (err) {
+        console.warn("Could not attach Firestore onSnapshot:", err);
+        loadFromLocalStorage();
+      }
+    }
+
+    function loadFromLocalStorage() {
+      const stored = localStorage.getItem("aachico_vault_trips");
+      if (stored) {
+        try {
+          trips = JSON.parse(stored);
+        } catch(e) {
+          trips = [];
+        }
+      } else {
+        // Seed default records if completely fresh
+        trips = [
+          {
+            id: "seed_1",
+            vehicleNumber: "KA-01-MT-4521",
+            driverName: "Ravi Shankar",
+            tripDateTime: new Date(Date.now() - 3600000 * 2).toISOString(),
+            startKm: 12450.0,
+            endKm: 12595.0,
+            totalKm: 145.0,
+            tollCharges: 350,
+            fuelAmount: 850,
+            otherExpenses: 0,
+            totalExpenses: 1200,
+            remarks: "Electronic City to Hosur delivery depot. Fuel top-up at BPCL.",
+            createdAt: new Date(Date.now() - 3600000 * 2).toISOString()
+          },
+          {
+            id: "seed_2",
+            vehicleNumber: "MH-12-RS-9902",
+            driverName: "Ahmed Khan",
+            tripDateTime: new Date(Date.now() - 3600000 * 5).toISOString(),
+            startKm: 15100.0,
+            endKm: 15310.0,
+            totalKm: 210.0,
+            tollCharges: 420,
+            fuelAmount: 3950,
+            otherExpenses: 130,
+            totalExpenses: 4500,
+            remarks: "Express delivery Chakan to Mumbai JNPT Terminal. Expressway fast lane.",
+            createdAt: new Date(Date.now() - 3600000 * 5).toISOString()
+          },
+          {
+            id: "seed_3",
+            vehicleNumber: "DL-04-VC-7712",
+            driverName: "Gurpreet Singh",
+            tripDateTime: new Date(Date.now() - 3600000 * 22).toISOString(),
+            startKm: 8900.0,
+            endKm: 8988.0,
+            totalKm: 88.0,
+            tollCharges: 150,
+            fuelAmount: 700,
+            otherExpenses: 0,
+            totalExpenses: 850,
+            remarks: "Gurugram to Noida cross-city transit. Clean delivery receipt.",
+            createdAt: new Date(Date.now() - 3600000 * 22).toISOString()
+          }
+        ];
+        localStorage.setItem("aachico_vault_trips", JSON.stringify(trips));
+      }
+      renderTrips();
+    }
+
+    // Render Stats & Tables
+    function renderTrips() {
+      const tableBody = document.getElementById("trips-table-body");
+      const mobileList = document.getElementById("mobile-trips-list");
+      const emptyState = document.getElementById("empty-state");
+      const searchVal = document.getElementById("search-filter").value.toLowerCase().trim();
+      const vehicleFilterVal = document.getElementById("vehicle-filter").value;
+
+      updateVehicleDropdown(trips);
+
+      const filtered = trips.filter(t => {
+        const matchesSearch = !searchVal || 
+          (t.vehicleNumber && t.vehicleNumber.toLowerCase().includes(searchVal)) ||
+          (t.driverName && t.driverName.toLowerCase().includes(searchVal)) ||
+          (t.remarks && t.remarks.toLowerCase().includes(searchVal));
+        
+        const matchesVehicle = vehicleFilterVal === "ALL" || t.vehicleNumber === vehicleFilterVal;
+        return matchesSearch && matchesVehicle;
+      });
+
+      // Update KPI Cards
+      let sumKm = 0;
+      let sumExp = 0;
+      trips.forEach(t => {
+        sumKm += (parseFloat(t.totalKm) || 0);
+        sumExp += (parseFloat(t.totalExpenses) || 0);
+      });
+
+      document.getElementById("stat-total-trips").textContent = trips.length;
+      document.getElementById("stat-total-km").textContent = `${sumKm.toLocaleString('en-IN', { maximumFractionDigits: 1 })} KM`;
+      document.getElementById("stat-total-expenses").textContent = `₹${sumExp.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+      
+      const avgCost = sumKm > 0 ? (sumExp / sumKm).toFixed(2) : "0.00";
+      document.getElementById("stat-avg-cost-km").textContent = `₹${avgCost}`;
+
+      // Render Empty State or Records
+      if (filtered.length === 0) {
+        tableBody.innerHTML = "";
+        mobileList.innerHTML = "";
+        emptyState.classList.remove("hidden");
+        return;
+      } else {
+        emptyState.classList.add("hidden");
+      }
+
+      // Populate Desktop Table Rows
+      tableBody.innerHTML = filtered.map(t => {
+        const dateStr = formatDateTime(t.tripDateTime || t.createdAt);
+        const totalKmVal = parseFloat(t.totalKm || 0).toFixed(1);
+        const totalExpVal = parseFloat(t.totalExpenses || 0).toLocaleString('en-IN', { minimumFractionDigits: 0 });
+
+        return `
+          <tr class="hover:bg-slate-700/30 transition group">
+            <td class="px-4 py-3 opacity-70 text-slate-300 whitespace-nowrap font-mono text-[11px]">
+              ${dateStr}
+            </td>
+            <td class="px-4 py-3 font-medium text-slate-100 whitespace-nowrap font-mono">
+              <span class="text-indigo-400 font-bold">${escapeHtml(t.vehicleNumber || 'N/A')}</span>
+            </td>
+            <td class="px-4 py-3 text-slate-200 whitespace-nowrap">
+              ${escapeHtml(t.driverName || 'Unknown')}
+            </td>
+            <td class="px-4 py-3 text-right font-mono font-semibold text-slate-200 whitespace-nowrap">
+              ${totalKmVal} <span class="text-[10px] text-slate-500 font-normal">KM</span>
+            </td>
+            <td class="px-4 py-3 text-right text-rose-400 font-mono font-bold whitespace-nowrap">
+              ₹${totalExpVal}
+            </td>
+            <td class="px-4 py-3 whitespace-nowrap">
+              <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-[10px] uppercase font-bold">
+                Saved
+              </span>
+            </td>
+            <td class="px-4 py-3 text-center whitespace-nowrap">
+              <div class="flex items-center justify-center gap-1">
+                <button 
+                  type="button" 
+                  onclick="window.viewTripVoucher('${t.id}')"
+                  class="p-1 rounded text-slate-400 hover:text-indigo-400 hover:bg-indigo-500/10 transition cursor-pointer" 
+                  title="View Voucher"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
+                <button 
+                  type="button" 
+                  onclick="window.promptDeleteTrip('${t.id}')"
+                  class="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer" 
+                  title="Delete Record"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      // Populate Mobile Cards
+      mobileList.innerHTML = filtered.map(t => {
+        const dateStr = formatDateTime(t.tripDateTime || t.createdAt);
+        const totalKmVal = parseFloat(t.totalKm || 0).toFixed(1);
+        const totalExpVal = parseFloat(t.totalExpenses || 0).toLocaleString('en-IN');
+
+        return `
+          <div class="bg-slate-900 border border-slate-700 rounded-lg p-3 space-y-2 text-xs">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="text-[10px] text-slate-500 font-mono">${dateStr}</span>
+                <h4 class="text-sm font-bold font-mono text-indigo-400">${escapeHtml(t.vehicleNumber || 'N/A')}</h4>
+                <p class="text-slate-300">${escapeHtml(t.driverName || 'Unknown')}</p>
+              </div>
+              <div class="text-right">
+                <span class="font-mono font-bold text-slate-100">${totalKmVal} KM</span>
+                <div class="font-mono font-bold text-rose-400">₹${totalExpVal}</div>
+              </div>
+            </div>
+
+            <div class="bg-slate-800/60 px-2.5 py-1.5 rounded text-[11px] font-mono text-slate-400 flex items-center justify-between">
+              <span>Start: <strong class="text-slate-200">${t.startKm ?? '--'}</strong></span>
+              <span>→</span>
+              <span>End: <strong class="text-slate-200">${t.endKm ?? '--'}</strong></span>
+            </div>
+
+            ${t.remarks ? `<p class="text-slate-400 italic text-[11px] truncate">"${escapeHtml(t.remarks)}"</p>` : ''}
+
+            <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+              <span class="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded text-[10px] uppercase font-bold">Saved</span>
+              <div class="flex items-center gap-2">
+                <button onclick="window.viewTripVoucher('${t.id}')" class="px-2 py-1 rounded bg-indigo-500/10 text-indigo-400 text-xs font-semibold">Voucher</button>
+                <button onclick="window.promptDeleteTrip('${t.id}')" class="px-2 py-1 rounded bg-rose-500/10 text-rose-400 text-xs font-semibold">Delete</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    }
+
+    // Vehicle Filter Dropdown Options
+    function updateVehicleDropdown(tripList) {
+      const select = document.getElementById("vehicle-filter");
+      const currentVal = select.value;
+      const vehicles = [...new Set(tripList.map(t => t.vehicleNumber).filter(Boolean))].sort();
+
+      let options = `<option value="ALL">All Vehicles (${tripList.length})</option>`;
+      vehicles.forEach(v => {
+        const count = tripList.filter(t => t.vehicleNumber === v).length;
+        options += `<option value="${escapeHtml(v)}" ${v === currentVal ? 'selected' : ''}>${escapeHtml(v)} (${count})</option>`;
+      });
+      select.innerHTML = options;
+    }
+
+    document.getElementById("search-filter").addEventListener("input", renderTrips);
+    document.getElementById("vehicle-filter").addEventListener("change", renderTrips);
+
+    // Export CSV
+    document.getElementById("btn-export-csv").addEventListener("click", () => {
+      if (trips.length === 0) {
+        showToast("No trips to export", "info");
+        return;
+      }
+
+      const headers = ["Trip ID", "Date Time", "Vehicle Number", "Driver Name", "Start KM", "End KM", "Total KM", "Toll (INR)", "Fuel (INR)", "Other (INR)", "Total Expenses (INR)", "Remarks"];
+      const rows = trips.map(t => [
+        t.id || "",
+        t.tripDateTime || t.createdAt || "",
+        `"${(t.vehicleNumber || "").replace(/"/g, '""')}"`,
+        `"${(t.driverName || "").replace(/"/g, '""')}"`,
+        t.startKm || 0,
+        t.endKm || 0,
+        t.totalKm || 0,
+        t.tollCharges || 0,
+        t.fuelAmount || 0,
+        t.otherExpenses || 0,
+        t.totalExpenses || 0,
+        `"${(t.remarks || "").replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Aachico_Vault_Ledger_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast("Exported trips to CSV", "success");
+    });
+
+    // View Voucher Modal
+    window.viewTripVoucher = function(tripId) {
+      const trip = trips.find(t => t.id === tripId);
+      if (!trip) return;
+
+      const modal = document.getElementById("trip-modal");
+      const idEl = document.getElementById("modal-trip-id");
+      const contentEl = document.getElementById("modal-content");
+
+      idEl.textContent = `REF: #${trip.id}`;
+
+      const totalKm = parseFloat(trip.totalKm || 0);
+      const totalExp = parseFloat(trip.totalExpenses || 0);
+      const costPerKm = totalKm > 0 ? (totalExp / totalKm).toFixed(2) : "0.00";
+
+      contentEl.innerHTML = `
+        <div class="bg-slate-800/80 border border-slate-700 rounded-lg p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+            <div>
+              <span class="text-[10px] text-slate-500 uppercase font-bold">Vehicle</span>
+              <div class="text-sm font-bold font-mono text-indigo-400">${escapeHtml(trip.vehicleNumber || 'N/A')}</div>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-slate-500 uppercase font-bold">Driver</span>
+              <div class="text-sm font-semibold text-slate-200">${escapeHtml(trip.driverName || 'N/A')}</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-[11px] font-mono bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+            <div><span class="text-slate-500">Timestamp:</span> <div class="text-slate-200">${formatDateTime(trip.tripDateTime || trip.createdAt)}</div></div>
+            <div><span class="text-slate-500">Distance Run:</span> <div class="text-indigo-400 font-bold">${totalKm.toFixed(1)} KM</div></div>
+            <div><span class="text-slate-500">Odometer Start:</span> <div class="text-slate-300">${trip.startKm} KM</div></div>
+            <div><span class="text-slate-500">Odometer End:</span> <div class="text-slate-300">${trip.endKm} KM</div></div>
+          </div>
+        </div>
+
+        <div class="bg-slate-800/80 border border-slate-700 rounded-lg p-3.5 space-y-2">
+          <span class="text-[10px] text-slate-400 uppercase font-bold">Expense Breakdown</span>
+          <div class="space-y-1 divide-y divide-slate-700/60 text-slate-300">
+            <div class="flex justify-between pt-1"><span>Fuel / Diesel</span><span class="font-mono text-white">₹${parseFloat(trip.fuelAmount || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span></div>
+            <div class="flex justify-between pt-1"><span>Toll / FastTag</span><span class="font-mono text-white">₹${parseFloat(trip.tollCharges || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span></div>
+            <div class="flex justify-between pt-1"><span>Other Expenses</span><span class="font-mono text-white">₹${parseFloat(trip.otherExpenses || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span></div>
+            <div class="flex justify-between pt-1.5 font-bold text-rose-400 text-sm"><span>Total Expense</span><span class="font-mono">₹${totalExp.toLocaleString('en-IN', {minimumFractionDigits: 2})}</span></div>
+          </div>
+        </div>
+
+        <div class="bg-indigo-900/20 border border-indigo-500/30 rounded-lg p-2.5 flex items-center justify-between text-xs">
+          <span class="text-indigo-300 font-medium">Efficiency Index:</span>
+          <span class="font-mono font-bold text-indigo-400">₹${costPerKm} / KM</span>
+        </div>
+
+        ${trip.remarks ? `
+          <div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-700 text-xs">
+            <span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Remarks</span>
+            <p class="text-slate-300 italic">${escapeHtml(trip.remarks)}</p>
+          </div>
+        ` : ''}
+      `;
+
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    };
+
+    document.getElementById("btn-close-modal").addEventListener("click", () => {
+      document.getElementById("trip-modal").classList.add("hidden");
+      document.getElementById("trip-modal").classList.remove("flex");
+    });
+    document.getElementById("btn-modal-done").addEventListener("click", () => {
+      document.getElementById("trip-modal").classList.add("hidden");
+      document.getElementById("trip-modal").classList.remove("flex");
+    });
+
+    // Delete Prompt & Confirmation
+    window.promptDeleteTrip = function(tripId) {
+      activeDeleteId = tripId;
+      const trip = trips.find(t => t.id === tripId);
+      const modal = document.getElementById("delete-modal");
+      const warningText = document.getElementById("delete-warning-text");
+
+      if (trip) {
+        warningText.innerHTML = `Are you sure you want to delete trip record for vehicle <strong class="text-indigo-400 font-mono">${escapeHtml(trip.vehicleNumber || '')}</strong> driven by <strong class="text-white">${escapeHtml(trip.driverName || '')}</strong> (${trip.totalKm} KM)?`;
+      }
+
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    };
+
+    document.getElementById("btn-cancel-delete").addEventListener("click", () => {
+      activeDeleteId = null;
+      document.getElementById("delete-modal").classList.add("hidden");
+      document.getElementById("delete-modal").classList.remove("flex");
+    });
+
+    document.getElementById("btn-confirm-delete").addEventListener("click", async () => {
+      if (!activeDeleteId) return;
+
+      const deleteModal = document.getElementById("delete-modal");
+      const confirmBtn = document.getElementById("btn-confirm-delete");
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = "Deleting...";
+
+      try {
+        if (db && !activeDeleteId.startsWith("seed_") && !activeDeleteId.startsWith("local_")) {
+          await deleteDoc(doc(db, "trips", activeDeleteId));
+          showToast("Deleted from Firestore", "success");
+        } else {
+          trips = trips.filter(t => t.id !== activeDeleteId);
+          localStorage.setItem("aachico_vault_trips", JSON.stringify(trips));
+          renderTrips();
+          showToast("Entry removed", "info");
+        }
+      } catch (err) {
+        console.error("Delete error:", err);
+        trips = trips.filter(t => t.id !== activeDeleteId);
+        localStorage.setItem("aachico_vault_trips", JSON.stringify(trips));
+        renderTrips();
+        showToast("Deleted from local ledger", "info");
+      } finally {
+        activeDeleteId = null;
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = "Delete";
+        deleteModal.classList.add("hidden");
+        deleteModal.classList.remove("flex");
+      }
+    });
+
+    // Utilities
+    function formatDateTime(isoString) {
+      if (!isoString) return "--";
+      try {
+        const d = new Date(isoString);
+        if (isNaN(d.getTime())) return isoString;
+        return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) + ", " + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      } catch (e) {
+        return isoString;
+      }
+    }
+
+    function escapeHtml(text) {
+      if (text === null || text === undefined) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Initialize App
+    listenToTrips();
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  </script>
+</body>
+</html>
