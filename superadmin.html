@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aachico Vault - Master Super-Admin Controller</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .glass-panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+  <!-- ================= AUTH SCREEN ================= -->
+  <div id="authScreen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md p-8 rounded-3xl border border-amber-500/30 space-y-6 shadow-2xl">
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black text-2xl border border-amber-500/40">
+          A
+        </div>
+        <h1 class="text-xl font-extrabold text-white">Super-Admin Master Access</h1>
+        <p class="text-xs text-slate-400">केवल Aachico Vault ओनर के लिए अधिकृत पोर्टल</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Master Security Key</label>
+          <input type="password" id="masterKeyInput" placeholder="Enter Master Key" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500 font-mono" />
+        </div>
+        <button onclick="verifyMasterAccess()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition flex items-center justify-center space-x-2">
+          <i data-lucide="shield" class="w-4 h-4"></i>
+          <span>Secure Master Unlock</span>
+        </button>
+      </div>
+      <p class="text-center text-[10px] text-slate-500 font-mono">Default Key: AACHICO2026</p>
+    </div>
+  </div>
+
+  <!-- ================= MAIN CONTROLLER DASHBOARD ================= -->
+  <div id="dashboardScreen" class="hidden min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <header class="glass-panel border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black text-lg border border-amber-500/30">
+          A
+        </div>
+        <div>
+          <h2 class="font-extrabold text-sm text-white tracking-wider">AACHICO VAULT • MASTER CONTROL</h2>
+          <p class="text-[10px] text-emerald-400 flex items-center space-x-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Firebase Connected (Spark Free Tier)</span>
+          </p>
+        </div>
+      </div>
+      <button onclick="logoutMaster()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 px-3.5 py-1.5 rounded-xl transition flex items-center space-x-1.5">
+        <i data-lucide="log-out" class="w-3.5 h-3.5 text-rose-400"></i>
+        <span>Logout</span>
+      </button>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+      
+      <!-- Top Metrics -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+          <p class="text-xs text-slate-400">कुल रजिस्टर्ड कंपनियाँ</p>
+          <p id="totalCompaniesCount" class="text-2xl font-black text-white font-mono mt-1">--</p>
+        </div>
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+          <p class="text-xs text-slate-400">सक्रिय सब्सक्रिप्शन (Active)</p>
+          <p id="activeSubsCount" class="text-2xl font-black text-emerald-400 font-mono mt-1">--</p>
+        </div>
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+          <p class="text-xs text-slate-400">डायनामिक प्राइस स्टेटस</p>
+          <p class="text-sm font-bold text-amber-400 mt-2 flex items-center space-x-1">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+            <span>Live Cloud Synced</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- SECTION 1: LIVE DYNAMIC PRICING MANAGER -->
+      <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+          <div>
+            <h3 class="font-extrabold text-base text-white">Dynamic Pricing Manager (वेबसाइट के दाम यहाँ से बदलें)</h3>
+            <p class="text-xs text-slate-400">यहाँ जो भी बदलाव करेंगे, वो सीधे मुख्य वेबसाइट (<code class="text-amber-400">index.html</code>) पर तुरंत दिखने लगेगा।</p>
+          </div>
+          <button onclick="savePricingMatrixToCloud()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition flex items-center space-x-1.5 self-start sm:self-auto">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Save & Publish Live Prices</span>
+          </button>
+        </div>
+
+        <div id="pricingEditorGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Dynamic Form Inputs will load here -->
+        </div>
+      </div>
+
+      <!-- SECTION 2: ALL REGISTERED COMPANIES & MASTER KILL-SWITCH -->
+      <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+          <div>
+            <h3 class="font-extrabold text-base text-white">Registered Companies Directory</h3>
+            <p class="text-xs text-slate-400">सभी कंपनियों का डेटा मॉनिटर करें और आवश्यकता पड़ने पर 1-क्लिक में खाता लॉक करें।</p>
+          </div>
+          <button onclick="loadAllCompanies()" class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold px-3.5 py-2 rounded-xl text-xs transition flex items-center space-x-1.5">
+            <i data-lucide="refresh-cw" class="w-4 h-4 text-amber-400"></i>
+            <span>Refresh Companies List</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-900/80 text-slate-400 uppercase font-mono text-[10px]">
+              <tr>
+                <th class="p-3.5 rounded-l-xl">Company Details</th>
+                <th class="p-3.5">Company Code</th>
+                <th class="p-3.5">Fleet Limit</th>
+                <th class="p-3.5">Plan Status</th>
+                <th class="p-3.5 rounded-r-xl text-right">Master Action</th>
+              </tr>
+            </thead>
+            <tbody id="companiesTableBody" class="divide-y divide-slate-800/60 font-medium">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ================= FIREBASE CLOUD CONTROLLER SCRIPT ================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDOIEKyvSwfpRybZBmNuImzdJ3hdlEO3hI",
+      authDomain: "aachico-vault.firebaseapp.com",
+      projectId: "aachico-vault",
+      storageBucket: "aachico-vault.firebasestorage.app",
+      messagingSenderId: "766953520082",
+      appId: "1:766953520082:web:481f1aab82b74d78aae60b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let activePricingTiers = [
+      { id: "starter", name: "Starter", cars: "1 - 2 Cars", monthly: 0, firstMonth: 0, yearly: 0, badge: "Free Tier", isFeatured: false, ads: true },
+      { id: "micro5", name: "Micro-5", cars: "Up to 5 Cars", monthly: 29, firstMonth: 29, yearly: 290, badge: "Buy 1+1 Free", isFeatured: false, ads: false },
+      { id: "pro10", name: "Pro-10", cars: "Up to 10 Cars", monthly: 49, firstMonth: 49, yearly: 490, badge: "Most Popular", isFeatured: true, ads: false },
+      { id: "pro15", name: "Pro-15", cars: "Up to 15 Cars", monthly: 79, firstMonth: 79, yearly: 790, badge: "Best Value", isFeatured: false, ads: false },
+      { id: "fleet25", name: "Fleet-25", cars: "Up to 25 Cars", monthly: 119, firstMonth: 119, yearly: 1190, badge: "Growth", isFeatured: false, ads: false },
+      { id: "enterprise", name: "Enterprise", cars: "Unlimited", monthly: 199, firstMonth: 199, yearly: 1990, badge: "VIP Support", isFeatured: false, ads: false }
+    ];
+
+    window.verifyMasterAccess = function() {
+      const key = document.getElementById('masterKeyInput').value.trim();
+      if(key === "AACHICO2026") {
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('dashboardScreen').classList.remove('hidden');
+        lucide.createIcons();
+        loadPricingEditor();
+        loadAllCompanies();
+      } else {
+        alert("गलत मास्टर की! केवल एडमिन के लिए अधिकृत है।");
+      }
+    };
+
+    window.logoutMaster = function() {
+      document.getElementById('masterKeyInput').value = "";
+      document.getElementById('dashboardScreen').classList.add('hidden');
+      document.getElementById('authScreen').classList.remove('hidden');
+    };
+
+    async function loadPricingEditor() {
+      try {
+        const docRef = doc(db, "system_config", "pricing_matrix");
+        const docSnap = await getDoc(docRef);
+        if(docSnap.exists() && docSnap.data().tiers) {
+          activePricingTiers = docSnap.data().tiers;
+        }
+      } catch (err) {
+        console.log("Using baseline pricing tier array:", err);
+      }
+
+      const container = document.getElementById('pricingEditorGrid');
+      container.innerHTML = activePricingTiers.map((t, idx) => `
+        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-xs text-amber-400">${t.name} Plan</span>
+            <span class="text-[10px] text-slate-500 font-mono">${t.cars}</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[10px] text-slate-400 block">Monthly Price (₹)</label>
+              <input type="number" id="monthly_${idx}" value="${t.monthly}" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs font-mono text-white" />
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-400 block">Yearly Price (₹)</label>
+              <input type="number" id="yearly_${idx}" value="${t.yearly}" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs font-mono text-white" />
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.savePricingMatrixToCloud = async function() {
+      activePricingTiers.forEach((t, idx) => {
+        const m = parseFloat(document.getElementById(`monthly_${idx}`).value) || 0;
+        const y = parseFloat(document.getElementById(`yearly_${idx}`).value) || 0;
+        t.monthly = m;
+        t.firstMonth = m;
+        t.yearly = y;
+      });
+
+      try {
+        await setDoc(doc(db, "system_config", "pricing_matrix"), {
+          tiers: activePricingTiers,
+          lastUpdated: new Date().toISOString()
+        });
+        alert("सफलतापूर्वक पब्लिश हुआ! अब मुख्य वेबसाइट (index.html) पर यही नए दाम दिखेंगे।");
+      } catch (err) {
+        alert("एरर: " + err.message);
+      }
+    };
+
+    window.loadAllCompanies = async function() {
+      const tbody = document.getElementById('companiesTableBody');
+      tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">डेटा लोड हो रहा है...</td></tr>`;
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "companies"));
+        let companies = [];
+        querySnapshot.forEach((d) => {
+          companies.push({ id: d.id, ...d.data() });
+        });
+
+        document.getElementById('totalCompaniesCount').innerText = companies.length;
+        document.getElementById('activeSubsCount').innerText = companies.filter(c => c.status === 'active').length;
+
+        if(companies.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500">अभी तक कोई कंपनी रजिस्टर नहीं हुई है।</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = companies.map(c => `
+          <tr class="hover:bg-slate-900/40 transition">
+            <td class="p-3.5">
+              <p class="font-bold text-white">${c.name || 'Company Name'}</p>
+              <p class="text-[10px] text-slate-500">${c.phone || c.email || 'No Contact'}</p>
+            </td>
+            <td class="p-3.5 font-mono text-amber-400 font-bold">${c.companyCode || c.id}</td>
+            <td class="p-3.5 font-mono">${c.fleetLimit || '5 Cars'}</td>
+            <td class="p-3.5">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${c.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
+                ${c.status ? c.status.toUpperCase() : 'ACTIVE'}
+              </span>
+            </td>
+            <td class="p-3.5 text-right">
+              <button onclick="toggleCompanyAccess('${c.id}', '${c.status || 'active'}')" class="px-3 py-1 rounded-lg text-[11px] font-bold transition ${c.status === 'active' ? 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
+                ${c.status === 'active' ? 'Freeze / Lock' : 'Reactivate'}
+              </button>
+            </td>
+          </tr>
+        `).join('');
+
+        lucide.createIcons();
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">कंपनियाँ लोड नहीं हो सकीं या अभी तक डेटाबेस नया है।</td></tr>`;
+      }
+    };
+
+    window.toggleCompanyAccess = async function(companyId, currentStatus) {
+      const newStatus = currentStatus === 'active' ? 'frozen' : 'active';
+      const actionConfirm = confirm(`क्या आप इस कंपनी का स्टेटस बदलकर '${newStatus}' करना चाहते हैं?`);
+      if(!actionConfirm) return;
+
+      try {
+        await updateDoc(doc(db, "companies", companyId), {
+          status: newStatus
+        });
+        alert(`कंपनी अब ${newStatus} कर दी गई है!`);
+        loadAllCompanies();
+      } catch (err) {
+        alert("अपडेट एरर: " + err.message);
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
