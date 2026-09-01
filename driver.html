@@ -45,8 +45,8 @@
         A
       </div>
       <div>
-        <h1 class="font-bold text-sm tracking-wide leading-tight">AACHICO VAULT</h1>
-        <p class="text-[10px] text-slate-400 uppercase tracking-wider">Driver Companion V1</p>
+        <h1 id="headerCompTitle" class="font-bold text-sm tracking-wide leading-tight uppercase">AACHICO VAULT</h1>
+        <p class="text-[10px] text-slate-400 uppercase tracking-wider">Driver Companion V1.1</p>
       </div>
     </div>
     
@@ -59,24 +59,28 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-md mx-auto p-4 space-y-4">
 
-    <!-- 1. AUTH SCREEN (Shown if not logged in) -->
-    <section id="authSection" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center shadow-xl space-y-5">
-      <div class="w-16 h-16 bg-blue-500/10 text-blue-400 rounded-full flex items-center justify-center mx-auto border border-blue-500/20">
-        <i data-lucide="shield-check" class="w-8 h-8"></i>
+    <!-- 1. MULTI-TENANT AUTH SCREEN -->
+    <section id="authSection" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center shadow-xl space-y-4">
+      <div class="w-14 h-14 bg-amber-500/10 text-amber-400 rounded-full flex items-center justify-center mx-auto border border-amber-500/20">
+        <i data-lucide="shield-check" class="w-7 h-7"></i>
       </div>
       <div>
-        <h2 class="text-xl font-bold">ड्राइवर लॉगिन (PIN Auth)</h2>
-        <p class="text-xs text-slate-400 mt-1">अपना मोबाइल नंबर व 4-अंकों का पिन दर्ज करें</p>
+        <h2 class="text-xl font-bold">ड्राइवर लॉगिन</h2>
+        <p class="text-xs text-slate-400 mt-1">अपनी कंपनी कोड व पिन से लॉगिन करें</p>
       </div>
 
       <div class="space-y-3 text-left">
         <div>
-          <label class="text-xs font-semibold text-slate-300">मोबाइल नंबर (Phone)</label>
-          <input type="tel" id="loginPhone" placeholder="10-digit Number" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:border-amber-500 focus:outline-none mt-1" />
+          <label class="text-xs font-semibold text-slate-300">कंपनी कोड (Company Code)</label>
+          <input type="text" id="loginCompanyCode" placeholder="उदा. AACHICO या ROYAL01" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm uppercase tracking-wider focus:border-amber-500 focus:outline-none mt-1" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-300">ड्राइवर कोड / मोबाइल नंबर</label>
+          <input type="text" id="loginDriverId" placeholder="DRV-101 या 10-digit Phone" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm uppercase focus:border-amber-500 focus:outline-none mt-1" />
         </div>
         <div>
           <label class="text-xs font-semibold text-slate-300">4-अंकों का पिन (PIN)</label>
-          <input type="password" maxlength="4" id="loginPin" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm tracking-widest text-center text-lg focus:border-amber-500 focus:outline-none mt-1" />
+          <input type="password" maxlength="4" id="loginPin" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm tracking-widest text-center text-lg focus:border-amber-500 focus:outline-none mt-1" />
         </div>
       </div>
 
@@ -85,23 +89,26 @@
       </button>
 
       <div class="flex justify-between items-center text-xs text-slate-400 pt-2 border-t border-slate-800">
-        <button onclick="requestPinReset()" class="text-slate-400 hover:text-amber-400 underline">PIN भूल गए? (Reset)</button>
-        <button onclick="showSetPinModal()" class="text-amber-400 font-medium">नया PIN बनाएं</button>
+        <button onclick="requestPinReset()" class="text-slate-400 hover:text-amber-400 underline">PIN भूल गए?</button>
+        <span class="text-slate-500 text-[11px]">Admin Managed</span>
       </div>
     </section>
 
-    <!-- 2. DASHBOARD VIEW (Shown once logged in) -->
+    <!-- 2. DASHBOARD VIEW -->
     <div id="driverAppBody" class="hidden space-y-4">
       
-      <!-- DRIVER STATUS CARD -->
+      <!-- DRIVER PROFILE STATUS -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-lg">
         <div class="flex items-center space-x-3">
           <div class="w-11 h-11 rounded-xl bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-lg border border-slate-700">
             <i data-lucide="user" class="w-6 h-6"></i>
           </div>
           <div>
-            <h3 id="driverDisplay" class="font-bold text-base leading-tight">Driver Name</h3>
-            <p id="phoneDisplay" class="text-xs text-slate-400">+91 0000000000</p>
+            <div class="flex items-center space-x-1.5">
+              <h3 id="driverDisplay" class="font-bold text-base leading-tight">Driver</h3>
+              <span id="badgeDriverCode" class="text-[10px] bg-slate-800 text-amber-400 px-1.5 py-0.5 rounded font-mono border border-slate-700">DRV-00</span>
+            </div>
+            <p id="companyDisplay" class="text-xs text-slate-400 font-medium">Company: Aachico Vault</p>
           </div>
         </div>
         <button onclick="handleLogout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-lg bg-slate-800 border border-slate-700">
@@ -109,7 +116,7 @@
         </button>
       </div>
 
-      <!-- 4-CARD FINANCIAL LEDGER (View-Only) -->
+      <!-- 4-CARD FINANCIAL LEDGER -->
       <div class="grid grid-cols-2 gap-2.5">
         <div class="bg-slate-900 border border-slate-800/80 p-3 rounded-xl">
           <div class="flex items-center space-x-1.5 text-slate-400 text-[11px] mb-1">
@@ -144,7 +151,7 @@
         </div>
       </div>
 
-      <!-- ACTIVE TRIP IN PROGRESS BANNER (Phase 1 Running) -->
+      <!-- ACTIVE TRIP PERSISTENCE BANNER -->
       <div id="activeTripBanner" class="hidden bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 space-y-3">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
@@ -162,7 +169,7 @@
         </button>
       </div>
 
-      <!-- NEW TRIP TRIGGER (If no trip running) -->
+      <!-- START TRIP BUTTON -->
       <div id="startTripBanner">
         <button onclick="openTripWizard()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-4 rounded-2xl flex items-center justify-center space-x-2 shadow-lg shadow-amber-500/20 active:scale-[0.98] transition">
           <i data-lucide="play-circle" class="w-6 h-6"></i>
@@ -170,7 +177,7 @@
         </button>
       </div>
 
-      <!-- RECENT COMPLETED TRIPS LIST (View Only) -->
+      <!-- RECENT TRIPS LIST -->
       <div class="space-y-3 pt-2">
         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
           <span>मेरी पिछली ट्रिप्स (My Trips)</span>
@@ -186,7 +193,6 @@
     <div id="wizardModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-50 p-4 hidden flex items-center justify-center">
       <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-5 max-h-[90vh] overflow-y-auto space-y-4">
         
-        <!-- STEP INDICATOR -->
         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
           <div>
             <h3 id="wizardTitle" class="text-base font-bold text-slate-100">Step 1: ट्रिप शुरू करें</h3>
@@ -197,12 +203,11 @@
           </button>
         </div>
 
-        <!-- STEP 1: START DETAILS -->
+        <!-- STEP 1 VIEW -->
         <div id="step1View" class="space-y-3.5">
           <div>
-            <label class="text-xs font-semibold text-slate-300">गाड़ी चुनें (Select Fleet Vehicle)</label>
+            <label class="text-xs font-semibold text-slate-300">गाड़ी चुनें (Company Fleet)</label>
             <select id="tripVehicle" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:border-amber-500 focus:outline-none mt-1">
-              <!-- Filled from Admin Fleet -->
               <option value="RJ-27-TA-1234">RJ-27-TA-1234 (Innova Crysta)</option>
               <option value="RJ-27-PA-5678">RJ-27-PA-5678 (Swift Dzire)</option>
               <option value="RJ-27-EA-9012">RJ-27-EA-9012 (Ertiga)</option>
@@ -225,7 +230,7 @@
           </div>
 
           <div>
-            <label class="text-xs font-semibold text-slate-300">Start Meter Photo (शुरुआती मीटर फोटो)</label>
+            <label class="text-xs font-semibold text-slate-300">Start Meter Photo</label>
             <input type="file" id="startPhotoInput" accept="image/*" capture="environment" class="mt-1 block w-full text-xs text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-amber-400 hover:file:bg-slate-700 cursor-pointer" />
           </div>
 
@@ -234,7 +239,7 @@
           </button>
         </div>
 
-        <!-- STEP 2: END TRIP & EXPENSES -->
+        <!-- STEP 2 VIEW -->
         <div id="step2View" class="hidden space-y-4">
           <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs flex justify-between">
             <span>Start KM: <b id="displayStartKmVal">0</b></span>
@@ -251,13 +256,11 @@
             <input type="file" id="endPhotoInput" accept="image/*" capture="environment" class="mt-1 block w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-amber-400 hover:file:bg-slate-700 cursor-pointer" />
           </div>
 
-          <!-- CUSTOMER CASH COLLECTED -->
           <div class="border-t border-slate-800 pt-3">
             <label class="text-xs font-semibold text-amber-400">ग्राहक से नकद किराया मिला (Customer Cash)</label>
             <input type="number" id="custCashInput" placeholder="₹0" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm mt-1 focus:border-amber-500 focus:outline-none" />
           </div>
 
-          <!-- EXPENSES ENTRY -->
           <div class="border-t border-slate-800 pt-3 space-y-3">
             <h4 class="text-xs font-bold text-slate-300">खर्चे दर्ज करें (Expenses)</h4>
             
@@ -280,7 +283,6 @@
               </div>
             </div>
 
-            <!-- MULTI-PHOTO UPLOAD FOR BILLS -->
             <div>
               <label class="text-xs font-semibold text-slate-300">रसीदें और बिल फोटो (Upload Multiple Bills)</label>
               <input type="file" id="multiBillInput" accept="image/*" multiple capture="environment" onchange="handleBillPhotos(event)" class="mt-1 block w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-amber-400 hover:file:bg-slate-700 cursor-pointer" />
@@ -310,10 +312,10 @@
 
   </main>
 
-  <!-- FIREBASE SCRIPTS (SDK v12.18.0) -->
+  <!-- FIREBASE CONFIG & LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, setDoc, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, setDoc, query, where } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDOIEKyvSwfpRybZBmNuImzdJ3hdlEO3hI",
@@ -327,37 +329,34 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // STATE VARIABLES
     let currentDriver = JSON.parse(localStorage.getItem('aachico_driver') || 'null');
     let activeTrip = JSON.parse(localStorage.getItem('aachico_active_trip') || 'null');
     let stagedReceipts = [];
 
-    // INIT
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       checkAuthStatus();
       setupNetworkListener();
     });
 
-    // NETWORK LISTENER (Offline Sync)
     function setupNetworkListener() {
       const net = document.getElementById('netStatus');
       window.addEventListener('online', () => {
         net.className = "w-3 h-3 rounded-full bg-emerald-500 animate-pulse";
-        syncOfflineTrips();
       });
       window.addEventListener('offline', () => {
         net.className = "w-3 h-3 rounded-full bg-rose-500";
       });
     }
 
-    // CHECK AUTH
     window.checkAuthStatus = function() {
       if(currentDriver) {
         document.getElementById('authSection').classList.add('hidden');
         document.getElementById('driverAppBody').classList.remove('hidden');
         document.getElementById('driverDisplay').innerText = currentDriver.name || "Driver";
-        document.getElementById('phoneDisplay').innerText = currentDriver.phone;
+        document.getElementById('companyDisplay').innerText = `Company: ${currentDriver.companyCode || 'AACHICO'}`;
+        document.getElementById('badgeDriverCode').innerText = currentDriver.driverCode || 'DRV-101';
+        document.getElementById('headerCompTitle').innerText = currentDriver.companyCode || 'AACHICO VAULT';
         loadDriverLedger();
         renderActiveTripState();
         renderMyTrips();
@@ -367,45 +366,28 @@
       }
     };
 
-    // LOGIN ACTION
     window.handleLogin = async function() {
-      const phone = document.getElementById('loginPhone').value.trim();
+      const companyCode = document.getElementById('loginCompanyCode').value.trim().toUpperCase();
+      const driverId = document.getElementById('loginDriverId').value.trim().toUpperCase();
       const pin = document.getElementById('loginPin').value.trim();
 
-      if(!phone || pin.length !== 4) {
-        alert("कृपया सही मोबाइल नंबर और 4-अंकों का पिन डालें");
+      if(!companyCode || !driverId || pin.length !== 4) {
+        alert("कृपया Company Code, Driver Code/Phone और 4-अंकों का PIN भरें");
         return;
       }
 
-      // Check in Firestore or Local Mock
-      try {
-        const dRef = collection(db, "drivers");
-        const q = query(dRef, where("phone", "==", phone));
-        const snap = await getDocs(q);
+      currentDriver = {
+        companyCode: companyCode,
+        driverCode: driverId.startsWith("DRV") ? driverId : "DRV-" + driverId.slice(-4),
+        phone: driverId,
+        name: "Driver (" + driverId + ")",
+        pocketAdvance: 0,
+        customerCashCollected: 0,
+        expensesClaim: 0
+      };
 
-        if(!snap.empty) {
-          const dData = snap.docs[0].data();
-          if(dData.pin === pin) {
-            currentDriver = { id: snap.docs[0].id, ...dData };
-            localStorage.setItem('aachico_driver', JSON.stringify(currentDriver));
-            checkAuthStatus();
-            return;
-          } else {
-            alert("गलत PIN! कृपया दोबारा जांचें।");
-            return;
-          }
-        } else {
-          // Direct setup if driver not found or initial setup
-          currentDriver = { phone: phone, name: "Driver (" + phone.slice(-4) + ")", pin: pin };
-          localStorage.setItem('aachico_driver', JSON.stringify(currentDriver));
-          checkAuthStatus();
-        }
-      } catch (err) {
-        // Fallback for offline login
-        currentDriver = { phone: phone, name: "Driver", pin: pin };
-        localStorage.setItem('aachico_driver', JSON.stringify(currentDriver));
-        checkAuthStatus();
-      }
+      localStorage.setItem('aachico_driver', JSON.stringify(currentDriver));
+      checkAuthStatus();
     };
 
     window.handleLogout = function() {
@@ -417,17 +399,14 @@
     };
 
     window.requestPinReset = function() {
-      alert("PIN रीसेट रिक्वेस्ट एडमिन को भेज दी गई है। कृपया एडमिन से नया PIN प्राप्त करें।");
+      alert("PIN रीसेट रिक्वेस्ट आपकी कंपनी के एडमिन को भेज दी गई है।");
     };
 
-    // LEDGER & BALANCE
     function loadDriverLedger() {
       if(!currentDriver) return;
-      
       const pocketAdv = currentDriver.pocketAdvance || 0;
       const custCash = currentDriver.customerCashCollected || 0;
       const totalExp = currentDriver.expensesClaim || 0;
-      
       const net = (pocketAdv + custCash) - totalExp;
 
       document.getElementById('valPocketAdvance').innerText = `₹${pocketAdv}`;
@@ -435,8 +414,6 @@
       document.getElementById('valExpenses').innerText = `₹${totalExp}`;
       
       const netEl = document.getElementById('valNetBalance');
-      const box = document.getElementById('netBalanceBox');
-      
       if(net >= 0) {
         netEl.innerText = `₹${net} (Due to Co.)`;
         netEl.className = "text-base font-bold text-amber-400";
@@ -446,7 +423,6 @@
       }
     }
 
-    // TRIP WIZARD CONTROLS
     window.openTripWizard = function() {
       document.getElementById('wizardModal').classList.remove('hidden');
       if(activeTrip) {
@@ -472,13 +448,11 @@
       document.getElementById('step2View').classList.remove('hidden');
       document.getElementById('wizardTitle').innerText = "Step 2: ट्रिप समाप्त करें";
       document.getElementById('wizardSub').innerText = "एंड KM, रसीदें और कलेक्टेड कैश भरें";
-      
       if(activeTrip) {
         document.getElementById('displayStartKmVal').innerText = activeTrip.startKm;
       }
     }
 
-    // PHASE 1: START TRIP
     window.saveTripStartPhase = function() {
       const vehicle = document.getElementById('tripVehicle').value;
       const route = document.getElementById('tripRoute').value.trim();
@@ -490,7 +464,8 @@
       }
 
       activeTrip = {
-        driverPhone: currentDriver.phone,
+        companyCode: currentDriver.companyCode,
+        driverCode: currentDriver.driverCode,
         driverName: currentDriver.name,
         vehicleNo: vehicle,
         route: route,
@@ -529,7 +504,6 @@
       document.getElementById('displayNetRunKm').innerText = `${diff > 0 ? diff : 0} KM`;
     };
 
-    // PHOTO HANDLING
     window.handleBillPhotos = function(e) {
       const files = Array.from(e.target.files);
       const preview = document.getElementById('receiptsPreview');
@@ -547,7 +521,6 @@
       });
     };
 
-    // PHASE 2: FINAL SUBMISSION
     window.finalSubmitTrip = async function() {
       const endKm = Number(document.getElementById('tripEndKm').value);
       if(!endKm || endKm <= activeTrip.startKm) {
@@ -577,10 +550,8 @@
         status: "PENDING_APPROVAL"
       };
 
-      // Save locally first (Offline resilience)
       saveTripToLocal(completeTripData);
 
-      // Attempt Firestore sync
       if(navigator.onLine) {
         try {
           await addDoc(collection(db, "trips"), completeTripData);
@@ -589,7 +560,6 @@
         }
       }
 
-      // Clear Active Trip
       localStorage.removeItem('aachico_active_trip');
       activeTrip = null;
       stagedReceipts = [];
@@ -597,8 +567,7 @@
       renderActiveTripState();
       renderMyTrips();
 
-      // Trigger WhatsApp Summary
-      const waMsg = `*Aachico Vault Trip Summary*%0A------------------%0A*गाड़ी:* ${completeTripData.vehicleNo}%0A*ड्राइवर:* ${completeTripData.driverName}%0A*रूट:* ${completeTripData.route}%0A*कुल दूरी:* ${totalKm} KM%0A*ग्राहक कैश:* ₹${custCash}%0A*कुल खर्च:* ₹${totalExpense}%0A*डीजल:* ₹${fuel} | *टोल:* ₹${toll}`;
+      const waMsg = `*${completeTripData.companyCode} Trip Summary*%0A------------------%0A*गाड़ी:* ${completeTripData.vehicleNo}%0A*ड्राइवर:* ${completeTripData.driverCode}%0A*रूट:* ${completeTripData.route}%0A*कुल दूरी:* ${totalKm} KM%0A*ग्राहक कैश:* ₹${custCash}%0A*कुल खर्च:* ₹${totalExpense}`;
       if(confirm("ट्रिप सफलतापूर्वक सेव हो गई! क्या आप WhatsApp पर समरी भेजना चाहते हैं?")) {
         window.open(`https://wa.me/?text=${waMsg}`, '_blank');
       }
@@ -635,10 +604,9 @@
       `).join('');
     }
 
-    // VOICE-TO-TEXT ENGINE
     window.startVoiceInput = function(targetId) {
       if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        alert("आपका ब्राउज़र वॉइस टाइपिंग सपोर्ट नहीं करता।");
+        alert("आपका डिवाइस वॉइस टाइपिंग सपोर्ट नहीं करता।");
         return;
       }
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -650,11 +618,6 @@
         document.getElementById(targetId).value = e.results[0][0].transcript;
       };
     };
-
-    async function syncOfflineTrips() {
-      // Syncs pending trips from localStorage when connection restores
-      console.log("Online: Syncing offline data...");
-    }
   </script>
 </body>
 </html>
