@@ -3,146 +3,149 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Aachico Vault - Driver Companion</title>
+  <title>Aachico Vault - Driver App</title>
   <link rel="manifest" href="./manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-    .glass-card { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glass-card { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950 pb-10">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-emerald-500 selection:text-slate-950 pb-12">
 
-  <!-- ================= DRIVER LOGIN SCREEN ================= -->
+  <!-- LOGIN SCREEN -->
   <div id="driverLoginScreen" class="min-h-screen flex items-center justify-center p-4">
     <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-emerald-500/30 space-y-5 shadow-2xl">
       <div class="text-center space-y-2">
         <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black text-2xl border border-emerald-500/40">
           <i data-lucide="steering-wheel" class="w-8 h-8"></i>
         </div>
-        <h1 class="text-xl font-extrabold text-white">Driver Companion</h1>
-        <p class="text-xs text-slate-400">अपनी कंपनी और 4-डिजिट पिन दर्ज करें</p>
+        <h1 class="text-xl font-extrabold text-white">Driver Duty Login</h1>
+        <p class="text-xs text-slate-400">कंपनी कोड और अपना 4-अंकों का PIN दर्ज करें</p>
       </div>
 
       <div class="space-y-3">
         <div>
           <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Company Code</label>
-          <input type="text" id="driverCompanyCode" placeholder="उदा. RJ27-FLEET" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white uppercase focus:outline-none focus:border-emerald-500 font-mono text-center" />
+          <input type="text" id="dCompanyCode" placeholder="उदा. RJ27-FLEET" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white uppercase focus:border-emerald-500 font-mono text-center" />
         </div>
         <div>
           <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Driver 4-Digit PIN</label>
-          <input type="password" maxlength="4" id="driverPIN" placeholder="••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-2xl text-white focus:outline-none focus:border-emerald-500 font-mono text-center tracking-widest" />
+          <input type="password" maxlength="4" id="dPIN" placeholder="••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-2xl text-white focus:border-emerald-500 font-mono text-center tracking-widest" />
         </div>
-        <button onclick="handleDriverLogin()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition flex items-center justify-center space-x-2 shadow-lg shadow-emerald-500/20">
+        <button onclick="handleDriverLogin()" id="driverLoginBtn" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition flex items-center justify-center space-x-2">
           <i data-lucide="log-in" class="w-4 h-4"></i>
-          <span>लॉगिन करें (Start Duty)</span>
+          <span>ड्यूटी शुरू करें (Start Duty)</span>
         </button>
       </div>
-
-      <!-- Forgot PIN Trigger -->
-      <div class="text-center pt-2">
-        <button onclick="openForgotPinModal()" class="text-xs text-amber-400 hover:underline">पिन भूल गए? (Forgot PIN?)</button>
-      </div>
     </div>
   </div>
 
-  <!-- ================= FORGOT PIN MODAL ================= -->
-  <div id="forgotPinModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-    <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-slate-700 space-y-4">
-      <div class="text-center space-y-1">
-        <h3 class="font-bold text-base text-white">ड्राइवर पिन रिकवरी</h3>
-        <p class="text-xs text-slate-400">सुरक्षा कारणों से ड्राइवर पिन केवल कंपनी एडमिन बदल सकता है।</p>
-      </div>
-      <div class="bg-slate-900 p-3 rounded-xl text-xs space-y-2 border border-slate-800">
-        <p class="text-slate-300">कृपया अपने ट्रांसपोर्ट मालिक / कंपनी एडमिन को कॉल करके नया 4-अंकों का पिन सेट करने को कहें।</p>
-        <p class="text-amber-400 font-bold">मालिक अपने Admin Portal से 1 सेकंड में नया PIN अपडेट कर देगा।</p>
-      </div>
-      <button onclick="closeForgotPinModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 rounded-xl text-xs transition">
-        वापस लॉगिन स्क्रीन पर जाएँ
-      </button>
-    </div>
-  </div>
-
-  <!-- ================= DRIVER ACTIVE DASHBOARD ================= -->
+  <!-- ACTIVE DRIVER DASHBOARD -->
   <div id="driverDashboard" class="hidden flex-1 flex flex-col">
     <header class="glass-card border-b border-slate-800 px-4 py-3 flex items-center justify-between sticky top-0 z-40">
       <div class="flex items-center space-x-2.5">
-        <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm border border-emerald-500/30">
-          <i data-lucide="user" class="w-4 h-4"></i>
+        <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">
+          <i data-lucide="user" class="w-5 h-5"></i>
         </div>
         <div>
-          <h2 id="displayDriverName" class="font-bold text-xs text-white">ड्राइवर डैशबोर्ड</h2>
+          <h2 id="displayDriverName" class="font-bold text-xs text-white">ड्राइवर</h2>
           <p id="displayCompanyPill" class="text-[10px] text-amber-400 font-mono">RJ27-FLEET</p>
         </div>
       </div>
-      <div class="flex items-center space-x-2">
-        <button onclick="openChangePinModal()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 px-2.5 py-1.5 rounded-xl">
-          पिन बदलें
-        </button>
-        <button onclick="logoutDriver()" class="text-xs bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 px-3 py-1.5 rounded-xl">
-          ड्यूटी ऑफ
-        </button>
-      </div>
+      <button onclick="logoutDriver()" class="text-xs bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 px-3 py-1.5 rounded-xl font-bold">
+        ड्यूटी ऑफ
+      </button>
     </header>
 
     <main class="flex-1 max-w-lg w-full mx-auto p-4 space-y-4">
+      <!-- 4-Card Cash & Trip Form -->
       <div class="glass-card p-5 rounded-3xl border border-slate-800 space-y-4">
-        <h3 class="font-bold text-sm text-white flex items-center space-x-2 border-b border-slate-800 pb-2">
-          <i data-lucide="map-pin" class="w-4 h-4 text-emerald-400"></i>
-          <span>ट्रिप एंट्री व मीटर ऑडिट</span>
-        </h3>
-        <div>
-          <label class="text-[11px] text-slate-400 block mb-1">गाड़ी नंबर</label>
-          <input type="text" id="tripCarNumber" placeholder="RJ-27-TA-1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-white font-mono uppercase focus:border-emerald-500" />
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+            <i data-lucide="file-text" class="w-4 h-4 text-emerald-400"></i>
+            <span>दैनिक ट्रिप व कैश एंट्री</span>
+          </h3>
+          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-mono">Duty Live</span>
         </div>
+
+        <!-- Car Dropdown populated from Admin Cars -->
+        <div>
+          <label class="text-[11px] text-slate-300 block mb-1 font-semibold">गाड़ी चुनें (Select Car)</label>
+          <select id="tripCarSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white font-mono focus:border-emerald-500">
+            <option value="">गाड़ियाँ लोड हो रही हैं...</option>
+          </select>
+        </div>
+
+        <!-- Odometer KM -->
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="text-[10px] text-slate-400 block mb-1">स्टार्ट KM</label>
-            <input type="number" id="tripStartKm" placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-sm text-white font-mono" />
+            <label class="text-[10px] text-slate-400 block mb-1">स्टार्ट रीडिंग (KM)</label>
+            <input type="number" id="tripStartKm" placeholder="10250" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white font-mono" />
           </div>
           <div>
-            <label class="text-[10px] text-slate-400 block mb-1">एंड KM</label>
-            <input type="number" id="tripEndKm" placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-sm text-white font-mono" />
+            <label class="text-[10px] text-slate-400 block mb-1">एंड रीडिंग (KM)</label>
+            <input type="number" id="tripEndKm" placeholder="10450" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white font-mono" />
           </div>
         </div>
+
+        <!-- Diesel & Expenses -->
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="text-[10px] text-slate-400 block mb-1">डीज़ल (लीटर)</label>
-            <input type="number" id="tripDiesel" placeholder="0 L" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
+            <input type="number" id="tripDieselLitre" placeholder="25 L" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
           </div>
           <div>
-            <label class="text-[10px] text-slate-400 block mb-1">खर्च (₹)</label>
-            <input type="number" id="tripExp" placeholder="₹0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
+            <label class="text-[10px] text-slate-400 block mb-1">डीज़ल खर्च (₹)</label>
+            <input type="number" id="tripDieselAmt" placeholder="₹2400" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
           </div>
         </div>
-        <button onclick="submitTrip()" id="tripSubmitBtn" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition">
-          ट्रिप सबमिट करें (Sync Trip)
+
+        <!-- Toll & Parking -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[10px] text-slate-400 block mb-1">टोल टैक्स (Toll ₹)</label>
+            <input type="number" id="tripToll" placeholder="₹350" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
+          </div>
+          <div>
+            <label class="text-[10px] text-slate-400 block mb-1">पार्किंग / अन्य (₹)</label>
+            <input type="number" id="tripParking" placeholder="₹100" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
+          </div>
+        </div>
+
+        <!-- Cash & Pocket Money -->
+        <div class="grid grid-cols-2 gap-3 bg-slate-900/50 p-3 rounded-2xl border border-slate-800">
+          <div>
+            <label class="text-[10px] text-emerald-400 block mb-1 font-bold">कस्टमर से मिला कैश (₹)</label>
+            <input type="number" id="tripCashCollected" placeholder="₹5000" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-sm text-emerald-400 font-bold font-mono" />
+          </div>
+          <div>
+            <label class="text-[10px] text-amber-400 block mb-1 font-bold">ड्राइवर दैनिक जेबखर्च (₹)</label>
+            <input type="number" id="tripDriverAllowance" placeholder="₹300" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-sm text-amber-400 font-bold font-mono" />
+          </div>
+        </div>
+
+        <button onclick="submitDriverTrip()" id="tripSubmitBtn" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-3.5 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2">
+          <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+          <span>ट्रिप सबमिट करें (Audit Sync)</span>
         </button>
+      </div>
+
+      <!-- Driver's Recent Submissions Status -->
+      <div class="glass-card p-4 rounded-2xl border border-slate-800 space-y-3">
+        <h4 class="font-bold text-xs text-slate-300">आपकी पिछली ट्रिप्स की स्थिति</h4>
+        <div id="driverTripsHistory" class="space-y-2 text-xs">
+          <p class="text-slate-500 text-center py-2">लोड हो रहा है...</p>
+        </div>
       </div>
     </main>
   </div>
 
-  <!-- CHANGE PIN MODAL -->
-  <div id="changePinModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-    <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-slate-700 space-y-4">
-      <h3 class="font-bold text-base text-white text-center">अपना PIN बदलें</h3>
-      <div class="space-y-3">
-        <div>
-          <label class="text-[11px] text-slate-400 block mb-1">नया 4-अंकों का PIN</label>
-          <input type="password" maxlength="4" id="newDriverPinInput" placeholder="••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-xl font-mono text-white" />
-        </div>
-        <button onclick="updateDriverSelfPin()" class="w-full bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs">PIN सेव करें</button>
-        <button onclick="closeChangePinModal()" class="w-full bg-slate-800 text-slate-300 py-2 rounded-xl text-xs">रद्द करें</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- FIREBASE LOGIC & AUTO-UPDATER -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc, addDoc, collection, updateDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, getDocs, collection, addDoc, query, where } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDOIEKyvSwfpRybZBmNuImzdJ3hdlEO3hI",
@@ -156,92 +159,181 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let session = JSON.parse(localStorage.getItem('aachico_driver_session') || 'null');
+    let session = JSON.parse(localStorage.getItem('aachico_driver_active_session') || 'null');
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       if(session) showDashboard();
     });
 
-    window.handleDriverLogin = function() {
-      const code = document.getElementById('driverCompanyCode').value.trim().toUpperCase();
-      const pin = document.getElementById('driverPIN').value.trim();
+    window.handleDriverLogin = async function() {
+      const code = document.getElementById('dCompanyCode').value.trim().toUpperCase();
+      const pin = document.getElementById('dPIN').value.trim();
+
       if(!code || pin.length !== 4) {
         alert("कंपनी कोड और 4-अंकों का पिन सही दर्ज करें!");
         return;
       }
-      session = { companyCode: code, pin: pin, name: "ड्राइवर #" + pin };
-      localStorage.setItem('aachico_driver_session', JSON.stringify(session));
-      showDashboard();
+
+      const btn = document.getElementById('driverLoginBtn');
+      btn.innerText = "सत्यापित हो रहा है...";
+      btn.disabled = true;
+
+      try {
+        // Query drivers collection for this PIN
+        const driversRef = collection(db, "companies", code, "drivers");
+        const snap = await getDocs(driversRef);
+        let foundDriver = null;
+
+        snap.forEach(d => {
+          const data = d.data();
+          if(data.pin === pin) {
+            foundDriver = { name: data.name || d.id, ...data };
+          }
+        });
+
+        if(!foundDriver) {
+          alert("गलत PIN या कंपनी कोड! कृपया कंपनी एडमिन से सही पिन लें।");
+          btn.innerText = "ड्यूटी शुरू करें (Start Duty)";
+          btn.disabled = false;
+          return;
+        }
+
+        session = { companyCode: code, pin: pin, name: foundDriver.name };
+        localStorage.setItem('aachico_driver_active_session', JSON.stringify(session));
+        showDashboard();
+      } catch(err) {
+        alert("लॉगिन एरर: " + err.message);
+        btn.innerText = "ड्यूटी शुरू करें (Start Duty)";
+        btn.disabled = false;
+      }
     };
 
-    function showDashboard() {
+    async function showDashboard() {
       document.getElementById('driverLoginScreen').classList.add('hidden');
       document.getElementById('driverDashboard').classList.remove('hidden');
       document.getElementById('displayCompanyPill').innerText = session.companyCode;
       document.getElementById('displayDriverName').innerText = session.name;
       lucide.createIcons();
+      await loadAvailableCars();
+      loadDriverHistory();
     }
 
-    window.logoutDriver = function() {
-      localStorage.removeItem('aachico_driver_session');
-      location.reload();
-    };
-
-    window.openForgotPinModal = () => document.getElementById('forgotPinModal').classList.remove('hidden');
-    window.closeForgotPinModal = () => document.getElementById('forgotPinModal').classList.add('hidden');
-
-    window.openChangePinModal = () => document.getElementById('changePinModal').classList.remove('hidden');
-    window.closeChangePinModal = () => document.getElementById('changePinModal').classList.add('hidden');
-
-    window.updateDriverSelfPin = async function() {
-      const newPin = document.getElementById('newDriverPinInput').value.trim();
-      if(newPin.length !== 4) {
-        alert("PIN ठीक 4 अंकों का होना चाहिए!");
-        return;
+    async function loadAvailableCars() {
+      const select = document.getElementById('tripCarSelect');
+      try {
+        const snap = await getDocs(collection(db, "companies", session.companyCode, "cars"));
+        if(snap.empty) {
+          select.innerHTML = `<option value="">कोई गाड़ी उपलब्ध नहीं है (एडमिन से जोड़ें)</option>`;
+          return;
+        }
+        let opts = `<option value="">-- अपनी गाड़ी चुनें --</option>`;
+        snap.forEach(d => {
+          const car = d.data();
+          opts += `<option value="${car.carNumber}">${car.carNumber} ${car.carModel ? '('+car.carModel+')' : ''}</option>`;
+        });
+        select.innerHTML = opts;
+      } catch(e) {
+        select.innerHTML = `<option value="">गाड़ियाँ लोड नहीं हो सकीं</option>`;
       }
-      session.pin = newPin;
-      localStorage.setItem('aachico_driver_session', JSON.stringify(session));
-      alert("PIN सफलतापूर्वक अपडेट हो गया!");
-      closeChangePinModal();
-    };
+    }
 
-    window.submitTrip = async function() {
-      const car = document.getElementById('tripCarNumber').value.trim().toUpperCase();
-      const start = document.getElementById('tripStartKm').value;
-      const end = document.getElementById('tripEndKm').value;
-      const diesel = document.getElementById('tripDiesel').value;
-      const exp = document.getElementById('tripExp').value;
+    window.submitDriverTrip = async function() {
+      const car = document.getElementById('tripCarSelect').value;
+      const startKm = Number(document.getElementById('tripStartKm').value) || 0;
+      const endKm = Number(document.getElementById('tripEndKm').value) || 0;
+      const dieselLitre = Number(document.getElementById('tripDieselLitre').value) || 0;
+      const dieselAmt = Number(document.getElementById('tripDieselAmt').value) || 0;
+      const toll = Number(document.getElementById('tripToll').value) || 0;
+      const parking = Number(document.getElementById('tripParking').value) || 0;
+      const cash = Number(document.getElementById('tripCashCollected').value) || 0;
+      const allowance = Number(document.getElementById('tripDriverAllowance').value) || 0;
 
-      if(!car) { alert("गाड़ी नंबर दर्ज करें!"); return; }
+      if(!car) { alert("कृपया लिस्ट में से गाड़ी नंबर चुनें!"); return; }
+      if(endKm <= startKm && endKm > 0) { alert("एंड रीडिंग, स्टार्ट रीडिंग से अधिक होनी चाहिए!"); return; }
+
+      const totalKm = endKm > startKm ? (endKm - startKm) : 0;
+      const totalExpense = dieselAmt + toll + parking + allowance;
+      const netCashInHand = cash - totalExpense;
 
       const btn = document.getElementById('tripSubmitBtn');
-      btn.innerText = "सेव हो रहा है...";
+      btn.innerText = "सिंक हो रहा है...";
       btn.disabled = true;
 
       try {
         await addDoc(collection(db, "companies", session.companyCode, "trips"), {
           carNumber: car,
+          driverName: session.name,
           driverPin: session.pin,
-          startKm: Number(start),
-          endKm: Number(end),
-          dieselLitres: Number(diesel),
-          expenses: Number(exp),
-          timestamp: new Date().toISOString()
+          startKm: startKm,
+          endKm: endKm,
+          totalKm: totalKm,
+          dieselLitre: dieselLitre,
+          dieselAmt: dieselAmt,
+          tollTax: toll,
+          parking: parking,
+          cashCollected: cash,
+          driverAllowance: allowance,
+          totalExpense: totalExpense,
+          netCashInHand: netCashInHand,
+          status: "Pending", // Pending, Approved, Rejected
+          createdAt: new Date().toISOString()
         });
-        alert("ट्रिप सफलतापूर्वक सबमिट हो गई!");
+
+        alert("ट्रिप सफलतापूर्वक सबमिट हो गई! एडमिन/मैनेजर के अप्रूवल का इंतज़ार है।");
         document.getElementById('tripStartKm').value = "";
         document.getElementById('tripEndKm').value = "";
-      } catch (err) {
-        alert("एरर: " + err.message);
+        document.getElementById('tripDieselAmt').value = "";
+        document.getElementById('tripToll').value = "";
+        document.getElementById('tripParking').value = "";
+        document.getElementById('tripCashCollected').value = "";
+        loadDriverHistory();
+      } catch(err) {
+        alert("सबमिशन एरर: " + err.message);
       } finally {
-        btn.innerText = "ट्रिप सबमिट करें (Sync Trip)";
+        btn.innerText = "ट्रिप सबमिट करें (Audit Sync)";
         btn.disabled = false;
       }
     };
+
+    async function loadDriverHistory() {
+      const container = document.getElementById('driverTripsHistory');
+      try {
+        const snap = await getDocs(collection(db, "companies", session.companyCode, "trips"));
+        let myTrips = [];
+        snap.forEach(d => {
+          const data = { id: d.id, ...d.data() };
+          if(data.driverPin === session.pin) myTrips.push(data);
+        });
+
+        if(myTrips.length === 0) {
+          container.innerHTML = `<p class="text-slate-500 text-center py-2">कोई ट्रिप रिकॉर्ड नहीं मिला।</p>`;
+          return;
+        }
+
+        container.innerHTML = myTrips.slice(-3).reverse().map(t => `
+          <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+            <div>
+              <span class="font-bold text-white">${t.carNumber}</span>
+              <p class="text-[10px] text-slate-400">${t.totalKm} KM | खर्च: ₹${t.totalExpense} | कैश: ₹${t.cashCollected}</p>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded ${
+              t.status === 'Approved' ? 'bg-emerald-500/20 text-emerald-400' :
+              t.status === 'Rejected' ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/20 text-amber-400'
+            }">${t.status || 'Pending'}</span>
+          </div>
+        `).join('');
+      } catch(e) {
+        container.innerHTML = `<p class="text-slate-500 text-center">डेटा लोड नहीं हुआ</p>`;
+      }
+    }
+
+    window.logoutDriver = function() {
+      localStorage.removeItem('aachico_driver_active_session');
+      location.reload();
+    };
   </script>
 
-  <!-- AUTO-UPDATER SERVICE WORKER -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js');
