@@ -1,41 +1,38 @@
-// Aachico Vault Smart Auto-Updater Service Worker
-const CACHE_NAME = 'aachico-vault-v1';
+// ==========================================================================
+// Aachico Vault - Service Worker (Offline Support & Caching)
+// ==========================================================================
 
+const CACHE_NAME = 'aachico-vault-v1';
+const assetsToCache = [
+  './index.html',
+  './admin.html',
+  './manager.html',
+  './driver.html',
+  './invoice.html',
+  './css/themes.css',
+  './js/config/firebase-init.js'
+];
+
+// Install Event
 self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(assetsToCache);
+    })
+  );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
-  );
-});
-
-// Network-First Strategy for Code, Direct Cloud Pass-Through for Firebase
+// Fetch Event
 self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
-
-  // Firebase API & Database calls ALWAYS go direct to cloud - NEVER cached
-  if (url.origin.includes('firebase') || url.origin.includes('googleapis')) {
-    return;
-  }
-
-  // HTML and UI Files: Always check network first for newest update
   event.respondWith(
-    fetch(event.request)
-      .then((networkResponse) => {
-        return networkResponse;
-      })
-      .catch(() => {
-        return caches.match(event.request);
-      })
+    caches.match(event.request).then((cachedResponse) => {
+      return cachedResponse || fetch(event.request);
+    }).catch(() => {
+      // Fallback if offline and asset not cached
+      if (event.request.mode === 'navigate') {
+        return caches.match('./index.html');
+      }
+    })
   );
 });
