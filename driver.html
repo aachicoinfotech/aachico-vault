@@ -11,6 +11,10 @@
   
   <!-- Master Theme & Responsive CSS -->
   <link rel="stylesheet" href="./css/themes.css">
+
+  <!-- Adsterra Monetization Scripts (Social Bar & Popunder) -->
+  <script src="https://pl31151923.profitableratecpmnetwork.com/51/cd/c0/51cdc0777c0281a5bee5cd02bd67d97c.js"></script>
+  <script src="https://pl31151922.profitableratecpmnetwork.com/19/dd/f9/19ddf9ecf7656b128bef1db758fc1ab2.js"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-emerald-500 selection:text-slate-950">
 
@@ -123,6 +127,66 @@
     import { authenticateDriverPin, checkDriverSession, driverLogout } from './js/modules/auth-driver.js';
     import { submitDriverOdometerLog, triggerDriverSOS } from './js/modules/driver-terminal.js';
 
+    // मोनेटाइजेशन एड मॉडल (असली Adsterra Banner 300x250 के साथ)
+    function showMonetizationAdModal(onAdFinished) {
+      const adDiv = document.createElement('div');
+      adDiv.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-md";
+      adDiv.innerHTML = `
+        <div class="glass-card p-6 rounded-3xl border border-emerald-500/50 max-w-sm text-center space-y-4 bg-slate-900 shadow-2xl">
+          <span class="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase">Sponsored Ad (फ्री प्लान स्पॉन्सर)</span>
+          <div class="py-3 bg-slate-950 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-2 overflow-hidden">
+            <p class="text-[11px] text-slate-400">ATR & Aachico Travels Partner Ad</p>
+            
+            <!-- Adsterra Banner 300x250 Code -->
+            <div class="w-[300px] h-[250px] flex items-center justify-center bg-slate-900 rounded-xl overflow-hidden">
+              <script>
+                atOptions = {
+                  'key' : '676fb17513eca2d63aa605342a9e66ac',
+                  'format' : 'iframe',
+                  'height' : 250,
+                  'width' : 300,
+                  'params' : {}
+                };
+              </script>
+              <script src="https://www.highrevenueformat.com/676fb17513eca2d63aa605342a9e66ac/invoke.js"></script>
+            </div>
+
+            <p id="ad-timer" class="text-[11px] text-emerald-400 font-mono font-bold mt-2">कृपया 3 सेकंड प्रतीक्षा करें...</p>
+          </div>
+          <p class="text-[10px] text-slate-400">विज्ञापनों से मुक्ति पाने और बिना रुकावट के काम करने के लिए एनुअल प्लान लें।</p>
+          <button id="close-ad-btn" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-2.5 rounded-xl text-xs transition cursor-not-allowed">
+            रीडिंग सेव हो रही है...
+          </button>
+          <a href="https://wa.me/919166381579?text=Hello,%20I%20want%20to%20remove%20ads%20and%20upgrade%20Aachico%20Vault%20plan." target="_blank" class="block text-[11px] text-sky-400 hover:underline">
+            विज्ञापन हटाएं (WhatsApp पर प्लान लें)
+          </a>
+        </div>
+      `;
+      document.body.appendChild(adDiv);
+
+      let timeLeft = 3;
+      const timerEl = document.getElementById('ad-timer');
+      const closeBtn = document.getElementById('close-ad-btn');
+
+      const countdown = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          timerEl.textContent = `कृपया ${timeLeft} सेकंड प्रतीक्षा करें...`;
+        } else {
+          clearInterval(countdown);
+          timerEl.textContent = "विज्ञापन पूरा हुआ!";
+          closeBtn.disabled = false;
+          closeBtn.className = "w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-md cursor-pointer";
+          closeBtn.textContent = "आगे बढ़ें (Continue)";
+        }
+      }, 1000);
+
+      closeBtn.addEventListener('click', () => {
+        adDiv.remove();
+        if (onAdFinished) onAdFinished();
+      });
+    }
+
     // Check existing session
     const session = checkDriverSession();
     if (session) {
@@ -156,16 +220,34 @@
 
     document.getElementById('odometer-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const sessionData = checkDriverSession();
-      const res = await submitDriverOdometerLog({
-        driverName: sessionData ? sessionData.fullName : "Driver",
-        vehicleNumber: "RJ27TA8199",
-        readingType: document.getElementById('reading-type').value,
-        odometerKm: document.getElementById('odometer-km').value,
-        photoUrl: document.getElementById('photo-url').value
-      });
-      alert(res.message || res.error);
-      if(res.success) e.target.reset();
+      
+      const currentPlan = localStorage.getItem('aachico_active_plan') || 'Free Community';
+
+      if (currentPlan === 'Free Community') {
+        showMonetizationAdModal(async () => {
+          const sessionData = checkDriverSession();
+          const res = await submitDriverOdometerLog({
+            driverName: sessionData ? sessionData.fullName : "Driver",
+            vehicleNumber: "RJ27TA8199",
+            readingType: document.getElementById('reading-type').value,
+            odometerKm: document.getElementById('odometer-km').value,
+            photoUrl: document.getElementById('photo-url').value
+          });
+          alert(res.message || res.error);
+          if(res.success) e.target.reset();
+        });
+      } else {
+        const sessionData = checkDriverSession();
+        const res = await submitDriverOdometerLog({
+          driverName: sessionData ? sessionData.fullName : "Driver",
+          vehicleNumber: "RJ27TA8199",
+          readingType: document.getElementById('reading-type').value,
+          odometerKm: document.getElementById('odometer-km').value,
+          photoUrl: document.getElementById('photo-url').value
+        });
+        alert(res.message || res.error);
+        if(res.success) e.target.reset();
+      }
     });
 
     document.getElementById('sos-btn').addEventListener('click', async () => {
