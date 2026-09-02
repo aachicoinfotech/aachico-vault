@@ -16,6 +16,13 @@
       "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/3063/3063822.png", "sizes": "192x192" }]
     },
     {
+      "name": "Manager Desk",
+      "short_name": "Manager",
+      "description": "Open Manager Operations & Billing",
+      "url": "./manager.html",
+      "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/942/942748.png", "sizes": "192x192" }]
+    },
+    {
       "name": "Company Admin",
       "short_name": "Admin",
       "description": "Open Fleet Admin Dashboard",
