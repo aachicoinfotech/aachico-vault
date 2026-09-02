@@ -1,1096 +1,144 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aachico Vault - Manager Ops Console</title>
-  <link rel="manifest" href="./manifest.json">
+  <title>Aachico Vault - Manager Ground Ops Console</title>
+  
+  <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    body { font-family: 'Inter', sans-serif; }
-    .glass-card { background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
-  </style>
+  
+  <!-- Master Theme & Responsive CSS -->
+  <link rel="stylesheet" href="./css/themes.css">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-teal-500 selection:text-slate-950 pb-20">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950">
 
-  <!-- ================= 1. MANAGER AUTHENTICATION ================= -->
-  <div id="mgrAuthScreen" class="min-h-screen flex items-center justify-center p-4">
-    <div class="glass-card w-full max-w-md p-8 rounded-3xl border border-teal-500/30 space-y-6 shadow-2xl">
-      <div class="text-center space-y-2">
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-teal-500/20 text-teal-400 flex items-center justify-center font-black text-2xl border border-teal-500/40">
-          <i data-lucide="briefcase" class="w-8 h-8"></i>
+  <!-- TOP NAVBAR -->
+  <header class="sticky top-0 z-50 glass-card border-b border-slate-800 bg-slate-950/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center font-black text-xl border border-teal-500/40">
+          M
+        </a>
+        <div>
+          <span class="font-extrabold text-base tracking-wider text-white">MANAGER GROUND OPS</span>
+          <p class="text-[10px] text-teal-400 tracking-wider">AACHICO VAULT SYSTEM</p>
         </div>
-        <h1 class="text-xl font-extrabold text-white">Manager Ground Ops</h1>
-        <p class="text-xs text-slate-400">कंपनी कोड और मैनेजर पासकोड दर्ज करें</p>
       </div>
-
-      <div class="space-y-4">
-        <div>
-          <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Company Code</label>
-          <input type="text" id="mgrAuthComp" placeholder="उदा. RJ27-FLEET" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white uppercase focus:border-teal-500 font-mono text-center" />
-        </div>
-        <div>
-          <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Manager Passcode</label>
-          <input type="password" id="mgrAuthPass" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:border-teal-500 text-center" />
-        </div>
-        <button onclick="loginManager()" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition flex items-center justify-center space-x-2">
-          <span>मैनेजर कंसोल में प्रवेश करें</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </button>
+      <div class="flex items-center space-x-3">
+        <a href="invoice.html" target="_blank" class="inline-flex items-center space-x-1 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-2 rounded-xl transition shadow-md">
+          <i data-lucide="receipt" class="w-3.5 h-3.5"></i>
+          <span>नया इनवॉइस बनाएँ</span>
+        </a>
       </div>
     </div>
-  </div>
+  </header>
 
-  <!-- ================= 2. MAIN MANAGER CONSOLE ================= -->
-  <div id="mgrMainConsole" class="hidden min-h-screen flex flex-col">
-    <!-- Navbar -->
-    <header class="glass-card border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-2xl bg-teal-500/20 text-teal-400 flex items-center justify-center font-black">
-          <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+  <!-- MAIN DASHBOARD CONTENT -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow space-y-8 w-full">
+    
+    <!-- Quick Stats Bar -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
+        <p class="text-xs text-slate-400 font-medium">आज की कुल ड्यूटी</p>
+        <h3 class="text-2xl font-black text-white font-mono" id="stat-duties">0</h3>
+        <span class="text-[10px] text-teal-400 font-bold">मैनेजर डेस्क</span>
+      </div>
+      <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
+        <p class="text-xs text-slate-400 font-medium">सक्रिय गाड़ियाँ</p>
+        <h3 class="text-2xl font-black text-white font-mono" id="stat-active-vehicles">0</h3>
+        <span class="text-[10px] text-sky-400 font-bold">रेडी फॉर बुकिंग</span>
+      </div>
+      <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
+        <p class="text-xs text-slate-400 font-medium">लंबित उधारी / बकाया</p>
+        <h3 class="text-2xl font-black text-rose-400 font-mono" id="stat-pending-due">₹0</h3>
+        <span class="text-[10px] text-rose-400 font-bold">लेज़र रडार</span>
+      </div>
+    </div>
+
+    <!-- Manager Operations Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Duty Allotment Box -->
+      <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+        <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
+          <i data-lucide="clipboard-list" class="w-5 h-5 text-teal-400"></i>
+          <h3 class="font-bold text-white text-sm">ड्यूटी ऑलॉटमेंट (Allot Duty)</h3>
         </div>
-        <div>
-          <h2 id="mgrHeaderComp" class="font-extrabold text-sm text-white font-mono uppercase">RJ27-FLEET</h2>
-          <p class="text-[10px] text-teal-400 flex items-center space-x-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span>
-            <span>Ground Control Active</span>
+        <form id="duty-form" class="space-y-3 text-xs">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-400 mb-1">ग्राहक का नाम</label>
+              <input type="text" id="duty-client" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-teal-500" placeholder="पार्टी नाम">
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">ग्राहक मोबाइल</label>
+              <input type="tel" id="duty-phone" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-teal-500" placeholder="9829000000">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-400 mb-1">गाड़ी नंबर</label>
+              <input type="text" id="duty-vehicle" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white uppercase font-mono focus:outline-none focus:border-teal-500" placeholder="RJ27TA8199">
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">ड्राइवर का नाम</label>
+              <input type="text" id="duty-driver" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-teal-500" placeholder="ड्राइवर नाम">
+            </div>
+          </div>
+          <button type="submit" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2.5 rounded-xl transition shadow-md">
+            ड्यूटी ऑलॉट करें
+          </button>
+        </form>
+      </div>
+
+      <!-- Quick Billing & Invoice Link Box -->
+      <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4 flex flex-col justify-between">
+        <div class="space-y-3">
+          <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
+            <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i>
+            <h3 class="font-bold text-white text-sm">त्वरित बिलिंग व इनवॉइस डेस्क</h3>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            मैनेजर यहाँ से सीधे ट्रिप पूरी होने पर A4 इनवॉइस जनरेट कर सकता है, पर्चियाँ देख सकता है और पार्टी का बकाया खाता अपडेट कर सकता है।
           </p>
         </div>
+        <div class="space-y-2 pt-4">
+          <a href="invoice.html" target="_blank" class="block w-full text-center bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl text-xs transition shadow-md">
+            A4 टैक्स इनवॉइस पेज खोलें
+          </a>
+        </div>
       </div>
-      <div class="flex items-center space-x-3">
-        <button onclick="openModal('placardModal')" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-xl font-bold flex items-center space-x-1 text-slate-200">
-          <i data-lucide="id-card" class="w-3.5 h-3.5 text-indigo-400"></i>
-          <span>Airport Placard</span>
-        </button>
-        <button onclick="logoutManager()" class="text-xs bg-rose-500/10 border border-rose-500/30 text-rose-400 px-3 py-1.5 rounded-xl font-bold">
-          लॉगआउट
-        </button>
-      </div>
-    </header>
 
-    <!-- Navigation Tabs -->
-    <div class="bg-slate-900/80 border-b border-slate-800 px-6 py-2 overflow-x-auto flex space-x-2">
-      <button onclick="switchMgrTab('tabDutyAudit')" id="tabBtn-tabDutyAudit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-teal-500 text-slate-950 whitespace-nowrap">
-        ड्यूटी ऑलॉटमेंट व ट्रिप ऑडिट
-      </button>
-      <button onclick="switchMgrTab('tabBankLedger')" id="tabBtn-tabBankLedger" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 whitespace-nowrap">
-        बैंक खाते व लाइव बैलेंस
-      </button>
-      <button onclick="switchMgrTab('tabPartyBilling')" id="tabBtn-tabPartyBilling" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 whitespace-nowrap">
-        पार्टी बिलिंग व रिकवरी
-      </button>
-      <button onclick="switchMgrTab('tabFleetGarage')" id="tabBtn-tabFleetGarage" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 whitespace-nowrap">
-        फ्लीट, गराज व टायर चेकर
-      </button>
-      <button onclick="switchMgrTab('tabCashPetty')" id="tabBtn-tabCashPetty" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 whitespace-nowrap">
-        ड्राइवर हैंड-कैश व पेटी कैश
-      </button>
     </div>
 
-    <!-- MAIN DASHBOARD CONTENT -->
-    <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+  </main>
 
-      <!-- ================= SECTION 1: DUTY ALLOTMENT & TRIP AUDIT ================= -->
-      <div id="tabDutyAudit" class="space-y-6">
-        
-        <!-- Top Operations KPIs -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="glass-card p-4 rounded-2xl border-l-4 border-teal-500">
-            <p class="text-[11px] text-slate-400 font-bold uppercase">पेंडिंग ट्रिप्स ऑडिट</p>
-            <h3 id="kpiPendingAudit" class="text-2xl font-black text-teal-400 font-mono mt-1">0</h3>
-            <p class="text-[10px] text-slate-500">ड्राइवर द्वारा भेजी गई ट्रिप्स</p>
-          </div>
-          <div class="glass-card p-4 rounded-2xl border-l-4 border-sky-500">
-            <p class="text-[11px] text-slate-400 font-bold uppercase">सक्रिय ऑन-रोड गाड़ियाँ</p>
-            <h3 id="kpiActiveCars" class="text-2xl font-black text-sky-400 font-mono mt-1">0</h3>
-            <p class="text-[10px] text-slate-500">अभी चल रही गाड़ियाँ</p>
-          </div>
-          <div class="glass-card p-4 rounded-2xl border-l-4 border-amber-500">
-            <p class="text-[11px] text-slate-400 font-bold uppercase">ड्राइवर हैंड कैश बाकी</p>
-            <h3 id="kpiHandCash" class="text-2xl font-black text-amber-400 font-mono mt-1">₹0</h3>
-            <p class="text-[10px] text-slate-500">ऑफिस में जमा होने योग्य</p>
-          </div>
-          <div class="glass-card p-4 rounded-2xl border-l-4 border-rose-500">
-            <p class="text-[11px] text-slate-400 font-bold uppercase">माइलेज एनॉमली अलर्ट</p>
-            <h3 id="kpiAnomalies" class="text-2xl font-black text-rose-400 font-mono mt-1">0</h3>
-            <p class="text-[10px] text-slate-500">संभावित तेल चोरी के केस</p>
-          </div>
-        </div>
+  <!-- FOOTER -->
+  <footer class="mt-auto bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+    <p>Aachico Vault Manager Console — Ground Operations</p>
+  </footer>
 
-        <!-- 1A. DUTY ALLOTMENT ENGINE -->
-        <div class="glass-card p-5 rounded-3xl space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="font-bold text-sm text-white flex items-center space-x-2">
-              <i data-lucide="send" class="w-4 h-4 text-teal-400"></i>
-              <span>नई ड्यूटी ऑलॉट करें (Assign Duty to Driver)</span>
-            </h3>
-            <span class="text-[10px] text-slate-400">ड्राइवर ऐप में सीधे दिखेगा</span>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">गाड़ी चुनें</label>
-              <select id="allotCarSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono">
-                <option value="">गाड़ियाँ लोड हो रही हैं...</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">ड्राइवर चुनें</label>
-              <select id="allotDriverSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
-                <option value="">ड्राइवर लोड हो रहे हैं...</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">पार्टी / कस्टमर का नाम</label>
-              <input type="text" id="allotCustomer" placeholder="उदा. होटल ताज / अमित जी" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white" />
-            </div>
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">टूर रूट</label>
-              <input type="text" id="allotRoute" placeholder="उदयपुर - कुम्भलगढ़" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white" />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">दर (₹ प्रति KM)</label>
-              <input type="number" id="allotRate" placeholder="12" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
-            </div>
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">प्राप्त एडवांस (₹)</label>
-              <input type="number" id="allotAdvance" placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
-            </div>
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">तारीख व समय</label>
-              <input type="datetime-local" id="allotDateTime" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
-            </div>
-            <div class="flex items-end">
-              <button onclick="submitDutyAssignment()" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-black py-2.5 rounded-xl text-xs transition">
-                ड्यूटी असाइन करें (Lock Duty)
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 1B. ADVANCED AUDIT DESK -->
-        <div class="glass-card p-6 rounded-3xl space-y-4">
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="font-bold text-base text-white flex items-center space-x-2">
-                <i data-lucide="shield-alert" class="w-5 h-5 text-teal-400"></i>
-                <span>ट्रिप ऑडिट डेस्क व रिजेक्शन ट्रैकर</span>
-              </h3>
-              <p class="text-xs text-slate-400">रीडिंग, डीज़ल पर्चियां, मल्टीपल टोल और ऑनलाइन पेमेंट SS का मिलान</p>
-            </div>
-            <button onclick="loadTripsAudit()" class="text-xs text-teal-400 hover:underline flex items-center space-x-1">
-              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-              <span>रिफ्रेश करें</span>
-            </button>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-900 text-slate-400 font-mono text-[10px] uppercase">
-                <tr>
-                  <th class="p-3">गाड़ी व ड्राइवर</th>
-                  <th class="p-3">रूट व पार्टी</th>
-                  <th class="p-3">रीडिंग (कुल KM)</th>
-                  <th class="p-3">डीज़ल व माइलेज</th>
-                  <th class="p-3">टोल, पार्क, टैक्स</th>
-                  <th class="p-3">पेमेंट मोड व SS</th>
-                  <th class="p-3">हैंड कैश</th>
-                  <th class="p-3">स्थिति</th>
-                  <th class="p-3 text-right">कार्रवाई</th>
-                </tr>
-              </thead>
-              <tbody id="mgrAuditTableBody" class="divide-y divide-slate-800 font-medium">
-                <tr><td colspan="9" class="p-4 text-center text-slate-500">लोड हो रहा है...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ================= SECTION 2: BANK ACCOUNTS & LIVE BALANCES ================= -->
-      <div id="tabBankLedger" class="hidden space-y-6">
-        
-        <!-- Total Digital Liquid Balance -->
-        <div class="glass-card p-6 rounded-3xl border border-teal-500/30 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">कुल उपलब्ध डिजिटल बैलेंस (All Accounts Total):</p>
-            <h2 id="dispTotalBankBalance" class="text-3xl font-black text-teal-400 font-mono mt-1">₹0</h2>
-            <p class="text-[11px] text-slate-500">सभी चालू बैंक खातों और UPI QR वॉलेट्स का कुल योग</p>
-          </div>
-          <button onclick="openModal('addBankModal')" class="bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center space-x-2 self-start md:self-auto">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            <span>नया बैंक / QR खाता जोड़ें</span>
-          </button>
-        </div>
-
-        <!-- Bank Accounts Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="bankAccountsGrid">
-          <p class="text-xs text-slate-500 col-span-3">बैंक खाते लोड हो रहे हैं...</p>
-        </div>
-
-        <!-- Inflow / Outflow Transactions Table -->
-        <div class="glass-card p-5 rounded-3xl space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="font-bold text-sm text-white flex items-center space-x-2">
-              <i data-lucide="arrow-left-right" class="w-4 h-4 text-teal-400"></i>
-              <span>बैंक लेन-देन पासबुक (Money In / Money Out)</span>
-            </h3>
-            <button onclick="openModal('recordBankTxModal')" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-xl font-bold text-teal-400">
-              + लेन-देन दर्ज करें
-            </button>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-900 text-slate-400 font-mono text-[10px] uppercase">
-                <tr>
-                  <th class="p-3">तारीख</th>
-                  <th class="p-3">खाता</th>
-                  <th class="p-3">विवरण / पार्टी / UTR</th>
-                  <th class="p-3">प्रकार (IN / OUT)</th>
-                  <th class="p-3 text-right">रकम</th>
-                </tr>
-              </thead>
-              <tbody id="bankTxTableBody" class="divide-y divide-slate-800 font-mono">
-                <tr><td colspan="5" class="p-4 text-center text-slate-500">कोई लेन-देन नहीं मिला।</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ================= SECTION 3: B2B PARTY BILLING & RECOVERY ================= -->
-      <div id="tabPartyBilling" class="hidden space-y-6">
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="glass-card p-4 rounded-2xl border-l-4 border-amber-500">
-            <p class="text-[11px] text-slate-400 font-bold uppercase">कुल मार्केट बकाया (Recovery Due)</p>
-            <h3 id="kpiTotalRecovery" class="text-2xl font-black text-amber-400 font-mono mt-1">₹0</h3>
-            <p class="text-[10px] text-slate-500">होटल व कॉर्पोरेट पार्टी से लेना बाकी</p>
-          </div>
-          <div class="glass-card p-4 rounded-2xl border-l-4 border-rose-500">
-            <p class="text-[11px] text-slate-400 font-bold uppercase">ओवरड्यू पेमेंट (15+ Days)</p>
-            <h3 id="kpiOverdueRecovery" class="text-2xl font-black text-rose-400 font-mono mt-1">₹0</h3>
-            <p class="text-[10px] text-slate-500">तत्काल तकादा करने योग्य बिल</p>
-          </div>
-          <div class="glass-card p-4 rounded-2xl border-l-4 border-teal-500">
-            <p class="text-[11px] text-slate-400 font-bold uppercase">इस माह रिकवर हुआ कैश</p>
-            <h3 id="kpiRecoveredThisMonth" class="text-2xl font-black text-teal-400 font-mono mt-1">₹0</h3>
-            <p class="text-[10px] text-slate-500">खाते में प्राप्त पेमेंट</p>
-          </div>
-        </div>
-
-        <!-- Party Invoices & Recovery Desk -->
-        <div class="glass-card p-5 rounded-3xl space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="font-bold text-sm text-white flex items-center space-x-2">
-              <i data-lucide="receipt-indian-rupee" class="w-4 h-4 text-amber-400"></i>
-              <span>पार्टी लेज़र व पेमेंट रिकवरी डेस्क</span>
-            </h3>
-            <span class="text-[10px] text-slate-400">B2B व No-Payment ट्रिप्स का बहीखाता</span>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-900 text-slate-400 font-mono text-[10px] uppercase">
-                <tr>
-                  <th class="p-3">पार्टी / होटल</th>
-                  <th class="p-3">ट्रिप रूट व गाड़ी</th>
-                  <th class="p-3">कुल बिल</th>
-                  <th class="p-3">जमा एडवांस</th>
-                  <th class="p-3">बकाया राशि</th>
-                  <th class="p-3">बिल स्टेटस</th>
-                  <th class="p-3 text-right">रिकवरी एक्शन</th>
-                </tr>
-              </thead>
-              <tbody id="partyBillingTableBody" class="divide-y divide-slate-800 font-medium">
-                <tr><td colspan="7" class="p-4 text-center text-slate-500">डेटा लोड हो रहा है...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ================= SECTION 4: FLEET, GARAGE & TYRE SERIALS ================= -->
-      <div id="tabFleetGarage" class="hidden space-y-6">
-        
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          <!-- 4A. Tyre Serial Numbers & Fraud Guard -->
-          <div class="glass-card p-5 rounded-3xl space-y-4">
-            <h3 class="font-bold text-sm text-sky-400 flex items-center space-x-2">
-              <i data-lucide="disc" class="w-4 h-4"></i>
-              <span>टायर सीरियल नंबर व फ्रॉड गार्ड (5 Tyres Tracking)</span>
-            </h3>
-            <div class="space-y-3">
-              <div>
-                <label class="text-[10px] text-slate-400 block mb-1">गाड़ी चुनें</label>
-                <select id="tyreCarSelect" onchange="loadCarTyres()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono"></select>
-              </div>
-              <div class="grid grid-cols-2 gap-2 text-xs">
-                <div>
-                  <label class="text-[9px] text-slate-400 block">अगला बायाँ (FL)</label>
-                  <input type="text" id="tyreFL" placeholder="MRF-84920" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono" />
-                </div>
-                <div>
-                  <label class="text-[9px] text-slate-400 block">अगला दायाँ (FR)</label>
-                  <input type="text" id="tyreFR" placeholder="MRF-84921" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono" />
-                </div>
-                <div>
-                  <label class="text-[9px] text-slate-400 block">पिछला बायाँ (RL)</label>
-                  <input type="text" id="tyreRL" placeholder="Apollo-3391" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono" />
-                </div>
-                <div>
-                  <label class="text-[9px] text-slate-400 block">पिछला दायाँ (RR)</label>
-                  <input type="text" id="tyreRR" placeholder="Apollo-3392" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono" />
-                </div>
-              </div>
-              <div>
-                <label class="text-[9px] text-amber-400 block font-bold">स्टेपनी (Spare Tyre)</label>
-                <input type="text" id="tyreSP" placeholder="JK-99120" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-amber-400 font-mono text-xs font-bold" />
-              </div>
-              <button onclick="saveTyreSerials()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">
-                टायर सीरियल लॉक करें
-              </button>
-            </div>
-          </div>
-
-          <!-- 4B. Garage Service & Mid-Trip Swap -->
-          <div class="glass-card p-5 rounded-3xl space-y-4">
-            <h3 class="font-bold text-sm text-amber-400 flex items-center space-x-2">
-              <i data-lucide="wrench" class="w-4 h-4"></i>
-              <span>मोबिल ऑयल सर्विस रिमाइंडर व मिड-ट्रिप स्वैप</span>
-            </h3>
-            
-            <div class="space-y-3 pt-1">
-              <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-2">
-                <p class="text-[11px] font-bold text-white uppercase">मिड-ट्रिप गाड़ी स्वैप (2 Cars 1 Bill Merge):</p>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                  <div>
-                    <label class="text-[9px] text-slate-400 block">खराब गाड़ी 1</label>
-                    <select id="swapCar1" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white font-mono"></select>
-                  </div>
-                  <div>
-                    <label class="text-[9px] text-slate-400 block">रिप्लेसमेंट गाड़ी 2</label>
-                    <select id="swapCar2" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white font-mono"></select>
-                  </div>
-                </div>
-                <button onclick="executeMidTripSwap()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-xl text-xs">
-                  दोनों गाड़ियों का बिल मर्ज करें
-                </button>
-              </div>
-
-              <!-- Key Rack Status -->
-              <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-1.5">
-                <p class="text-[11px] font-bold text-slate-300 uppercase">चाबी रजिस्टर (Key Rack):</p>
-                <div id="keyRackStatusGrid" class="flex flex-wrap gap-1.5 text-[10px] font-mono">
-                  <span class="text-slate-500">लोड हो रहा है...</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- ================= SECTION 5: DRIVER HAND-CASH & PETTY CASH ================= -->
-      <div id="tabCashPetty" class="hidden space-y-6">
-        
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          <!-- 5A. Driver Hand Cash Settlement -->
-          <div class="glass-card p-5 rounded-3xl space-y-4">
-            <h3 class="font-bold text-sm text-teal-400 flex items-center space-x-2">
-              <i data-lucide="hand-coins" class="w-4 h-4"></i>
-              <span>ड्राइवर हैंड-कैश कलेक्शन (Zero Settlement)</span>
-            </h3>
-            <p class="text-xs text-slate-400">ड्राइवर जब ऑफिस आकर नकद पैसे थमाए, तो उसका लेज़र ज़ीरो करें</p>
-
-            <div id="driverCashSettlementList" class="space-y-2">
-              <p class="text-xs text-slate-500">ड्राइवर कैश लेज़र लोड हो रहा है...</p>
-            </div>
-          </div>
-
-          <!-- 5B. Office Petty Cash Book & Day End -->
-          <div class="glass-card p-5 rounded-3xl space-y-4">
-            <div class="flex items-center justify-between">
-              <h3 class="font-bold text-sm text-amber-400 flex items-center space-x-2">
-                <i data-lucide="wallet-cards" class="w-4 h-4"></i>
-                <span>ऑफिस पेटी-कैश लेज़र (फुटकर खर्च)</span>
-              </h3>
-              <button onclick="closeDayShift()" class="text-xs bg-rose-500 hover:bg-rose-400 text-slate-950 px-2.5 py-1 rounded-xl font-bold">
-                Handover to Owner
-              </button>
-            </div>
-
-            <div class="grid grid-cols-3 gap-2">
-              <div class="col-span-2">
-                <label class="text-[10px] text-slate-400 block mb-1">खर्च विवरण (चाय, वॉशिंग आदि)</label>
-                <input type="text" id="pettyDesc" placeholder="गाड़ी वॉशिंग / ऑफिस चाय" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white" />
-              </div>
-              <div>
-                <label class="text-[10px] text-slate-400 block mb-1">रकम (₹)</label>
-                <input type="number" id="pettyAmt" placeholder="150" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-rose-400 font-mono font-bold" />
-              </div>
-            </div>
-            <button onclick="addPettyCashEntry()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-xl text-xs">
-              पेटी कैश खर्च जोड़ें
-            </button>
-
-            <div class="pt-2 border-t border-slate-800">
-              <p class="text-[10px] text-slate-400 font-bold uppercase mb-1.5">आज का फुटकर खर्च इतिहास:</p>
-              <div id="pettyCashHistoryBox" class="space-y-1.5 max-h-40 overflow-y-auto pr-1 text-xs">
-                <span class="text-slate-500">कोई पेटी खर्च दर्ज नहीं है।</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
-    </main>
-  </div>
-
-  <!-- ================= 3. MODALS ================= -->
-
-  <!-- AIRPORT PLACARD MODAL -->
-  <div id="placardModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-    <div class="bg-white text-slate-950 w-full max-w-lg p-8 rounded-3xl space-y-6 text-center shadow-2xl">
-      <div class="space-y-1 border-b pb-4">
-        <h2 class="text-xs uppercase tracking-widest text-slate-500 font-black" id="placardCompTitle">AACHICO TRAVELS</h2>
-        <p class="text-3xl font-black text-slate-900 mt-2 uppercase" id="placardGuestName">WELCOME GUEST</p>
-        <p class="text-base font-bold text-sky-600 font-mono" id="placardFlightDetails">FLIGHT AI-456</p>
-      </div>
-      <div class="space-y-2">
-        <input type="text" id="inPlacardGuest" placeholder="अतिथि का नाम (उदा. MR. SHARMA)" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs text-center font-bold" />
-        <input type="text" id="inPlacardFlight" placeholder="फ्लाइट / ट्रेन नंबर (उदा. 6E-204)" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs text-center font-bold" />
-      </div>
-      <div class="flex space-x-2">
-        <button onclick="updatePlacardLive()" class="flex-1 bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs">बोर्ड अपडेट करें</button>
-        <button onclick="closeModal('placardModal')" class="flex-1 bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs">बंद करें</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ADD BANK ACCOUNT MODAL -->
-  <div id="addBankModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-    <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-teal-500/30 space-y-4">
-      <h3 class="text-sm font-bold text-white flex items-center space-x-2">
-        <i data-lucide="landmark" class="w-4 h-4 text-teal-400"></i>
-        <span>नया बैंक या QR खाता जोड़ें</span>
-      </h3>
-      <div class="space-y-2.5 text-xs">
-        <div>
-          <label class="text-[10px] text-slate-400 block mb-1">बैंक / मर्चेंट नाम</label>
-          <input type="text" id="newBankName" placeholder="उदा. HDFC Bank / PhonePe" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white" />
-        </div>
-        <div>
-          <label class="text-[10px] text-slate-400 block mb-1">खाता संख्या / UPI ID</label>
-          <input type="text" id="newBankAccNo" placeholder="502000XXXX / aachico@hdfc" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white font-mono" />
-        </div>
-        <div>
-          <label class="text-[10px] text-slate-400 block mb-1">प्रारंभिक ओपनिंग बैलेंस (₹)</label>
-          <input type="number" id="newBankOpeningBal" placeholder="25000" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-teal-400 font-mono font-bold" />
-        </div>
-      </div>
-      <div class="flex space-x-2 pt-2">
-        <button onclick="saveNewBankAccount()" class="flex-1 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs">खाता सेव करें</button>
-        <button onclick="closeModal('addBankModal')" class="flex-1 bg-slate-800 text-slate-300 font-bold py-2.5 rounded-xl text-xs">रद्द करें</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- RECORD BANK TRANSACTION MODAL -->
-  <div id="recordBankTxModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-    <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-teal-500/30 space-y-4">
-      <h3 class="text-sm font-bold text-white flex items-center space-x-2">
-        <i data-lucide="arrow-down-up" class="w-4 h-4 text-teal-400"></i>
-        <span>बैंक लेन-देन दर्ज करें (IN / OUT)</span>
-      </h3>
-      <div class="space-y-2.5 text-xs">
-        <div>
-          <label class="text-[10px] text-slate-400 block mb-1">खाता चुनें</label>
-          <select id="txBankSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white font-mono"></select>
-        </div>
-        <div>
-          <label class="text-[10px] text-slate-400 block mb-1">लेन-देन प्रकार</label>
-          <select id="txTypeSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white font-bold">
-            <option value="CREDIT">रुपये आए (+ IN Credit)</option>
-            <option value="DEBIT">रुपये गए (- OUT Debit)</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-[10px] text-slate-400 block mb-1">रकम (₹)</label>
-          <input type="number" id="txAmount" placeholder="5000" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-teal-400 font-mono font-bold" />
-        </div>
-        <div>
-          <label class="text-[10px] text-slate-400 block mb-1">विवरण / पार्टी / UTR नंबर</label>
-          <input type="text" id="txRemark" placeholder="होटल ताज पेमेंट / UTR: 938201" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white" />
-        </div>
-      </div>
-      <div class="flex space-x-2 pt-2">
-        <button onclick="saveBankTransaction()" class="flex-1 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs">लेन-देन सेव करें</button>
-        <button onclick="closeModal('recordBankTxModal')" class="flex-1 bg-slate-800 text-slate-300 font-bold py-2.5 rounded-xl text-xs">रद्द करें</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- AUDIT REJECTION MODAL -->
-  <div id="rejectionModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-    <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-rose-500/30 space-y-4">
-      <h3 class="text-sm font-bold text-rose-400 flex items-center space-x-2">
-        <i data-lucide="x-circle" class="w-4 h-4"></i>
-        <span>ट्रिप रिजेक्ट करें (Fix & Re-Submit)</span>
-      </h3>
-      <input type="hidden" id="rejectTripId" />
-      <div>
-        <label class="text-[10px] text-slate-400 block mb-1">रिजेक्शन का स्पष्ट कारण लिखें:</label>
-        <textarea id="rejectReasonInput" rows="3" placeholder="उदा. एंड मीटर फोटो धुंधली है, या टोल पर्ची मिसिंग है..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></textarea>
-      </div>
-      <div class="flex space-x-2">
-        <button onclick="confirmRejectTrip()" class="flex-1 bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs">ड्राइवर को वापस भेजें</button>
-        <button onclick="closeModal('rejectionModal')" class="flex-1 bg-slate-800 text-slate-300 font-bold py-2.5 rounded-xl text-xs">रद्द करें</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- FIREBASE SCRIPTS -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, collection } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+    import { allotDuty } from './js/modules/manager-ops.js';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDOIEKyvSwfpRybZBmNuImzdJ3hdlEO3hI",
-      authDomain: "aachico-vault.firebaseapp.com",
-      projectId: "aachico-vault",
-      storageBucket: "aachico-vault.firebasestorage.app",
-      messagingSenderId: "766953520082",
-      appId: "1:766953520082:web:481f1aab82b74d78aae60b"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let mgrSession = JSON.parse(sessionStorage.getItem('aachico_mgr_session') || 'null');
-    let fleetCars = [];
-    let fleetDrivers = [];
-    let loadedTrips = [];
-    let bankAccounts = [];
+    document.getElementById('duty-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const res = await allotDuty({
+        clientName: document.getElementById('duty-client').value,
+        clientPhone: document.getElementById('duty-phone').value,
+        vehicleNumber: document.getElementById('duty-vehicle').value,
+        driverName: document.getElementById('duty-driver').value,
+        allotmentDate: new Date().toISOString().split('T')[0]
+      });
+      alert(res.message || res.error);
+      if(res.success) e.target.reset();
+    });
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      if(mgrSession) initManagerConsole();
     });
-
-    window.loginManager = function() {
-      const code = document.getElementById('mgrAuthComp').value.trim().toUpperCase();
-      const pass = document.getElementById('mgrAuthPass').value.trim();
-      if(!code || !pass) { alert("कंपनी कोड और पासकोड दर्ज करें!"); return; }
-
-      mgrSession = { companyCode: code };
-      sessionStorage.setItem('aachico_mgr_session', JSON.stringify(mgrSession));
-      initManagerConsole();
-    };
-
-    function initManagerConsole() {
-      document.getElementById('mgrAuthScreen').classList.add('hidden');
-      document.getElementById('mgrMainConsole').classList.remove('hidden');
-      document.getElementById('mgrHeaderComp').innerText = mgrSession.companyCode;
-      document.getElementById('placardCompTitle').innerText = mgrSession.companyCode;
-      lucide.createIcons();
-      refreshAllManagerData();
-    }
-
-    window.logoutManager = function() {
-      sessionStorage.removeItem('aachico_mgr_session');
-      location.reload();
-    };
-
-    window.switchMgrTab = function(tabId) {
-      ['tabDutyAudit', 'tabBankLedger', 'tabPartyBilling', 'tabFleetGarage', 'tabCashPetty'].forEach(t => {
-        document.getElementById(t).classList.add('hidden');
-        document.getElementById('tabBtn-' + t).className = "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 whitespace-nowrap";
-      });
-      document.getElementById(tabId).classList.remove('hidden');
-      document.getElementById('tabBtn-' + tabId).className = "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-teal-500 text-slate-950 whitespace-nowrap";
-      lucide.createIcons();
-    };
-
-    window.openModal = function(id) { document.getElementById(id).classList.remove('hidden'); };
-    window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); };
-
-    async function refreshAllManagerData() {
-      await Promise.all([loadFleetDropdowns(), loadTripsAudit(), loadBankData(), loadPartyBilling(), loadKeyRackAndDrivers()]);
-      lucide.createIcons();
-    }
-
-    // Dropdowns for Duty Allotment
-    async function loadFleetDropdowns() {
-      const carSelect = document.getElementById('allotCarSelect');
-      const swapCar1 = document.getElementById('swapCar1');
-      const swapCar2 = document.getElementById('swapCar2');
-      const tyreSelect = document.getElementById('tyreCarSelect');
-      const drvSelect = document.getElementById('allotDriverSelect');
-
-      try {
-        const carSnap = await getDocs(collection(db, "companies", mgrSession.companyCode, "cars"));
-        fleetCars = [];
-        let carOpts = `<option value="">-- गाड़ी चुनें --</option>`;
-        carSnap.forEach(d => {
-          const c = d.data();
-          fleetCars.push(c);
-          carOpts += `<option value="${c.carNumber}">${c.carNumber} (${c.carModel || 'कार'})</option>`;
-        });
-        carSelect.innerHTML = carOpts;
-        swapCar1.innerHTML = carOpts;
-        swapCar2.innerHTML = carOpts;
-        tyreSelect.innerHTML = carOpts;
-
-        const drvSnap = await getDocs(collection(db, "companies", mgrSession.companyCode, "drivers"));
-        fleetDrivers = [];
-        let drvOpts = `<option value="">-- ड्राइवर चुनें --</option>`;
-        drvSnap.forEach(d => {
-          const drv = d.data();
-          fleetDrivers.push(drv);
-          drvOpts += `<option value="${drv.pin}">${drv.name} (PIN: ${drv.pin})</option>`;
-        });
-        drvSelect.innerHTML = drvOpts;
-      } catch(e) {}
-    }
-
-    // 1A. Submit Duty Assignment
-    window.submitDutyAssignment = async function() {
-      const car = document.getElementById('allotCarSelect').value;
-      const pin = document.getElementById('allotDriverSelect').value;
-      const cust = document.getElementById('allotCustomer').value.trim();
-      const route = document.getElementById('allotRoute').value.trim();
-      const rate = Number(document.getElementById('allotRate').value) || 12;
-      const adv = Number(document.getElementById('allotAdvance').value) || 0;
-      const dt = document.getElementById('allotDateTime').value;
-
-      if(!car || !pin || !cust) {
-        alert("कृपया गाड़ी, ड्राइवर और पार्टी का नाम भरें!");
-        return;
-      }
-
-      try {
-        await addDoc(collection(db, "companies", mgrSession.companyCode, "allotted_duties"), {
-          carNumber: car,
-          driverPin: pin,
-          customerName: cust,
-          route: route,
-          ratePerKm: rate,
-          advancePaid: adv,
-          dateTime: dt || new Date().toISOString(),
-          status: "Assigned",
-          createdAt: new Date().toISOString()
-        });
-        alert(`ड्यूटी सफलतापूर्वक असाइन हो गई! ड्राइवर के ऐप पर कार्ड दिख जाएगा।`);
-        document.getElementById('allotCustomer').value = "";
-        document.getElementById('allotRoute').value = "";
-      } catch(e) { alert("ड्यूटी असाइनमेंट एरर: " + e.message); }
-    };
-
-    // 1B. Trips Audit & Anomaly Engine
-    async function loadTripsAudit() {
-      const tbody = document.getElementById('mgrAuditTableBody');
-      try {
-        const snap = await getDocs(collection(db, "companies", mgrSession.companyCode, "trips"));
-        loadedTrips = [];
-        let pending = 0, handCash = 0, anomalies = 0;
-
-        snap.forEach(d => {
-          const dat = { id: d.id, ...d.data() };
-          loadedTrips.push(dat);
-          if(dat.status === 'Pending' || !dat.status) pending++;
-          handCash += Number(dat.netCashInHand || 0);
-
-          const mileage = (dat.dieselLitre > 0 && dat.totalKm > 0) ? (dat.totalKm / dat.dieselLitre) : null;
-          if(mileage && mileage < 10) anomalies++;
-        });
-
-        document.getElementById('kpiPendingAudit').innerText = pending;
-        document.getElementById('kpiHandCash').innerText = `₹${handCash}`;
-        document.getElementById('kpiAnomalies').innerText = anomalies;
-        document.getElementById('kpiActiveCars').innerText = fleetCars.length;
-
-        if(loadedTrips.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-slate-500">कोई ट्रिप नहीं मिली।</td></tr>`;
-          return;
-        }
-
-        tbody.innerHTML = loadedTrips.slice(-20).reverse().map(t => {
-          const mileage = (t.dieselLitre > 0 && t.totalKm > 0) ? (t.totalKm / t.dieselLitre).toFixed(1) : 'N/A';
-          const isTheft = mileage !== 'N/A' && Number(mileage) < 10;
-
-          return `
-            <tr class="hover:bg-slate-900/50">
-              <td class="p-3">
-                <span class="font-bold text-white font-mono block">${t.carNumber}</span>
-                <span class="text-[10px] text-slate-400">${t.driverName || 'PIN: ' + t.driverPin}</span>
-              </td>
-              <td class="p-3">
-                <span class="text-slate-200 block">${t.customerName || 'Local'}</span>
-                <span class="text-[10px] text-slate-500">${t.route || 'Local Route'}</span>
-              </td>
-              <td class="p-3 font-mono">
-                ${t.startKm} ➔ ${t.endKm}
-                <span class="text-sky-400 font-bold block">(${t.totalKm} KM)</span>
-              </td>
-              <td class="p-3 font-mono">
-                <span class="text-rose-400">${t.dieselLitre || 0} L (₹${t.dieselAmt || 0})</span>
-                <span class="block text-[10px] ${isTheft ? 'text-rose-500 font-black animate-pulse' : 'text-slate-400'}">
-                  ${mileage} KM/L ${isTheft ? '⚠️ तेल मिसमैच' : ''}
-                </span>
-              </td>
-              <td class="p-3 font-mono text-amber-300">
-                टोल: ₹${t.tollTax || 0} | पार्क: ₹${t.parking || 0}
-                <span class="block text-[10px] text-slate-400">पर्चियां: ${t.slipsCount || 0} Slips</span>
-              </td>
-              <td class="p-3">
-                <span class="font-bold font-mono text-teal-400 text-xs">${t.payMode || 'CASH'}</span>
-                <span class="block text-[10px] text-slate-400">कलेक्शन: ₹${t.cashCollected || 0}</span>
-              </td>
-              <td class="p-3 font-mono font-bold ${t.netCashInHand >= 0 ? 'text-teal-400' : 'text-rose-400'}">
-                ₹${t.netCashInHand || 0}
-              </td>
-              <td class="p-3">
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded ${
-                  t.status === 'Approved' ? 'bg-emerald-500/20 text-emerald-400' :
-                  t.status === 'Rejected' ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/20 text-amber-400'
-                }">${t.status || 'Pending'}</span>
-                ${t.reSubmitted ? `<span class="block text-[9px] text-teal-400 font-bold">Re-Submitted</span>` : ''}
-              </td>
-              <td class="p-3 text-right space-x-1 whitespace-nowrap">
-                <button onclick="approveTripDirect('${t.id}')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-2 py-1 rounded text-[10px] font-bold">Approve</button>
-                <button onclick="promptRejectModal('${t.id}')" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 border border-rose-500/30 px-2 py-1 rounded text-[10px] font-bold">Reject</button>
-              </td>
-            </tr>
-          `;
-        }).join('');
-      } catch(e) { tbody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-slate-500">ऑडिट लोड एरर</td></tr>`; }
-    }
-
-    window.approveTripDirect = async function(id) {
-      await updateDoc(doc(db, "companies", mgrSession.companyCode, "trips", id), {
-        status: "Approved",
-        auditedBy: "Manager",
-        auditedAt: new Date().toISOString()
-      });
-      loadTripsAudit();
-    };
-
-    window.promptRejectModal = function(id) {
-      document.getElementById('rejectTripId').value = id;
-      document.getElementById('rejectReasonInput').value = "";
-      openModal('rejectionModal');
-    };
-
-    window.confirmRejectTrip = async function() {
-      const id = document.getElementById('rejectTripId').value;
-      const reason = document.getElementById('rejectReasonInput').value.trim();
-      if(!reason) { alert("रिजेक्ट करने का कारण लिखना अनिवार्य है!"); return; }
-
-      await updateDoc(doc(db, "companies", mgrSession.companyCode, "trips", id), {
-        status: "Rejected",
-        rejectReason: reason,
-        auditedBy: "Manager",
-        auditedAt: new Date().toISOString()
-      });
-      closeModal('rejectionModal');
-      loadTripsAudit();
-      alert("ट्रिप रिजेक्ट हो गई। ड्राइवर ऐप में सुधार का अलर्ट चला गया है।");
-    };
-
-    // ================= 2. BANK ACCOUNTS & TRANSACTIONS =================
-    window.saveNewBankAccount = async function() {
-      const name = document.getElementById('newBankName').value.trim();
-      const accNo = document.getElementById('newBankAccNo').value.trim();
-      const bal = Number(document.getElementById('newBankOpeningBal').value) || 0;
-
-      if(!name || !accNo) { alert("बैंक नाम और खाता संख्या भरें!"); return; }
-
-      try {
-        await addDoc(collection(db, "companies", mgrSession.companyCode, "bank_accounts"), {
-          bankName: name,
-          accountNumber: accNo,
-          currentBalance: bal,
-          createdAt: new Date().toISOString()
-        });
-        closeModal('addBankModal');
-        loadBankData();
-      } catch(e) { alert("बैंक सेव एरर: " + e.message); }
-    };
-
-    async function loadBankData() {
-      const grid = document.getElementById('bankAccountsGrid');
-      const select = document.getElementById('txBankSelect');
-      const txBody = document.getElementById('bankTxTableBody');
-
-      try {
-        const snap = await getDocs(collection(db, "companies", mgrSession.companyCode, "bank_accounts"));
-        bankAccounts = [];
-        let totalLiquid = 0;
-        let opts = "";
-
-        snap.forEach(d => {
-          const b = { id: d.id, ...d.data() };
-          bankAccounts.push(b);
-          totalLiquid += Number(b.currentBalance || 0);
-          opts += `<option value="${b.id}">${b.bankName} (₹${b.currentBalance})</option>`;
-        });
-
-        document.getElementById('dispTotalBankBalance').innerText = `₹${totalLiquid}`;
-        select.innerHTML = opts;
-
-        if(bankAccounts.length === 0) {
-          grid.innerHTML = `<p class="text-xs text-slate-500 col-span-3">कोई बैंक या QR खाता दर्ज नहीं है। ऊपर से जोड़ें।</p>`;
-        } else {
-          grid.innerHTML = bankAccounts.map(b => `
-            <div class="glass-card p-4 rounded-2xl border border-teal-500/20 space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="font-bold text-white text-xs">${b.bankName}</span>
-                <span class="text-[10px] bg-teal-500/20 text-teal-400 px-2 py-0.5 rounded font-mono">Live</span>
-              </div>
-              <h4 class="text-xl font-black text-teal-400 font-mono">₹${b.currentBalance || 0}</h4>
-              <p class="text-[10px] text-slate-400 font-mono truncate">खाता / UPI: ${b.accountNumber}</p>
-            </div>
-          `).join('');
-        }
-
-        // Load Recent Transactions
-        const txSnap = await getDocs(collection(db, "companies", mgrSession.companyCode, "bank_transactions"));
-        let txList = [];
-        txSnap.forEach(d => txList.push(d.data()));
-
-        if(txList.length === 0) {
-          txBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">कोई लेन-देन नहीं मिला।</td></tr>`;
-          return;
-        }
-
-        txBody.innerHTML = txList.slice(-10).reverse().map(tx => `
-          <tr class="hover:bg-slate-900/50">
-            <td class="p-3 text-slate-400 text-[10px]">${tx.time ? tx.time.slice(0, 10) : 'Today'}</td>
-            <td class="p-3 font-bold text-white text-xs">${tx.bankName}</td>
-            <td class="p-3 text-slate-300 text-xs">${tx.remark || 'N/A'}</td>
-            <td class="p-3">
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${tx.type === 'CREDIT' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
-                ${tx.type}
-              </span>
-            </td>
-            <td class="p-3 text-right font-bold text-xs ${tx.type === 'CREDIT' ? 'text-emerald-400' : 'text-rose-400'}">
-              ${tx.type === 'CREDIT' ? '+' : '-'}₹${tx.amount}
-            </td>
-          </tr>
-        `).join('');
-
-      } catch(e) {}
-    }
-
-    window.saveBankTransaction = async function() {
-      const bankId = document.getElementById('txBankSelect').value;
-      const type = document.getElementById('txTypeSelect').value;
-      const amt = Number(document.getElementById('txAmount').value) || 0;
-      const remark = document.getElementById('txRemark').value.trim();
-
-      if(!bankId || amt <= 0) { alert("वैध रकम और खाता चुनें!"); return; }
-
-      const targetBank = bankAccounts.find(b => b.id === bankId);
-      if(!targetBank) return;
-
-      const newBal = type === 'CREDIT' ? (targetBank.currentBalance + amt) : (targetBank.currentBalance - amt);
-
-      try {
-        await updateDoc(doc(db, "companies", mgrSession.companyCode, "bank_accounts", bankId), {
-          currentBalance: newBal
-        });
-        await addDoc(collection(db, "companies", mgrSession.companyCode, "bank_transactions"), {
-          bankName: targetBank.bankName,
-          type: type,
-          amount: amt,
-          remark: remark,
-          time: new Date().toISOString()
-        });
-        closeModal('recordBankTxModal');
-        loadBankData();
-      } catch(e) { alert("लेन-देन त्रुटि: " + e.message); }
-    };
-
-    // ================= 3. B2B PARTY BILLING & RECOVERY =================
-    async function loadPartyBilling() {
-      const tbody = document.getElementById('partyBillingTableBody');
-      try {
-        const snap = await getDocs(collection(db, "companies", mgrSession.companyCode, "trips"));
-        let b2bTrips = [];
-        let totalDue = 0;
-
-        snap.forEach(d => {
-          const t = d.data();
-          if(t.payMode === 'NO_PAY' || t.customerName) {
-            b2bTrips.push({ id: d.id, ...t });
-            totalDue += Number(t.finalPayable || t.cashCollected || 0);
-          }
-        });
-
-        document.getElementById('kpiTotalRecovery').innerText = `₹${totalDue}`;
-        document.getElementById('kpiOverdueRecovery').innerText = `₹${Math.round(totalDue * 0.4)}`;
-        document.getElementById('kpiRecoveredThisMonth').innerText = `₹${Math.round(totalDue * 0.6)}`;
-
-        if(b2bTrips.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500">कोई B2B पार्टी लेज़र रिकॉर्ड नहीं मिला।</td></tr>`;
-          return;
-        }
-
-        tbody.innerHTML = b2bTrips.slice(-10).reverse().map(b => `
-          <tr class="hover:bg-slate-900/50">
-            <td class="p-3 font-bold text-white text-xs">${b.customerName || 'Guest Party'}</td>
-            <td class="p-3 font-mono text-slate-400 text-xs">${b.carNumber} (${b.route || 'Tour'})</td>
-            <td class="p-3 font-mono font-bold text-white text-xs">₹${b.totalExpense ? b.totalExpense + 1500 : 3500}</td>
-            <td class="p-3 font-mono text-teal-400 text-xs">₹${b.advancePaid || 0}</td>
-            <td class="p-3 font-mono font-bold text-amber-400 text-xs">₹${b.netCashInHand || 2500}</td>
-            <td class="p-3">
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400">Bill Sent</span>
-            </td>
-            <td class="p-3 text-right">
-              <button onclick="sendWhatsAppPaymentReminder('${b.customerName}', 2500)" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 px-2 py-1 rounded text-[10px] font-bold">
-                WhatsApp तकादा
-              </button>
-            </td>
-          </tr>
-        `).join('');
-
-      } catch(e) { tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500">पार्टी लेज़र लोड एरर</td></tr>`; }
-    }
-
-    window.sendWhatsAppPaymentReminder = function(party, amt) {
-      const msg = encodeURIComponent(`नमस्ते ${party} जी, Aachico Travels की ओर से आपकी हालिया ट्रिप का बकाया बैलेंस ₹${amt} देय है। कृपया कंपनी खाते में भुगतान कराने की कृपा करें। धन्यवाद!`);
-      window.open(`https://wa.me/?text=${msg}`, '_blank');
-    };
-
-    // ================= 4. TYRE SERIALS & MID-TRIP SWAP =================
-    window.loadCarTyres = async function() {
-      const car = document.getElementById('tyreCarSelect').value;
-      if(!car) return;
-
-      try {
-        const snap = await getDoc(doc(db, "companies", mgrSession.companyCode, "cars", car));
-        if(snap.exists() && snap.data().tyres) {
-          const t = snap.data().tyres;
-          document.getElementById('tyreFL').value = t.FL || '';
-          document.getElementById('tyreFR').value = t.FR || '';
-          document.getElementById('tyreRL').value = t.RL || '';
-          document.getElementById('tyreRR').value = t.RR || '';
-          document.getElementById('tyreSP').value = t.SP || '';
-        } else {
-          document.getElementById('tyreFL').value = '';
-          document.getElementById('tyreFR').value = '';
-          document.getElementById('tyreRL').value = '';
-          document.getElementById('tyreRR').value = '';
-          document.getElementById('tyreSP').value = '';
-        }
-      } catch(e) {}
-    };
-
-    window.saveTyreSerials = async function() {
-      const car = document.getElementById('tyreCarSelect').value;
-      if(!car) { alert("गाड़ी चुनें!"); return; }
-
-      const tyres = {
-        FL: document.getElementById('tyreFL').value.trim(),
-        FR: document.getElementById('tyreFR').value.trim(),
-        RL: document.getElementById('tyreRL').value.trim(),
-        RR: document.getElementById('tyreRR').value.trim(),
-        SP: document.getElementById('tyreSP').value.trim()
-      };
-
-      try {
-        await updateDoc(doc(db, "companies", mgrSession.companyCode, "cars", car), { tyres });
-        alert(`गाड़ी ${car} के 5 टायरों के सीरियल नंबर सफलतापूर्वक लॉक हो गए!`);
-      } catch(e) { alert("टायर सेव एरर: " + e.message); }
-    };
-
-    window.executeMidTripSwap = function() {
-      const c1 = document.getElementById('swapCar1').value;
-      const c2 = document.getElementById('swapCar2').value;
-      if(!c1 || !c2 || c1 === c2) { alert("कृपया दो अलग-अलग गाड़ियाँ चुनें!"); return; }
-      alert(`मिड-ट्रिप स्वैप सक्रिय: ${c1} का बिल और KM सफलतापूर्वक ${c2} में मर्ज कर दिया गया है!`);
-    };
-
-    // ================= 5. DRIVER CASH & PETTY CASH =================
-    async function loadKeyRackAndDrivers() {
-      const keyBox = document.getElementById('keyRackStatusGrid');
-      const drvList = document.getElementById('driverCashSettlementList');
-
-      keyBox.innerHTML = fleetCars.map(c => `
-        <span class="bg-slate-900 border border-slate-700 px-2 py-1 rounded text-slate-300">
-          🔑 ${c.carNumber}: ऑफिस में मौजूद
-        </span>
-      `).join('');
-
-      drvList.innerHTML = fleetDrivers.map(d => `
-        <div class="flex items-center justify-between p-3 bg-slate-950 rounded-2xl border border-slate-800">
-          <div>
-            <span class="font-bold text-white text-xs">${d.name}</span>
-            <p class="text-[10px] text-teal-400 font-mono">हाथ में बाकी कैश: ₹${d.inHandPending || 0}</p>
-          </div>
-          <button onclick="settleDriverCashZero('${d.name}')" class="bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-2.5 py-1 rounded-xl text-xs">
-            Receive & Settle ₹0
-          </button>
-        </div>
-      `).join('');
-    }
-
-    window.settleDriverCashZero = async function(name) {
-      if(!confirm(`ड्राइवर "${name}" का कैश ऑफिस में प्राप्त हो गया है? इसका लेज़र ₹0 हो जाएगा।`)) return;
-      await updateDoc(doc(db, "companies", mgrSession.companyCode, "drivers", name), { inHandPending: 0 });
-      alert("कैश प्राप्त हुआ! ड्राइवर का खाता सेटल हो गया।");
-      loadKeyRackAndDrivers();
-    };
-
-    window.addPettyCashEntry = function() {
-      const desc = document.getElementById('pettyDesc').value.trim();
-      const amt = Number(document.getElementById('pettyAmt').value) || 0;
-      if(!desc || amt <= 0) { alert("खर्च विवरण और सही रकम भरें!"); return; }
-
-      const box = document.getElementById('pettyCashHistoryBox');
-      const item = document.createElement('div');
-      item.className = "flex items-center justify-between p-2 bg-slate-900 rounded-xl border border-slate-800 text-xs";
-      item.innerHTML = `<span>${desc}</span><span class="font-mono text-rose-400 font-bold">-₹${amt}</span>`;
-      box.prepend(item);
-
-      document.getElementById('pettyDesc').value = "";
-      document.getElementById('pettyAmt').value = "";
-    };
-
-    window.closeDayShift = function() {
-      if(confirm("क्या आप आज की पूरी शिफ्ट क्लोज़ करके सारा कैश मालिक (Owner) को हैंडओवर करना चाहते हैं?")) {
-        alert("डे-एंड शिफ्ट क्लोज़! दैनिक कैश हैंडओवर रिपोर्ट मालिक के पास भेज दी गई है।");
-      }
-    };
-
-    // Placard Live Update
-    window.updatePlacardLive = function() {
-      const g = document.getElementById('inPlacardGuest').value.trim();
-      const f = document.getElementById('inPlacardFlight').value.trim();
-      if(g) document.getElementById('placardGuestName').innerText = g.toUpperCase();
-      if(f) document.getElementById('placardFlightDetails').innerText = f.toUpperCase();
-    };
-  </script>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js');
-    }
   </script>
 </body>
 </html>
