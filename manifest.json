@@ -1,43 +1,18 @@
 {
-  "name": "Aachico Vault - Fleet OS",
+  "name": "Aachico Vault - Fleet & Ledger Management System",
   "short_name": "AachicoVault",
   "start_url": "./index.html",
-  "scope": "./",
   "display": "standalone",
   "background_color": "#020617",
   "theme_color": "#020617",
-  "orientation": "any",
-  "shortcuts": [
-    {
-      "name": "Driver App",
-      "short_name": "Driver",
-      "description": "Open Driver Companion",
-      "url": "./driver.html",
-      "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/3063/3063822.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Manager Desk",
-      "short_name": "Manager",
-      "description": "Open Manager Operations & Billing",
-      "url": "./manager.html",
-      "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/942/942748.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Company Admin",
-      "short_name": "Admin",
-      "description": "Open Fleet Admin Dashboard",
-      "url": "./admin.html",
-      "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/2620/2620611.png", "sizes": "192x192" }]
-    }
-  ],
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3063/3063822.png",
+      "src": "https://img.icons8.com/fluency/192/shield.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3063/3063822.png",
+      "src": "https://img.icons8.com/fluency/512/shield.png",
       "sizes": "512x512",
       "type": "image/png"
     }
