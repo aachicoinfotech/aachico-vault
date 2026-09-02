@@ -70,6 +70,37 @@
       </div>
     </div>
 
+    <!-- Company Profile & Logo Setting Section -->
+    <div class="glass-card p-6 rounded-3xl border border-amber-500/30 space-y-4 bg-gradient-to-r from-amber-500/5 to-transparent">
+      <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
+        <i data-lucide="building-2" class="w-5 h-5 text-amber-400"></i>
+        <h3 class="font-bold text-white text-sm">कंपनी प्रोफाइल और बिलिंग लोगो (Company Profile & Invoice Branding)</h3>
+      </div>
+      <form id="company-profile-form" class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">कंपनी / ट्रेवल्स का नाम (Company Name)</label>
+          <input type="text" id="cp-name" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500" placeholder="Aachico Travels Udaipur">
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">मोबाइल / फोन नंबर</label>
+          <input type="tel" id="cp-phone" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-amber-500" placeholder="9166381579">
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">जीएसटी नंबर / टैक्स आईडी (GST/Tax ID)</label>
+          <input type="text" id="cp-gst" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white uppercase font-mono focus:outline-none focus:border-amber-500" placeholder="08AXXXX0000X1Z5">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-slate-400 mb-1">पूरा पता (Office Address)</label>
+          <input type="text" id="cp-address" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500" placeholder="Udaipur, Rajasthan">
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl transition shadow-md cursor-pointer">
+            प्रोफाइल सेव व अपडेट करें
+          </button>
+        </div>
+      </form>
+    </div>
+
     <!-- Management Sections Grid (Vehicle & Driver Forms) -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       
@@ -314,8 +345,39 @@
       window.location.href = "login.html";
     });
 
+    // Load Company Profile Data into Inputs if saved
+    function loadCompanyProfileData() {
+      const savedName = localStorage.getItem('aachico_comp_name');
+      const savedPhone = localStorage.getItem('aachico_comp_phone');
+      const savedGst = localStorage.getItem('aachico_comp_gst');
+      const savedAddress = localStorage.getItem('aachico_comp_address');
+
+      if (savedName) document.getElementById('cp-name').value = savedName;
+      if (savedPhone) document.getElementById('cp-phone').value = savedPhone;
+      if (savedGst) document.getElementById('cp-gst').value = savedGst;
+      if (savedAddress) document.getElementById('cp-address').value = savedAddress;
+    }
+
+    // Company Profile Form Save Handler
+    document.getElementById('company-profile-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const compName = document.getElementById('cp-name').value;
+      const compPhone = document.getElementById('cp-phone').value;
+      const compGst = document.getElementById('cp-gst').value;
+      const compAddress = document.getElementById('cp-address').value;
+
+      localStorage.setItem('aachico_comp_name', compName);
+      localStorage.setItem('aachico_comp_phone', compPhone);
+      localStorage.setItem('aachico_comp_gst', compGst);
+      localStorage.setItem('aachico_comp_address', compAddress);
+
+      alert("कंपनी प्रोफाइल और बिलिंग डिटेल्स सफलतापूर्वक अपडेट कर दी गई हैं! अब इनवॉइस में यही विवरण छपकर आएगा।");
+    });
+
     // Load Live Dashboard Stats & Tables (Vehicles, Drivers, Trips)
     async function loadAdminDashboard() {
+      loadCompanyProfileData();
+
       // 1. Vehicles List & Stats
       const vehiclesRes = await fetchAllVehicles();
       if (vehiclesRes.success) {
