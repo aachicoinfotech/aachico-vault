@@ -11,6 +11,10 @@
   
   <!-- Master Theme & Responsive CSS -->
   <link rel="stylesheet" href="./css/themes.css">
+
+  <!-- Adsterra Monetization Scripts (Social Bar & Popunder) -->
+  <script src="https://pl31151923.profitableratecpmnetwork.com/51/cd/c0/51cdc0777c0281a5bee5cd02bd67d97c.js"></script>
+  <script src="https://pl31151922.profitableratecpmnetwork.com/19/dd/f9/19ddf9ecf7656b128bef1db758fc1ab2.js"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
 
@@ -45,7 +49,7 @@
     <!-- Welcome & Quick Stats Bar -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
-        <p class="text-xs text-slate-400 font-medium">कुल सक्रिय गाड़ियाँ</p>
+        <p class="text-xs text-slate-400 font-medium">कुल सक्रिय गाड़ियाँ</p>
         <h3 class="text-2xl font-black text-white font-mono" id="stat-vehicles">0</h3>
         <span class="text-[10px] text-emerald-400 font-bold">फ्ललीट डेटा सिंक</span>
       </div>
@@ -168,6 +172,83 @@
     import { fetchAllTrips } from './js/modules/trips-audit.js';
     import { fetchFinancialLedger } from './js/modules/finance-pl.js';
 
+    // 1. मोनेटाइजेशन एड मॉडल (असली Adsterra Banner 300x250 के साथ)
+    function showMonetizationAdModal(onAdFinished) {
+      const adDiv = document.createElement('div');
+      adDiv.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-md";
+      adDiv.innerHTML = `
+        <div class="glass-card p-6 rounded-3xl border border-amber-500/50 max-w-sm text-center space-y-4 bg-slate-900 shadow-2xl">
+          <span class="bg-amber-500/20 text-amber-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase">Sponsored Ad (फ्री प्लान स्पॉन्सर)</span>
+          <div class="py-3 bg-slate-950 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-2 overflow-hidden">
+            <p class="text-[11px] text-slate-400">ATR & Aachico Travels Partner Ad</p>
+            
+            <!-- Adsterra Banner 300x250 Code -->
+            <div class="w-[300px] h-[250px] flex items-center justify-center bg-slate-900 rounded-xl overflow-hidden">
+              <script>
+                atOptions = {
+                  'key' : '676fb17513eca2d63aa605342a9e66ac',
+                  'format' : 'iframe',
+                  'height' : 250,
+                  'width' : 300,
+                  'params' : {}
+                };
+              </script>
+              <script src="https://www.highrevenueformat.com/676fb17513eca2d63aa605342a9e66ac/invoke.js"></script>
+            </div>
+
+            <p id="ad-timer" class="text-[11px] text-amber-400 font-mono font-bold mt-2">कृपया 3 सेकंड प्रतीक्षा करें...</p>
+          </div>
+          <p class="text-[10px] text-slate-400">विज्ञापनों से मुक्ति पाने और बिना रुकावट के काम करने के लिए एनुअल प्लान लें।</p>
+          <button id="close-ad-btn" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-2.5 rounded-xl text-xs transition cursor-not-allowed">
+            एंट्री सेव हो रही है...
+          </button>
+          <a href="https://wa.me/919166381579?text=Hello,%20I%20want%20to%20remove%20ads%20and%20upgrade%20Aachico%20Vault%20plan." target="_blank" class="block text-[11px] text-sky-400 hover:underline">
+            विज्ञापन हटाएं (WhatsApp पर प्लान लें)
+          </a>
+        </div>
+      `;
+      document.body.appendChild(adDiv);
+
+      let timeLeft = 3;
+      const timerEl = document.getElementById('ad-timer');
+      const closeBtn = document.getElementById('close-ad-btn');
+
+      const countdown = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          timerEl.textContent = `कृपया ${timeLeft} सेकंड प्रतीक्षा करें...`;
+        } else {
+          clearInterval(countdown);
+          timerEl.textContent = "विज्ञापन पूरा हुआ!";
+          closeBtn.disabled = false;
+          closeBtn.className = "w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-md cursor-pointer";
+          closeBtn.textContent = "आगे बढ़ें (Continue)";
+        }
+      }, 1000);
+
+      closeBtn.addEventListener('click', () => {
+        adDiv.remove();
+        if (onAdFinished) onAdFinished();
+      });
+    }
+
+    // 2. व्हाट्सएप रिन्यूअल लॉक पॉपअप (जब लिमिट क्रॉस हो जाए)
+    function showLockPopup(message) {
+      const lockDiv = document.createElement('div');
+      lockDiv.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md";
+      lockDiv.innerHTML = `
+        <div class="glass-card p-6 rounded-3xl border border-rose-500/50 max-w-md text-center space-y-4 bg-slate-900 shadow-2xl">
+          <div class="w-12 h-12 bg-rose-500/20 text-rose-400 rounded-full flex items-center justify-center mx-auto text-xl font-bold">🔒</div>
+          <h3 class="text-lg font-bold text-white">प्रीमियम लॉक / सीमा समाप्त</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">${message}</p>
+          <a href="https://wa.me/919166381579?text=Hello,%20I%20want%20to%20activate%20or%20renew%20my%20Aachico%20Vault%20plan." target="_blank" class="block w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-md">
+            WhatsApp पर पेमेंट करके प्लान एक्टिवेट करें
+          </a>
+        </div>
+      `;
+      document.body.appendChild(lockDiv);
+    }
+
     // Check session
     const session = checkAdminSession();
 
@@ -221,35 +302,85 @@
       }
     }
 
-    // Vehicle Form Handler
+    // Vehicle Form Handler with Limit Guard & Ad Monetization
     document.getElementById('vehicle-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const res = await registerNewVehicle({
-        vehicleNumber: document.getElementById('v-number').value,
-        modelName: document.getElementById('v-model').value,
-        currentOdometer: document.getElementById('v-km').value,
-        ownerName: "Admin"
-      });
-      alert(res.message || res.error);
-      if(res.success) {
-        e.target.reset();
-        loadAdminDashboard();
+      const vehiclesRes = await fetchAllVehicles();
+      const currentCount = vehiclesRes.success ? vehiclesRes.data.length : 0;
+      
+      const currentPlan = localStorage.getItem('aachico_active_plan') || 'Free Community';
+      if (currentPlan === 'Free Community' && currentCount >= 5) {
+        showLockPopup("फ्री कम्युनिटी प्लान की गाड़ी जोड़ने की अधिकतम सीमा (5 गाड़ियाँ) समाप्त हो चुकी है। अनलिमिटेड गाड़ियों के लिए WhatsApp पर संपर्क करें।");
+        return;
+      }
+
+      if (currentPlan === 'Free Community') {
+        showMonetizationAdModal(async () => {
+          const res = await registerNewVehicle({
+            vehicleNumber: document.getElementById('v-number').value,
+            modelName: document.getElementById('v-model').value,
+            currentOdometer: document.getElementById('v-km').value,
+            ownerName: "Admin"
+          });
+          alert(res.message || res.error);
+          if(res.success) {
+            e.target.reset();
+            loadAdminDashboard();
+          }
+        });
+      } else {
+        const res = await registerNewVehicle({
+          vehicleNumber: document.getElementById('v-number').value,
+          modelName: document.getElementById('v-model').value,
+          currentOdometer: document.getElementById('v-km').value,
+          ownerName: "Admin"
+        });
+        alert(res.message || res.error);
+        if(res.success) {
+          e.target.reset();
+          loadAdminDashboard();
+        }
       }
     });
 
-    // Driver Form Handler
+    // Driver Form Handler with Limit Guard & Ad Monetization
     document.getElementById('driver-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const res = await registerNewDriver({
-        fullName: document.getElementById('d-name').value,
-        phoneNumber: document.getElementById('d-phone').value,
-        driverPin: document.getElementById('d-pin').value,
-        monthlySalary: 15000
-      });
-      alert(res.message || res.error);
-      if(res.success) {
-        e.target.reset();
-        loadAdminDashboard();
+      const driversRes = await fetchAllDrivers();
+      const currentCount = driversRes.success ? driversRes.data.length : 0;
+
+      const currentPlan = localStorage.getItem('aachico_active_plan') || 'Free Community';
+      if (currentPlan === 'Free Community' && currentCount >= 7) {
+        showLockPopup("फ्री कम्युनिटी प्लान की ड्राइवर जोड़ने की अधिकतम सीमा (7 ड्राइवर) समाप्त हो चुकी है। अनलिमिटेड ड्राइवर्स के लिए WhatsApp पर संपर्क करें।");
+        return;
+      }
+
+      if (currentPlan === 'Free Community') {
+        showMonetizationAdModal(async () => {
+          const res = await registerNewDriver({
+            fullName: document.getElementById('d-name').value,
+            phoneNumber: document.getElementById('d-phone').value,
+            driverPin: document.getElementById('d-pin').value,
+            monthlySalary: 15000
+          });
+          alert(res.message || res.error);
+          if(res.success) {
+            e.target.reset();
+            loadAdminDashboard();
+          }
+        });
+      } else {
+        const res = await registerNewDriver({
+          fullName: document.getElementById('d-name').value,
+          phoneNumber: document.getElementById('d-phone').value,
+          driverPin: document.getElementById('d-pin').value,
+          monthlySalary: 15000
+        });
+        alert(res.message || res.error);
+        if(res.success) {
+          e.target.reset();
+          loadAdminDashboard();
+        }
       }
     });
 
