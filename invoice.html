@@ -54,12 +54,13 @@
   <!-- A4 Invoice Wrapper -->
   <div class="invoice-container max-w-3xl w-full glass-card p-8 rounded-3xl border border-slate-800 bg-white text-slate-900 space-y-6 shadow-2xl">
     
-    <!-- Header: Company Info -->
+    <!-- Header: Company Info (Dynamic from Admin Profile) -->
     <div class="flex justify-between items-start border-b border-slate-200 pb-6">
       <div>
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight">AACHICO TRAVELS UDAIPUR</h1>
+        <h1 class="text-2xl font-black text-slate-900 tracking-tight" id="invoice-comp-name">AACHICO TRAVELS UDAIPUR</h1>
         <p class="text-xs text-slate-600">प्रिमियम टैक्सी फ्लीट, टूर एंड ट्रेवल्स ऑपरेटर</p>
-        <p class="text-xs text-slate-500 mt-1">उदयपुर, राजस्थान | हेल्पलाइन: +91 9166381579</p>
+        <p class="text-xs text-slate-500 mt-1"><span id="invoice-comp-address">उदयपुर, राजस्थान</span> | हेल्पलाइन: <span id="invoice-comp-phone">+91 9166381579</span></p>
+        <p class="text-[11px] text-slate-500 font-mono mt-0.5" id="invoice-comp-gst-box">GSTIN: <span id="invoice-comp-gst">N/A</span></p>
       </div>
       <div class="text-right">
         <span class="inline-block bg-amber-100 text-amber-800 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">TAX INVOICE</span>
@@ -127,7 +128,7 @@
         <div class="h-12 border-b border-dashed border-slate-300 w-40 mt-2"></div>
       </div>
       <div class="text-right">
-        <p class="font-bold text-slate-700">वास्ते Aachico Travels Udaipur</p>
+        <p class="font-bold text-slate-700" id="sign-company-name">वास्ते Aachico Travels Udaipur</p>
         <div class="h-12 border-b border-dashed border-slate-300 w-40 mt-2 ml-auto"></div>
         <p class="text-[10px] text-slate-400 mt-1">अधिकृत हस्ताक्षरकर्ता (Authorized Signatory)</p>
       </div>
@@ -138,6 +139,32 @@
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
+
+      // एडमिन पैनल से सेव की गई कंपनी प्रोफाइल को इनवॉइस पर लोड करना
+      const savedName = localStorage.getItem('aachico_comp_name');
+      const savedPhone = localStorage.getItem('aachico_comp_phone');
+      const savedGst = localStorage.getItem('aachico_comp_gst');
+      const savedAddress = localStorage.getItem('aachico_comp_address');
+
+      if (savedName) {
+        document.getElementById('invoice-comp-name').textContent = savedName.toUpperCase();
+        document.getElementById('sign-company-name').textContent = `वास्ते ${savedName}`;
+      }
+      if (savedPhone) {
+        document.getElementById('invoice-comp-phone').textContent = `+91 ${savedPhone}`;
+      }
+      if (savedAddress) {
+        document.getElementById('invoice-comp-address').textContent = savedAddress;
+      }
+      if (savedGst) {
+        document.getElementById('invoice-comp-gst').textContent = savedGst;
+      } else {
+        document.getElementById('invoice-comp-gst-box').style.display = 'none';
+      }
+
+      // आज की तारीख ऑटोमैटिक सेट करना
+      const today = new Date().toLocaleDateString('hi-IN');
+      document.getElementById('inv-date').textContent = today;
     });
   </script>
 </body>
