@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aachico Vault - Manager Operations & Billing Desk</title>
+  <link rel="manifest" href="./manifest.json">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .glass-card { background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    @media print {
+      body * { visibility: hidden; }
+      #printableInvoice, #printableInvoice * { visibility: visible; }
+      #printableInvoice { position: absolute; left: 0; top: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950">
+
+  <!-- ================= MANAGER LOGIN SCREEN ================= -->
+  <div id="managerLoginScreen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-sm p-6 sm:p-8 rounded-3xl border border-teal-500/30 space-y-5 shadow-2xl">
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-teal-500/20 text-teal-400 flex items-center justify-center font-black text-2xl border border-teal-500/40">
+          <i data-lucide="receipt" class="w-8 h-8"></i>
+        </div>
+        <h1 class="text-xl font-extrabold text-white">Manager Billing Desk</h1>
+        <p class="text-xs text-slate-400">फ्लीट ऑपरेशन, बिलिंग व खाता प्रबंधन</p>
+      </div>
+
+      <div class="space-y-3.5">
+        <div>
+          <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Company Code</label>
+          <input type="text" id="mgrCompanyCode" placeholder="उदा. RJ27-FLEET" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white uppercase focus:border-teal-500 font-mono text-center" />
+        </div>
+        <div>
+          <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Manager Passcode / PIN</label>
+          <input type="password" id="mgrPassword" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:border-teal-500 text-center font-mono" />
+        </div>
+        <button onclick="handleManagerLogin()" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition flex items-center justify-center space-x-2 shadow-lg shadow-teal-500/20">
+          <i data-lucide="lock-open" class="w-4 h-4"></i>
+          <span>डेस्क लॉगिन करें</span>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between text-xs pt-2">
+        <button onclick="openForgotMgrModal()" class="text-xs text-teal-400 hover:underline">पिन भूल गए? (Forgot PIN?)</button>
+        <a href="index.html" class="text-slate-500 hover:text-slate-400">होमपेज ←</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORGOT PIN MODAL -->
+  <div id="forgotMgrModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-slate-700 space-y-4">
+      <div class="text-center space-y-1">
+        <h3 class="font-bold text-base text-white">मैनेजर पिन रिकवरी</h3>
+        <p class="text-xs text-slate-400">कंपनी सुरक्षा प्रोटोकॉल</p>
+      </div>
+      <div class="bg-slate-900 p-3 rounded-xl text-xs space-y-2 border border-slate-800">
+        <p class="text-slate-300">मैनेजर कोड एडमिन द्वारा अधिकृत होता है।</p>
+        <p class="text-teal-400 font-bold">यदि आप पिन भूल गए हैं तो कंपनी ओनर से संपर्क करें। वह 1 क्लिक में नया कोड अलॉट कर सकते हैं।</p>
+      </div>
+      <button onclick="closeForgotMgrModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 rounded-xl text-xs transition">
+        वापस लॉगिन स्क्रीन
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= ACTIVE MANAGER DASHBOARD ================= -->
+  <div id="managerDashboard" class="hidden min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <header class="glass-card border-b border-slate-800 px-4 sm:px-6 py-3.5 flex items-center justify-between sticky top-0 z-40">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center font-black text-sm border border-teal-500/30">
+          M
+        </div>
+        <div>
+          <h2 class="font-bold text-xs sm:text-sm text-white flex items-center space-x-2">
+            <span>मैनेजर ऑपरेशन्स व बिलिंग</span>
+            <span id="displayMgrCompany" class="text-[10px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded">RJ27-FLEET</span>
+          </h2>
+          <p class="text-[10px] text-slate-400">फ्लीट कंट्रोल, कस्टमर इनवॉइस व लेज़र</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button onclick="openChangeMgrPinModal()" class="text-xs bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-slate-300 hover:bg-slate-800">
+          पिन बदलें
+        </button>
+        <button onclick="logoutManager()" class="text-xs bg-rose-500/10 border border-rose-500/30 text-rose-400 px-3 py-1.5 rounded-xl">
+          लॉगआउट
+        </button>
+      </div>
+    </header>
+
+    <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+      <!-- ACTION TABS -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="glass-card p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+          <div>
+            <p class="text-xs text-slate-400">आज का बिलिंग कलेक्शन</p>
+            <p id="todayBillingSum" class="text-xl font-black text-white font-mono mt-0.5">₹0</p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+            <i data-lucide="arrow-down-left" class="w-5 h-5"></i>
+          </div>
+        </div>
+
+        <div class="glass-card p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+          <div>
+            <p class="text-xs text-slate-400">कुल बकाया राशि (Pending Khata)</p>
+            <p id="totalPendingKhata" class="text-xl font-black text-rose-400 font-mono mt-0.5">₹0</p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center">
+            <i data-lucide="clock" class="w-5 h-5"></i>
+          </div>
+        </div>
+
+        <div class="glass-card p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+          <div>
+            <p class="text-xs text-slate-400">क्लाउड स्टेटस</p>
+            <p class="text-xs font-bold text-teal-400 flex items-center space-x-1 mt-1">
+              <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
+              <span>Admin Auto-Sync On</span>
+            </p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center">
+            <i data-lucide="cloud" class="w-5 h-5"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 1: INSTANT BILL GENERATOR -->
+      <div class="glass-card p-5 sm:p-6 rounded-3xl border border-slate-800 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h3 class="font-bold text-sm sm:text-base text-white flex items-center space-x-2">
+            <i data-lucide="file-plus" class="w-5 h-5 text-teal-400"></i>
+            <span>नया बिल / इनवॉइस बनाएँ (Create Invoice & Booking)</span>
+          </h3>
+          <span class="text-[10px] bg-teal-500/10 text-teal-400 px-2 py-0.5 rounded font-mono">Invoice Engine</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="text-[10px] text-slate-400 block mb-1">कस्टमर / पार्टी का नाम</label>
+            <input type="text" id="billCustName" placeholder="उदा. राहुल शर्मा" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white" />
+          </div>
+          <div>
+            <label class="text-[10px] text-slate-400 block mb-1">कस्टमर मोबाइल (WhatsApp)</label>
+            <input type="tel" id="billCustPhone" placeholder="9876543210" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
+          </div>
+          <div>
+            <label class="text-[10px] text-slate-400 block mb-1">गाड़ी नंबर</label>
+            <input type="text" id="billCarNumber" placeholder="RJ27-TA-1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono uppercase" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div>
+            <label class="text-[10px] text-slate-400 block mb-1">कुल KM या पैकेज</label>
+            <input type="number" id="billTotalKm" placeholder="150" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
+          </div>
+          <div>
+            <label class="text-[10px] text-slate-400 block mb-1">दर प्रति KM (₹/KM)</label>
+            <input type="number" id="billRatePerKm" placeholder="14" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
+          </div>
+          <div>
+            <label class="text-[10px] text-slate-400 block mb-1">टोल / पार्किंग / अन्य (₹)</label>
+            <input type="number" id="billTollCharges" placeholder="350" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
+          </div>
+          <div>
+            <label class="text-[10px] text-slate-400 block mb-1">प्राप्त हुआ एडवांस / कैश (₹)</label>
+            <input type="number" id="billAdvancePaid" placeholder="1000" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-end gap-2 pt-2">
+          <button onclick="generateAndSaveInvoice()" class="w-full sm:w-auto bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-6 py-2.5 rounded-xl text-xs transition flex items-center justify-center space-x-1.5 shadow-lg shadow-teal-500/20">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+            <span>बिल सेव व प्रिंट करें</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- SECTION 2: CUSTOMER KHATA & PENDING PAYMENTS DIRECTORY -->
+      <div class="glass-card p-5 sm:p-6 rounded-3xl border border-slate-800 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div>
+            <h3 class="font-bold text-sm sm:text-base text-white flex items-center space-x-2">
+              <i data-lucide="book-open" class="w-5 h-5 text-amber-400"></i>
+              <span>कस्टमर खाता व बकाया लेज़र (Accounts & Receivables)</span>
+            </h3>
+            <p class="text-xs text-slate-400">किसका कितना पेमेंट बाकी है, देखें और नई पेमेंट एंट्री जोड़ें</p>
+          </div>
+          <button onclick="loadManagerInvoicesAndKhata()" class="text-xs text-teal-400 hover:underline flex items-center space-x-1">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>रिफ्रेश खाता</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-900 text-slate-400 font-mono text-[10px] uppercase">
+              <tr>
+                <th class="p-3 rounded-l-xl">कस्टमर / पार्टी</th>
+                <th class="p-3">गाड़ी व विवरण</th>
+                <th class="p-3">कुल बिल</th>
+                <th class="p-3">जमा राशि</th>
+                <th class="p-3">बकाया (Balance)</th>
+                <th class="p-3 rounded-r-xl text-right">एक्शन</th>
+              </tr>
+            </thead>
+            <tbody id="invoicesTableBody" class="divide-y divide-slate-800 font-medium">
+              <tr><td colspan="6" class="p-4 text-center text-slate-500">खाता लोड हो रहा है...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- PRINTABLE INVOICE TEMPLATE (HIDDEN ON SCREEN, VISIBLE IN PRINT) -->
+  <div id="printableInvoice" class="hidden bg-white text-black p-8 max-w-2xl mx-auto rounded">
+    <div class="border-b pb-4 mb-4">
+      <h1 class="text-2xl font-bold uppercase" id="invCompanyHeader">FLEET INVOICE</h1>
+      <p class="text-xs text-gray-500" id="invCompanySub">Official Trip Receipt</p>
+    </div>
+    <div class="grid grid-cols-2 gap-4 text-xs mb-6">
+      <div>
+        <p><strong>Customer:</strong> <span id="invCustName"></span></p>
+        <p><strong>Phone:</strong> <span id="invCustPhone"></span></p>
+      </div>
+      <div class="text-right">
+        <p><strong>Invoice No:</strong> <span id="invId"></span></p>
+        <p><strong>Date:</strong> <span id="invDate"></span></p>
+        <p><strong>Car No:</strong> <span id="invCar"></span></p>
+      </div>
+    </div>
+    <table class="w-full text-left text-xs border mb-6">
+      <thead class="bg-gray-100">
+        <tr class="border-b">
+          <th class="p-2">Description</th>
+          <th class="p-2 text-right">Qty / Rate</th>
+          <th class="p-2 text-right">Total</th>
+        </tr>
+      </thead>
+      <tbody id="invItemsList" class="divide-y">
+        <!-- Dynamically populated -->
+      </tbody>
+    </table>
+    <div class="text-right text-xs space-y-1 mb-8">
+      <p><strong>Grand Total:</strong> ₹<span id="invGrandTotal">0</span></p>
+      <p><strong>Paid Amount:</strong> ₹<span id="invPaidAmount">0</span></p>
+      <p class="text-sm font-bold text-red-600"><strong>Balance Due:</strong> ₹<span id="invBalanceDue">0</span></p>
+    </div>
+    <div class="text-center text-[10px] text-gray-400 border-t pt-4">
+      <p>Aachico Vault Billing Engine द्वारा प्रमाणित रसीद। धन्यवाद!</p>
+    </div>
+  </div>
+
+  <!-- FIREBASE LOGIC & AUTO-UPDATER -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, addDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDOIEKyvSwfpRybZBmNuImzdJ3hdlEO3hI",
+      authDomain: "aachico-vault.firebaseapp.com",
+      projectId: "aachico-vault",
+      storageBucket: "aachico-vault.firebasestorage.app",
+      messagingSenderId: "766953520082",
+      appId: "1:766953520082:web:481f1aab82b74d78aae60b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let mgrSession = JSON.parse(sessionStorage.getItem('aachico_mgr_session') || 'null');
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      if(mgrSession) unlockManagerScreen();
+    });
+
+    window.handleManagerLogin = function() {
+      const code = document.getElementById('mgrCompanyCode').value.trim().toUpperCase();
+      const pass = document.getElementById('mgrPassword').value.trim();
+
+      if(!code || !pass) {
+        alert("कंपनी कोड और पासवर्ड भरें!");
+        return;
+      }
+
+      mgrSession = { companyCode: code, managerName: "Fleet Manager" };
+      sessionStorage.setItem('aachico_mgr_session', JSON.stringify(mgrSession));
+      unlockManagerScreen();
+    };
+
+    function unlockManagerScreen() {
+      document.getElementById('managerLoginScreen').classList.add('hidden');
+      document.getElementById('managerDashboard').classList.remove('hidden');
+      document.getElementById('displayMgrCompany').innerText = mgrSession.companyCode;
+      lucide.createIcons();
+      loadManagerInvoicesAndKhata();
+    }
+
+    window.logoutManager = function() {
+      sessionStorage.removeItem('aachico_mgr_session');
+      location.reload();
+    };
+
+    window.openForgotMgrModal = () => document.getElementById('forgotMgrModal').classList.remove('hidden');
+    window.closeForgotMgrModal = () => document.getElementById('forgotMgrModal').classList.add('hidden');
+
+    window.generateAndSaveInvoice = async function() {
+      const name = document.getElementById('billCustName').value.trim();
+      const phone = document.getElementById('billCustPhone').value.trim();
+      const car = document.getElementById('billCarNumber').value.trim().toUpperCase();
+      const km = Number(document.getElementById('billTotalKm').value) || 0;
+      const rate = Number(document.getElementById('billRatePerKm').value) || 0;
+      const toll = Number(document.getElementById('billTollCharges').value) || 0;
+      const advance = Number(document.getElementById('billAdvancePaid').value) || 0;
+
+      if(!name || !car) {
+        alert("कृपया कस्टमर का नाम और गाड़ी नंबर दर्ज करें!");
+        return;
+      }
+
+      const kmAmount = km * rate;
+      const grandTotal = kmAmount + toll;
+      const balance = grandTotal - advance;
+      const invoiceData = {
+        customerName: name,
+        customerPhone: phone,
+        carNumber: car,
+        totalKm: km,
+        ratePerKm: rate,
+        tollCharges: toll,
+        grandTotal: grandTotal,
+        paidAmount: advance,
+        balanceDue: balance,
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        const docRef = await addDoc(collection(db, "companies", mgrSession.companyCode, "invoices"), invoiceData);
+        alert(`बिल #INV-${docRef.id.slice(0, 5)} सफलतापूर्वक क्लाउड में सेव हो गया!`);
+
+        // Populate Printable
+        document.getElementById('invCompanyHeader').innerText = mgrSession.companyCode + " • FLEET INVOICE";
+        document.getElementById('invCustName').innerText = name;
+        document.getElementById('invCustPhone').innerText = phone || "N/A";
+        document.getElementById('invId').innerText = "INV-" + docRef.id.slice(0, 6).toUpperCase();
+        document.getElementById('invDate').innerText = new Date().toLocaleDateString('en-IN');
+        document.getElementById('invCar').innerText = car;
+        document.getElementById('invItemsList').innerHTML = `
+          <tr><td class="p-2">Travel (${km} KM @ ₹${rate}/KM)</td><td class="p-2 text-right">${km} KM</td><td class="p-2 text-right">₹${kmAmount}</td></tr>
+          <tr><td class="p-2">Toll & Parking Charges</td><td class="p-2 text-right">Fixed</td><td class="p-2 text-right">₹${toll}</td></tr>
+        `;
+        document.getElementById('invGrandTotal').innerText = grandTotal;
+        document.getElementById('invPaidAmount').innerText = advance;
+        document.getElementById('invBalanceDue').innerText = balance;
+
+        // Print preview
+        window.print();
+
+        // Reset inputs
+        document.getElementById('billCustName').value = "";
+        document.getElementById('billCustPhone').value = "";
+        document.getElementById('billCarNumber').value = "";
+        document.getElementById('billTotalKm').value = "";
+        document.getElementById('billAdvancePaid').value = "";
+        
+        loadManagerInvoicesAndKhata();
+      } catch (err) {
+        alert("एरर: " + err.message);
+      }
+    };
+
+    window.loadManagerInvoicesAndKhata = async function() {
+      const tbody = document.getElementById('invoicesTableBody');
+      try {
+        const snap = await getDocs(collection(db, "companies", mgrSession.companyCode, "invoices"));
+        let invoices = [];
+        let totalPaidSum = 0;
+        let totalPendingSum = 0;
+
+        snap.forEach(d => {
+          const inv = { id: d.id, ...d.data() };
+          invoices.push(inv);
+          totalPaidSum += Number(inv.paidAmount || 0);
+          totalPendingSum += Number(inv.balanceDue || 0);
+        });
+
+        document.getElementById('todayBillingSum').innerText = "₹" + totalPaidSum;
+        document.getElementById('totalPendingKhata').innerText = "₹" + totalPendingSum;
+
+        if(invoices.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">अभी तक कोई बिल या खाता दर्ज नहीं हुआ है।</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = invoices.map(i => `
+          <tr class="hover:bg-slate-900/50">
+            <td class="p-3">
+              <span class="font-bold text-white block">${i.customerName}</span>
+              <span class="text-[10px] text-slate-400 font-mono">${i.customerPhone || 'No Phone'}</span>
+            </td>
+            <td class="p-3 font-mono">${i.carNumber} (${i.totalKm || 0} KM)</td>
+            <td class="p-3 font-mono font-bold text-white">₹${i.grandTotal}</td>
+            <td class="p-3 font-mono text-emerald-400">₹${i.paidAmount}</td>
+            <td class="p-3 font-mono font-bold ${i.balanceDue > 0 ? 'text-rose-400' : 'text-emerald-400'}">
+              ₹${i.balanceDue}
+            </td>
+            <td class="p-3 text-right">
+              ${i.balanceDue > 0 ? `
+                <button onclick="settleCustomerBalance('${i.id}', ${i.grandTotal})" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-lg text-[10px] font-bold">
+                  भुगतान जमा करें
+                </button>
+              ` : `
+                <span class="text-emerald-400 font-bold text-[10px]">चुका दिया (Clear)</span>
+              `}
+            </td>
+          </tr>
+        `).join('');
+      } catch(err) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">डेटा लोड नहीं हो पाया।</td></tr>`;
+      }
+    };
+
+    window.settleCustomerBalance = async function(invId, grandTotal) {
+      const amt = prompt("कस्टमर द्वारा कितना भुगतान जमा किया गया?");
+      if(!amt || isNaN(amt)) return;
+
+      try {
+        await updateDoc(doc(db, "companies", mgrSession.companyCode, "invoices", invId), {
+          paidAmount: Number(grandTotal),
+          balanceDue: 0,
+          clearedAt: new Date().toISOString()
+        });
+        alert("पेमेंट सफलतापूर्वक जमा कर दिया गया और खाता क्लियर हो गया!");
+        loadManagerInvoicesAndKhata();
+      } catch(err) {
+        alert("एरर: " + err.message);
+      }
+    };
+  </script>
+
+  <!-- AUTO-UPDATER SERVICE WORKER -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
+  </script>
+</body>
+</html>
