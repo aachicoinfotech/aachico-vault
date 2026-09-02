@@ -14,7 +14,7 @@
     @media print {
       body * { visibility: hidden; }
       #printableInvoiceModal, #printableInvoiceModal * { visibility: visible; }
-      #printableInvoiceModal { position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; }
+      #printableInvoiceModal { position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; box-shadow: none; }
     }
   </style>
 </head>
@@ -253,7 +253,6 @@
               <p class="text-xs text-slate-400">RC, Insurance, Fitness, All India Permit, State Tax, PUC</p>
             </div>
             
-            <!-- Car-wise Combined Share Box -->
             <div class="flex items-center space-x-2 bg-slate-900 p-2 rounded-2xl border border-slate-800">
               <select id="shareCarSelect" class="bg-slate-950 text-xs text-white p-2 rounded-xl font-mono border border-slate-700"></select>
               <button onclick="shareCarSpecificPDF()" class="bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-3 py-2 rounded-xl text-xs flex items-center space-x-1.5 whitespace-nowrap">
@@ -318,7 +317,6 @@
       <div id="tabBizSetup" class="hidden space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          <!-- Business Profile & Logo -->
           <div class="glass-card p-6 rounded-3xl space-y-4">
             <h3 class="font-bold text-sm text-white flex items-center space-x-2">
               <i data-lucide="building-2" class="w-4 h-4 text-rose-400"></i>
@@ -350,10 +348,9 @@
                 </div>
               </div>
               <div>
-                <label class="text-[10px] text-slate-400 block mb-1">कंपनी लोगो (Upload / Change / Delete)</label>
+                <label class="text-[10px] text-slate-400 block mb-1">कंपनी डिजिटल स्टैम्प / सिग्नेचर अपलोड (Seal & Sign)</label>
                 <div class="flex items-center space-x-2">
-                  <input type="file" id="bizLogoFile" accept="image/*" class="w-full text-[10px] text-slate-400 file:bg-rose-500 file:text-slate-950 file:border-0 file:rounded-lg file:px-2 file:py-1 file:font-bold cursor-pointer" />
-                  <button onclick="deleteCompanyLogo()" class="bg-rose-500/20 text-rose-400 px-3 py-1.5 rounded-xl text-[10px] font-bold border border-rose-500/40">हटाएँ</button>
+                  <input type="file" id="bizStampFile" accept="image/*" class="w-full text-[10px] text-slate-400 file:bg-rose-500 file:text-slate-950 file:border-0 file:rounded-lg file:px-2 file:py-1 file:font-bold cursor-pointer" />
                 </div>
               </div>
               <button onclick="saveBusinessProfile()" class="w-full bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold py-2.5 rounded-xl transition">
@@ -362,7 +359,6 @@
             </div>
           </div>
 
-          <!-- Master Tax & Editable Bank Accounts -->
           <div class="glass-card p-6 rounded-3xl space-y-4">
             <h3 class="font-bold text-sm text-white flex items-center space-x-2">
               <i data-lucide="landmark" class="w-4 h-4 text-rose-400"></i>
@@ -471,9 +467,9 @@
     </main>
   </div>
 
-  <!-- ================= 3. PROFESSIONAL 1-PAGE BILL INVOICE MODAL ================= -->
+  <!-- ================= 3. PROFESSIONAL 1-PAGE BILL INVOICE MODAL (With Invoice No, Udaipur Court Note & Stamp) ================= -->
   <div id="printableInvoiceModal" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white text-slate-950 w-full max-w-2xl p-8 rounded-3xl space-y-6 shadow-2xl relative">
+    <div class="bg-white text-slate-950 w-full max-w-2xl p-8 rounded-3xl space-y-5 shadow-2xl relative">
       <div class="flex justify-between items-start border-b pb-4">
         <div>
           <h2 id="invBizName" class="text-xl font-black uppercase text-slate-900">AACHICO TRAVELS</h2>
@@ -481,7 +477,8 @@
         </div>
         <div class="text-right">
           <span class="bg-slate-900 text-white px-3 py-1 rounded-lg text-xs font-mono font-bold">TAX INVOICE</span>
-          <p id="invDate" class="text-[11px] text-slate-500 mt-1 font-mono">Date: 2026-06-06</p>
+          <p id="invNoText" class="text-xs font-bold text-rose-600 font-mono mt-1">Invoice No: ACT-2026-001</p>
+          <p id="invDate" class="text-[11px] text-slate-500 mt-0.5 font-mono">Date: 2026-06-06</p>
         </div>
       </div>
 
@@ -492,9 +489,9 @@
         <p id="invCarRoute" class="text-slate-600 font-mono">गाड़ी नंबर: RJ 27 TA 8199 | रूट: उदयपुर - कुम्भलगढ़</p>
       </div>
 
-      <!-- Trip & Fare Charge Breakdown Table -->
+      <!-- Charge Breakdown Table -->
       <div class="space-y-2 text-xs">
-        <p class="font-bold text-slate-800 uppercase text-[10px]">ट्रिप एवं किराया विवरण (Charge Breakdown):</p>
+        <p class="font-bold text-slate-800 uppercase text-[10px]">ट्रिप एवं किराया विवरण (CHARGE BREAKDOWN):</p>
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b border-slate-300 text-slate-500 text-[10px]">
@@ -503,7 +500,7 @@
             </tr>
           </thead>
           <tbody id="invChargesTableBody" class="divide-y divide-slate-200 font-mono">
-            <!-- Dynamic Breakdown injected here -->
+            <!-- Dynamic breakdown -->
           </tbody>
         </table>
       </div>
@@ -520,11 +517,26 @@
         </div>
       </div>
 
-      <!-- Footer & Action Buttons -->
-      <div class="flex space-x-3 pt-4 border-t print:hidden">
+      <!-- Legal Note & Stamp Sign Section -->
+      <div class="pt-3 border-t flex justify-between items-end text-[10px] text-slate-500">
+        <div class="max-w-[65%] space-y-1">
+          <p class="font-bold text-slate-700 uppercase">नियम व शर्तें (Terms & Conditions):</p>
+          <p>1. भुगतान समय पर अनिवार्य है।</p>
+          <p>2. किसी भी प्रकार के विवाद की स्थिति में न्यायिक क्षेत्र केवल <strong>उदयपुर कोर्ट (Udaipur Jurisdiction)</strong> होगा।</p>
+        </div>
+        <div class="text-center space-y-1">
+          <div class="w-28 h-12 border border-dashed border-slate-400 flex items-center justify-center rounded-lg text-[9px] text-slate-400 uppercase font-mono bg-slate-50">
+            [ Authorized Stamp & Sign ]
+          </div>
+          <p class="font-bold text-slate-800">For Aachico Travels</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex space-x-3 pt-3 border-t print:hidden">
         <button onclick="window.print()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center space-x-2">
           <i data-lucide="printer" class="w-4 h-4"></i>
-          <span>बिल प्रिंट करें (Print)</span>
+          <span>बिल प्रिंट करें (Print / A4 PDF)</span>
         </button>
         <button onclick="shareInvoiceWhatsApp()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center space-x-2">
           <i data-lucide="share-2" class="w-4 h-4"></i>
@@ -585,6 +597,7 @@
     let loadedDocs = [];
     let loadedBanks = [];
     let activeInvoiceTrip = null;
+    let businessProfile = { bizName: "AACHICO TRAVELS", gstin: "08XXXXX", phone: "98290XXXXX" };
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
@@ -709,7 +722,6 @@
       loadVehicles();
     };
 
-    // Business Profile & Editable Settings
     window.saveBusinessProfile = async function() {
       const name = document.getElementById('bizName').value.trim();
       const gstin = document.getElementById('bizGstin').value.trim().toUpperCase();
@@ -723,6 +735,7 @@
         await setDoc(doc(db, "companies", currentSession.companyCode, "settings", "business"), {
           bizName: name, gstin, pan, phone, email, updatedAt: new Date().toISOString()
         }, { merge: true });
+        businessProfile = { bizName: name, gstin, phone };
         alert("बिज़नेस प्रोफ़ाइल और सेटिंग्स सफलतापूर्वक अपडेट हो गई!");
       } catch(e) { alert("सेव त्रुटि: " + e.message); }
     };
@@ -738,6 +751,7 @@
             document.getElementById('bizPan').value = data.pan || '';
             document.getElementById('bizPhone').value = data.phone || '';
             document.getElementById('bizEmail').value = data.email || '';
+            businessProfile = { bizName: data.bizName || 'AACHICO TRAVELS', gstin: data.gstin || '08XXXXX', phone: data.phone || '98290XXXXX' };
           }
           if(d.id === 'master') {
             const data = d.data();
@@ -764,7 +778,6 @@
       } catch(e) { alert("एरर: " + e.message); }
     };
 
-    // Bank Accounts Add & Delete
     window.addCompanyBank = async function() {
       const name = document.getElementById('bankNameIn').value.trim();
       const acc = document.getElementById('bankAccIn').value.trim();
@@ -811,7 +824,6 @@
       loadCompanyBanks();
     };
 
-    // 6 Legal Documents & Car-wise PDF Sharing
     window.saveVehicleDocument = async function() {
       const carNo = document.getElementById('docCarSelect').value;
       const docType = document.getElementById('docTypeSelect').value;
@@ -1019,9 +1031,12 @@
       if(!t) return;
       activeInvoiceTrip = t;
 
+      document.getElementById('invBizName').innerText = businessProfile.bizName;
+      document.getElementById('invBizDetails').innerText = `उदयपुर, राजस्थान | GSTIN: ${businessProfile.gstin} | Ph: ${businessProfile.phone}`;
+      document.getElementById('invNoText').innerText = `Invoice No: ACT-2026-${tripId.slice(-4).toUpperCase()}`;
       document.getElementById('invCustomerName').innerText = `कस्टमर: ${t.customerName || 'सामान्य पार्टी'}`;
       document.getElementById('invCarRoute').innerText = `गाड़ी नंबर: ${t.carNumber} | रूट: ${t.route || 'Local/Outstation'}`;
-      document.getElementById('invDate').innerText = `Date: ${t.submittedAt ? t.submittedAt.slice(0, 10) : '2026-06-06'}`;
+      document.getElementById('invDate').innerText = `Date: ${t.submittedAt ? t.submittedAt.slice(0, 10) : '2026-09-02'}`;
       document.getElementById('invAdvance').innerText = `₹${t.advancePaid || 0}`;
 
       const runningFare = (t.totalKm || 0) * (t.ratePerKm || 12);
@@ -1044,7 +1059,7 @@
     window.shareInvoiceWhatsApp = function() {
       if(!activeInvoiceTrip) return;
       const t = activeInvoiceTrip;
-      const msg = encodeURIComponent(`Aachico Travels - Tax Invoice\nकस्टमर: ${t.customerName || 'Party'}\nगाड़ी: ${t.carNumber}\nकुल KM: ${t.totalKm}\nदेय राशि: ₹${t.netCashInHand || 2500}\nधन्यवाद!`);
+      const msg = encodeURIComponent(`${businessProfile.bizName} - Tax Invoice\nInvoice No: ACT-2026-${t.id.slice(-4).toUpperCase()}\nकस्टमर: ${t.customerName || 'Party'}\nगाड़ी: ${t.carNumber}\nकुल KM: ${t.totalKm}\nअंतिम देय राशि: ₹${t.netCashInHand || 2500}\nन्यायिक क्षेत्र: उदयपुर कोर्ट\nधन्यवाद!`);
       window.open(`https://wa.me/?text=${msg}`, '_blank');
     };
 
