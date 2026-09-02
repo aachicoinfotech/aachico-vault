@@ -307,7 +307,7 @@
                 </tr>
               </thead>
               <tbody id="legalDocsTableBody" class="divide-y divide-slate-800 font-medium">
-                <tr><td colspan="5" class="p-4 text-center text-slate-500">डेटा लोड हो रहा है...</td></tr>
+                <tr><td colspan="5" class="p-4 text-center text-slate-500">कोई लीगल दस्तावेज़ अपलोड नहीं है।</td></tr>
               </tbody>
             </table>
           </div>
@@ -466,7 +466,7 @@
   <div id="printableInvoiceModal" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white text-slate-950 w-full max-w-4xl p-8 rounded-3xl space-y-6 shadow-2xl relative font-sans">
       
-      <!-- PAGE 1: MAIN TAXI INVOICE (Strictly fits 1 A4 portrait page) -->
+      <!-- PAGE 1: MAIN TAXI INVOICE -->
       <div class="bg-white p-2 space-y-4 page-break">
         
         <!-- HEADER -->
@@ -480,7 +480,7 @@
             </div>
           </div>
           <div class="text-right text-[10px] text-slate-700 space-y-0.5 font-mono">
-            <p id="invHeaderAddr">Address: उदयपुर, राजस्थान | Mobile: 98290XXXXX | WhatsApp: 98290XXXXX</p>
+            <p id="invHeaderAddr">Address: उदयपुर, राजस्थान | Mobile: 98290XXXXX</p>
             <p id="invHeaderContact">Email: info@aachico.com | GSTIN: 08AAAAA0000A1Z5</p>
           </div>
         </div>
@@ -490,8 +490,7 @@
           <span class="font-black text-xs tracking-widest uppercase">TAXI INVOICE / BILL</span>
           <div class="text-[11px] font-mono space-x-3">
             <span id="invNoText">Invoice No: ACT-001</span>
-            <span id="invBookingDate">Booking Date: 2026-09-02</span>
-            <span id="invDate">Trip Date: 2026-09-02</span>
+            <span id="invDate">Date: 2026-09-02</span>
           </div>
         </div>
 
@@ -507,9 +506,8 @@
         <!-- TRIP / VEHICLE DETAILS -->
         <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-xs space-y-1 font-medium">
           <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider border-b pb-0.5">TRIP / VEHICLE DETAILS</p>
-          <div class="grid grid-cols-4 gap-2 text-[11px] pt-1">
-            <p id="invVehicleType">Vehicle Type: Sedan</p>
-            <p id="invVehicleNo">Vehicle No.: RJ 27 TA 8199</p>
+          <div class="grid grid-cols-3 gap-2 text-[11px] pt-1">
+            <p id="invVehicleInfo">Vehicle Type: Sedan | No.: RJ 27 TA 8199</p>
             <p id="invDriverInfo">Driver: सुरेश जी</p>
             <p>Trip Type: ☑ One Way □ Round Trip</p>
           </div>
@@ -517,8 +515,7 @@
             <p id="invPickup">Pickup: Udaipur Junction</p>
             <p id="invDrop">Drop: Nathdwara</p>
           </div>
-          <div class="grid grid-cols-4 gap-2 text-[11px] pt-1 font-mono">
-            <p id="invTripTime">Trip Time: 10:00 AM</p>
+          <div class="grid grid-cols-3 gap-2 text-[11px] pt-1 font-mono">
             <p id="invStartKm">Start KM: 52400</p>
             <p id="invEndKm">End KM: 52500</p>
             <p id="invTotalKm" class="font-bold text-rose-600">Total KM: 100 KM</p>
@@ -541,11 +538,7 @@
               <!-- Injected dynamically -->
             </tbody>
           </table>
-          <div class="flex justify-end font-mono text-xs font-bold pt-1 space-x-4">
-            <span>Subtotal: <span id="invSubtotal">₹1460</span></span>
-            <span>Discount: ₹0</span>
-          </div>
-          <div class="bg-slate-900 text-white p-2 rounded-xl flex justify-between items-center font-mono text-xs font-bold">
+          <div class="bg-slate-900 text-white p-2 rounded-xl flex justify-between items-center font-mono text-xs font-bold mt-1">
             <span>GRAND TOTAL:</span>
             <span id="invGrandTotal" class="text-amber-400">₹1460</span>
           </div>
@@ -557,20 +550,18 @@
           <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200 space-y-1 font-mono text-[11px]">
             <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider border-b pb-0.5 font-sans">TAX DETAILS (IF APPLICABLE)</p>
             <div class="flex justify-between pt-0.5"><span>Taxable Amount:</span> <span id="invTaxable">₹1460</span></div>
-            <div class="flex justify-between"><span>CGST:</span> <span id="invCgst">₹36.50</span></div>
-            <div class="flex justify-between"><span>SGST:</span> <span id="invSgst">₹36.50</span></div>
-            <div class="flex justify-between"><span>IGST:</span> <span id="invIgst">₹0.00</span></div>
+            <div class="flex justify-between"><span>CGST (2.5%):</span> <span id="invCgst">₹36.50</span></div>
+            <div class="flex justify-between"><span>SGST (2.5%):</span> <span id="invSgst">₹36.50</span></div>
             <div class="flex justify-between font-bold border-t pt-0.5 text-slate-900"><span>Total Tax:</span> <span id="invTotalTax">₹73</span></div>
           </div>
 
           <!-- RIGHT: PAYMENT DETAILS -->
           <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200 space-y-1 font-mono text-[11px]">
             <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider border-b pb-0.5 font-sans">PAYMENT DETAILS</p>
-            <div class="flex justify-between pt-0.5"><span>Payment Mode:</span> <span class="font-bold">☑ Cash □ Bank Transfer</span></div>
-            <div class="flex justify-between"><span>Payment Status:</span> <span class="text-emerald-600 font-bold">☑ PAID □ PARTIAL □ UNPAID</span></div>
+            <div class="flex justify-between pt-0.5"><span>Payment Mode:</span> <span class="font-bold">☑ Cash □ Bank</span></div>
+            <div class="flex justify-between"><span>Status:</span> <span class="text-emerald-600 font-bold">PAID / ADVANCE</span></div>
             <div class="flex justify-between"><span>Amount Received:</span> <span id="invReceived" class="text-emerald-600">₹500</span></div>
             <div class="flex justify-between font-bold text-rose-600"><span>Balance Due:</span> <span id="invBalance">₹960</span></div>
-            <div class="flex justify-between text-[10px] pt-0.5 border-t"><span>UPI ID:</span> <span class="font-bold text-slate-800">aachico@hdfc</span></div>
           </div>
         </div>
 
@@ -616,7 +607,6 @@
           <div class="text-right text-[11px] font-mono text-slate-600">
             <p id="recInvNo">Invoice No: ACT-001</p>
             <p id="recTripDate">Trip Date: 2026-09-02</p>
-            <p id="recVehicleNo">Vehicle No: RJ 27 TA 8199</p>
           </div>
         </div>
 
@@ -639,17 +629,6 @@
           </div>
           <div class="h-28 border border-slate-300 bg-white rounded-xl flex items-center justify-center text-slate-400 text-xs italic">
             [ ATTACH / PASTE PARKING RECEIPT HERE ]
-          </div>
-        </div>
-
-        <!-- Receipt 3: State/Border Tax -->
-        <div class="border-2 border-dashed border-slate-300 p-4 rounded-2xl space-y-2 bg-slate-50/50">
-          <div class="flex justify-between items-center text-xs font-bold text-slate-800">
-            <span>STATE / BORDER TAX RECEIPT / PARCHI (स्टेट/बॉर्डर टैक्स पर्ची)</span>
-            <span class="text-rose-600 font-mono">Amount: ₹<span id="recBorderAmt">0</span></span>
-          </div>
-          <div class="h-28 border border-slate-300 bg-white rounded-xl flex items-center justify-center text-slate-400 text-xs italic">
-            [ ATTACH / PASTE STATE / BORDER TAX RECEIPT HERE ]
           </div>
         </div>
 
@@ -1160,26 +1139,22 @@
       if(!t) return;
       activeInvoiceTrip = t;
 
-      document.getElementById('invHeaderAddr').innerText = `Address: उदयपुर, राजस्थान | Mobile: ${businessProfile.phone || '98290XXXXX'} | WhatsApp: ${businessProfile.phone || '98290XXXXX'}`;
+      document.getElementById('invHeaderAddr').innerText = `Address: उदयपुर, राजस्थान | Mobile: ${businessProfile.phone || '98290XXXXX'}`;
       document.getElementById('invHeaderContact').innerText = `Email: ${businessProfile.email || 'info@aachico.com'} | GSTIN: ${businessProfile.gstin || '08AAAAA0000A1Z5'}`;
 
       const invNo = `ACT-2026-${tripId.slice(-4).toUpperCase()}`;
       const tripDate = t.submittedAt ? t.submittedAt.slice(0, 10) : '2026-09-02';
 
       document.getElementById('invNoText').innerText = `Invoice No: ${invNo}`;
-      document.getElementById('invBookingDate').innerText = `Booking Date: ${tripDate}`;
-      document.getElementById('invDate').innerText = `Trip Date: ${tripDate}`;
+      document.getElementById('invDate').innerText = `Date: ${tripDate}`;
       document.getElementById('recInvNo').innerText = `Invoice No: ${invNo}`;
       document.getElementById('recTripDate').innerText = `Trip Date: ${tripDate}`;
-      document.getElementById('recVehicleNo').innerText = `Vehicle No: ${t.carNumber}`;
 
       document.getElementById('invCustomerName').innerText = `Customer Name: ${t.customerName || 'राहुल जी'} | Mobile: ${t.customerPhone || '98290XXXXX'}`;
       document.getElementById('invCustomerAddr').innerText = `Address: Udaipur, Rajasthan`;
 
-      document.getElementById('invVehicleType').innerText = `Vehicle Type: Sedan`;
-      document.getElementById('invVehicleNo').innerText = `Vehicle No.: ${t.carNumber}`;
+      document.getElementById('invVehicleInfo').innerText = `Vehicle Type: Sedan | No.: ${t.carNumber}`;
       document.getElementById('invDriverInfo').innerText = `Driver: ${t.driverName || 'सुरेश जी'}`;
-      document.getElementById('invTripTime').innerText = `Trip Time: 10:00 AM`;
       document.getElementById('invPickup').innerText = `Pickup: ${t.pickup || 'Udaipur Junction'}`;
       document.getElementById('invDrop').innerText = `Drop: ${t.drop || t.route || 'Nathdwara'}`;
 
@@ -1200,42 +1175,35 @@
       const tbody = document.getElementById('invFareTableBody');
       tbody.innerHTML = `
         <tr><td class="p-2">Base / Package Fare</td><td class="p-2 text-center">${totalKm} KM</td><td class="p-2 text-right">₹${rate}</td><td class="p-2 text-right font-bold">₹${baseFare}</td></tr>
-        <tr><td class="p-2">Extra KM</td><td class="p-2 text-center">0</td><td class="p-2 text-right">₹0</td><td class="p-2 text-right font-bold">₹0</td></tr>
-        <tr><td class="p-2">Extra Hours</td><td class="p-2 text-center">0</td><td class="p-2 text-right">₹0</td><td class="p-2 text-right font-bold">₹0</td></tr>
-        <tr><td class="p-2">Driver Allowance / Bata</td><td class="p-2 text-center">1</td><td class="p-2 text-right">₹${allowance}</td><td class="p-2 text-right font-bold">₹${allowance}</td></tr>
         <tr><td class="p-2">Toll Tax</td><td class="p-2 text-center">1</td><td class="p-2 text-right">₹${toll}</td><td class="p-2 text-right font-bold">₹${toll}</td></tr>
         <tr><td class="p-2">Parking Charges</td><td class="p-2 text-center">1</td><td class="p-2 text-right">₹${parking}</td><td class="p-2 text-right font-bold">₹${parking}</td></tr>
         <tr><td class="p-2">State / Border Tax</td><td class="p-2 text-center">1</td><td class="p-2 text-right">₹${borderTax}</td><td class="p-2 text-right font-bold">₹${borderTax}</td></tr>
-        <tr><td class="p-2">Other Charges</td><td class="p-2 text-center">0</td><td class="p-2 text-right">₹0</td><td class="p-2 text-right font-bold">₹0</td></tr>
+        <tr><td class="p-2">Driver Allowance / Bata</td><td class="p-2 text-center">1</td><td class="p-2 text-right">₹${allowance}</td><td class="p-2 text-right font-bold">₹${allowance}</td></tr>
       `;
 
       const subtotal = baseFare + toll + parking + borderTax + allowance;
-      document.getElementById('invSubtotal').innerText = `₹${subtotal}`;
-      document.getElementById('invGrandTotal').innerText = `₹${subtotal}`;
-
       const taxable = subtotal;
       const cgst = taxable * 0.025;
       const sgst = taxable * 0.025;
       const totalTax = cgst + sgst;
+      const grandTotal = taxable + totalTax;
 
       document.getElementById('invTaxable').innerText = `₹${taxable}`;
       document.getElementById('invCgst').innerText = `₹${cgst.toFixed(2)}`;
       document.getElementById('invSgst').innerText = `₹${sgst.toFixed(2)}`;
-      document.getElementById('invIgst').innerText = `₹0.00`;
       document.getElementById('invTotalTax').innerText = `₹${totalTax.toFixed(2)}`;
 
       const advance = t.advancePaid || 500;
-      const balance = Math.max(0, (taxable + totalTax) - advance);
+      const balance = Math.max(0, grandTotal - advance);
 
+      document.getElementById('invGrandTotal').innerText = `₹${grandTotal.toFixed(2)}`;
       document.getElementById('invReceived').innerText = `₹${advance}`;
       document.getElementById('invBalance').innerText = `₹${balance.toFixed(2)}`;
-      document.getElementById('invAmountInWords').innerText = `Rupees Only (${(taxable + totalTax).toFixed(0)} INR)`;
+      document.getElementById('invAmountInWords').innerText = `Rupees Only (${grandTotal.toFixed(0)} INR)`;
 
-      // Supporting Receipts data
       document.getElementById('recTollAmt').innerText = toll;
       document.getElementById('recParkAmt').innerText = parking;
-      document.getElementById('recBorderAmt').innerText = borderTax;
-      document.getElementById('recTotalExpenses').innerText = `₹${toll + parking + borderTax}`;
+      document.getElementById('recTotalExpenses').innerText = `₹${toll + parking}`;
 
       openModal('printableInvoiceModal');
     };
