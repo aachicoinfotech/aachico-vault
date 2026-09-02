@@ -35,7 +35,7 @@
           <i data-lucide="receipt" class="w-3.5 h-3.5 text-amber-400"></i>
           <span>इनवॉइस खोलें</span>
         </a>
-        <button id="logout-btn" class="inline-flex items-center space-x-1 text-xs font-bold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 px-3 py-2 rounded-xl border border-rose-500/30 transition">
+        <button id="logout-btn" class="inline-flex items-center space-x-1 text-xs font-bold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 px-3 py-2 rounded-xl border border-rose-500/30 transition cursor-pointer">
           <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
           <span>लॉगआउट</span>
         </button>
@@ -70,7 +70,7 @@
       </div>
     </div>
 
-    <!-- Management Sections Grid -->
+    <!-- Management Sections Grid (Vehicle & Driver Forms) -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       
       <!-- Fleet Registration Box -->
@@ -94,7 +94,7 @@
               <input type="number" id="v-km" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-amber-500" placeholder="45000">
             </div>
           </div>
-          <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl transition shadow-md">
+          <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl transition shadow-md cursor-pointer">
             गाड़ी जोड़ें
           </button>
         </form>
@@ -121,7 +121,7 @@
               <input type="password" maxlength="4" id="d-pin" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-teal-500" placeholder="1234">
             </div>
           </div>
-          <button type="submit" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2.5 rounded-xl transition shadow-md">
+          <button type="submit" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2.5 rounded-xl transition shadow-md cursor-pointer">
             ड्राइवर रजिस्टर करें
           </button>
         </form>
@@ -129,7 +129,66 @@
 
     </div>
 
-    <!-- Live Data Tables Section -->
+    <!-- Registered Vehicles & Drivers List Tables -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Vehicles List Table -->
+      <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="truck" class="w-5 h-5 text-amber-400"></i>
+            <h3 class="font-bold text-white text-sm">पंजीकृत गाड़ियाँ (Vehicles List)</h3>
+          </div>
+          <span class="text-[10px] text-amber-400 font-mono">Manage Cars</span>
+        </div>
+        <div class="overflow-x-auto max-h-64 overflow-y-auto">
+          <table class="w-full text-xs text-left">
+            <thead>
+              <tr class="text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[10px]">
+                <th class="py-2.5 px-2">गाड़ी नंबर व मॉडल</th>
+                <th class="py-2.5 px-2">ओडोमीटर (KM)</th>
+                <th class="py-2.5 px-2 text-right">एक्शन (Action)</th>
+              </tr>
+            </thead>
+            <tbody id="vehicles-table-body" class="divide-y divide-slate-800/60 font-medium">
+              <tr>
+                <td colspan="3" class="py-4 text-center text-slate-500">गाड़ियों का डेटा लोड हो रहा है...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Drivers List Table -->
+      <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="users" class="w-5 h-5 text-teal-400"></i>
+            <h3 class="font-bold text-white text-sm">पंजीकृत ड्राइवर्स (Drivers List)</h3>
+          </div>
+          <span class="text-[10px] text-teal-400 font-mono">Manage Drivers</span>
+        </div>
+        <div class="overflow-x-auto max-h-64 overflow-y-auto">
+          <table class="w-full text-xs text-left">
+            <thead>
+              <tr class="text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[10px]">
+                <th class="py-2.5 px-2">नाम व मोबाइल</th>
+                <th class="py-2.5 px-2">पिन (PIN)</th>
+                <th class="py-2.5 px-2 text-right">एक्शन (Action)</th>
+              </tr>
+            </thead>
+            <tbody id="drivers-table-body" class="divide-y divide-slate-800/60 font-medium">
+              <tr>
+                <td colspan="3" class="py-4 text-center text-slate-500">ड्राइवर्स का डेटा लोड हो रहा है...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Live Trip Audit Table -->
     <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div class="flex items-center space-x-2">
@@ -172,42 +231,38 @@
     import { fetchAllTrips } from './js/modules/trips-audit.js';
     import { fetchFinancialLedger } from './js/modules/finance-pl.js';
 
-    // 1. मोनेटाइजेशन एड मॉडल (असली Adsterra Banner 300x250 के साथ)
+    // मोनेटाइजेशन एड मॉडल (बैनर एड के साथ सुरक्षित पॉपअप)
     function showMonetizationAdModal(onAdFinished) {
       const adDiv = document.createElement('div');
       adDiv.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-md";
-      adDiv.innerHTML = `
-        <div class="glass-card p-6 rounded-3xl border border-amber-500/50 max-w-sm text-center space-y-4 bg-slate-900 shadow-2xl">
-          <span class="bg-amber-500/20 text-amber-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase">Sponsored Ad (फ्री प्लान स्पॉन्सर)</span>
-          <div class="py-3 bg-slate-950 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-2 overflow-hidden">
-            <p class="text-[11px] text-slate-400">ATR & Aachico Travels Partner Ad</p>
-            
-            <!-- Adsterra Banner 300x250 Code -->
-            <div class="w-[300px] h-[250px] flex items-center justify-center bg-slate-900 rounded-xl overflow-hidden">
-              <script>
-                atOptions = {
-                  'key' : '676fb17513eca2d63aa605342a9e66ac',
-                  'format' : 'iframe',
-                  'height' : 250,
-                  'width' : 300,
-                  'params' : {}
-                };
-              </script>
-              <script src="https://www.highrevenueformat.com/676fb17513eca2d63aa605342a9e66ac/invoke.js"></script>
-            </div>
-
-            <p id="ad-timer" class="text-[11px] text-amber-400 font-mono font-bold mt-2">कृपया 3 सेकंड प्रतीक्षा करें...</p>
-          </div>
-          <p class="text-[10px] text-slate-400">विज्ञापनों से मुक्ति पाने और बिना रुकावट के काम करने के लिए एनुअल प्लान लें।</p>
-          <button id="close-ad-btn" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-2.5 rounded-xl text-xs transition cursor-not-allowed">
-            एंट्री सेव हो रही है...
-          </button>
-          <a href="https://wa.me/919166381579?text=Hello,%20I%20want%20to%20remove%20ads%20and%20upgrade%20Aachico%20Vault%20plan." target="_blank" class="block text-[11px] text-sky-400 hover:underline">
-            विज्ञापन हटाएं (WhatsApp पर प्लान लें)
-          </a>
+      
+      const modalBox = document.createElement('div');
+      modalBox.className = "glass-card p-6 rounded-3xl border border-amber-500/50 max-w-sm text-center space-y-4 bg-slate-900 shadow-2xl";
+      modalBox.innerHTML = `
+        <span class="bg-amber-500/20 text-amber-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase">Sponsored Ad (फ्री प्लान स्पॉन्सर)</span>
+        <div class="py-3 bg-slate-950 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-2 overflow-hidden">
+          <p class="text-[11px] text-slate-400">ATR & Aachico Travels Partner Ad</p>
+          <div id="ad-banner-container" class="w-[300px] h-[250px] flex items-center justify-center bg-slate-900 rounded-xl overflow-hidden"></div>
+          <p id="ad-timer" class="text-[11px] text-amber-400 font-mono font-bold mt-2">कृपया 3 सेकंड प्रतीक्षा करें...</p>
         </div>
+        <p class="text-[10px] text-slate-400">विज्ञापनों से मुक्ति पाने और बिना रुकावट के काम करने के लिए एनुअल प्लान लें।</p>
+        <button id="close-ad-btn" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-2.5 rounded-xl text-xs transition cursor-not-allowed">
+          एंट्री सेव हो रही है...
+        </button>
+        <a href="https://wa.me/919166381579?text=Hello,%20I%20want%20to%20remove%20ads%20and%20upgrade%20Aachico%20Vault%20plan." target="_blank" class="block text-[11px] text-sky-400 hover:underline">
+          विज्ञापन हटाएं (WhatsApp पर प्लान लें)
+        </a>
       `;
+      adDiv.appendChild(modalBox);
       document.body.appendChild(adDiv);
+
+      const adContainer = document.getElementById('ad-banner-container');
+      const script1 = document.createElement('script');
+      script1.innerHTML = `atOptions = { 'key' : '676fb17513eca2d63aa605342a9e66ac', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };`;
+      const script2 = document.createElement('script');
+      script2.src = "https://www.highrevenueformat.com/676fb17513eca2d63aa605342a9e66ac/invoke.js";
+      adContainer.appendChild(script1);
+      adContainer.appendChild(script2);
 
       let timeLeft = 3;
       const timerEl = document.getElementById('ad-timer');
@@ -232,7 +287,7 @@
       });
     }
 
-    // 2. व्हाट्सएप रिन्यूअल लॉक पॉपअप (जब लिमिट क्रॉस हो जाए)
+    // व्हाट्सएप रिन्यूअल लॉक पॉपअप
     function showLockPopup(message) {
       const lockDiv = document.createElement('div');
       lockDiv.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md";
@@ -249,28 +304,61 @@
       document.body.appendChild(lockDiv);
     }
 
-    // Check session
-    const session = checkAdminSession();
+    // Check session and Logout setup
+    checkAdminSession();
 
     document.getElementById('logout-btn').addEventListener('click', () => {
+      localStorage.removeItem('aachico_admin_logged');
+      localStorage.removeItem('aachico_company_name');
       adminLogout();
+      window.location.href = "login.html";
     });
 
-    // Load Live Dashboard Stats & Tables
+    // Load Live Dashboard Stats & Tables (Vehicles, Drivers, Trips)
     async function loadAdminDashboard() {
-      // 1. Fetch Vehicles
+      // 1. Vehicles List & Stats
       const vehiclesRes = await fetchAllVehicles();
       if (vehiclesRes.success) {
         document.getElementById('stat-vehicles').textContent = vehiclesRes.data.length;
+        const vTable = document.getElementById('vehicles-table-body');
+        if (vehiclesRes.data.length > 0) {
+          vTable.innerHTML = vehiclesRes.data.map((v, index) => `
+            <tr class="hover:bg-slate-900/50">
+              <td class="py-2.5 px-2 font-bold text-white">${v.vehicleNumber || v.number} <br><span class="text-[10px] text-slate-400 font-normal">${v.modelName || v.model || 'Innova'}</span></td>
+              <td class="py-2.5 px-2 font-mono text-amber-400">${v.currentOdometer || v.km || 0} KM</td>
+              <td class="py-2.5 px-2 text-right space-x-1">
+                <button onclick="alert('गाड़ी एडिट करने के लिए सपोर्ट पर संपर्क करें।')" class="bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 px-2 py-1 rounded-lg text-[10px] font-bold border border-sky-500/30 transition">एडिट</button>
+                <button onclick="alert('सुरक्षा कारणों से डेटाबेस से गाड़ी डिलीट करने के लिए सुपर एडमिन से संपर्क करें।')" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg text-[10px] font-bold border border-rose-500/30 transition">डिलीट</button>
+              </td>
+            </tr>
+          `).join('');
+        } else {
+          vTable.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-slate-500">कोई गाड़ी रजिस्टर्ड नहीं है।</td></tr>`;
+        }
       }
 
-      // 2. Fetch Drivers
+      // 2. Drivers List & Stats
       const driversRes = await fetchAllDrivers();
       if (driversRes.success) {
         document.getElementById('stat-drivers').textContent = driversRes.data.length;
+        const dTable = document.getElementById('drivers-table-body');
+        if (driversRes.data.length > 0) {
+          dTable.innerHTML = driversRes.data.map((d, index) => `
+            <tr class="hover:bg-slate-900/50">
+              <td class="py-2.5 px-2 font-bold text-white">${d.fullName || d.name} <br><span class="text-[10px] text-slate-400 font-mono">${d.phoneNumber || d.phone || 'N/A'}</span></td>
+              <td class="py-2.5 px-2 font-mono text-teal-400">${d.driverPin || d.pin || '****'}</td>
+              <td class="py-2.5 px-2 text-right space-x-1">
+                <button onclick="alert('ड्राइवर क्रेडेंशियल्स एडिट करने के लिए सपोर्ट पर संपर्क करें।')" class="bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 px-2 py-1 rounded-lg text-[10px] font-bold border border-sky-500/30 transition">एडिट</button>
+                <button onclick="alert('ड्राइवर डिलीट करने के लिए सुपर एडमिन से संपर्क करें।')" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg text-[10px] font-bold border border-rose-500/30 transition">डिलीट</button>
+              </td>
+            </tr>
+          `).join('');
+        } else {
+          dTable.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-slate-500">कोई ड्राइवर रजिस्टर्ड नहीं है।</td></tr>`;
+        }
       }
 
-      // 3. Fetch Trips & Pending Count
+      // 3. Trips Audit Table
       const tripsRes = await fetchAllTrips();
       if (tripsRes.success) {
         const pendingTrips = tripsRes.data.filter(t => t.status === "Pending Approval");
@@ -284,7 +372,7 @@
               <td class="py-3 px-2 text-slate-300">${trip.clientName || 'Local Duty'}</td>
               <td class="py-3 px-2 font-mono">${trip.totalKm || 0} KM</td>
               <td class="py-3 px-2 font-mono text-amber-400">${trip.mileage || 0} km/l</td>
-              <td class="py-3 px-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${trip.status === 'Approved' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'}">${trip.status}</span></td>
+              <td class="py-3 px-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${trip.status === 'Approved' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'}">${trip.status || 'Pending'}</span></td>
             </tr>
           `).join('');
         } else {
@@ -292,7 +380,7 @@
         }
       }
 
-      // 4. Fetch Financial P&L
+      // 4. Financial P&L
       const financeRes = await fetchFinancialLedger();
       if (financeRes.success) {
         const netProfit = financeRes.summary.netProfitOrLoss;
@@ -302,7 +390,7 @@
       }
     }
 
-    // Vehicle Form Handler with Limit Guard & Ad Monetization
+    // Vehicle Form Handler
     document.getElementById('vehicle-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const vehiclesRes = await fetchAllVehicles();
@@ -314,36 +402,28 @@
         return;
       }
 
-      if (currentPlan === 'Free Community') {
-        showMonetizationAdModal(async () => {
-          const res = await registerNewVehicle({
-            vehicleNumber: document.getElementById('v-number').value,
-            modelName: document.getElementById('v-model').value,
-            currentOdometer: document.getElementById('v-km').value,
-            ownerName: "Admin"
-          });
-          alert(res.message || res.error);
-          if(res.success) {
-            e.target.reset();
-            loadAdminDashboard();
-          }
-        });
-      } else {
+      const runVehicleRegistration = async () => {
         const res = await registerNewVehicle({
           vehicleNumber: document.getElementById('v-number').value,
           modelName: document.getElementById('v-model').value,
           currentOdometer: document.getElementById('v-km').value,
           ownerName: "Admin"
         });
-        alert(res.message || res.error);
-        if(res.success) {
+        alert(res.message || res.error || "गाड़ी सफलतापूर्वक जोड़ दी गई है!");
+        if(res.success !== false) {
           e.target.reset();
           loadAdminDashboard();
         }
+      };
+
+      if (currentPlan === 'Free Community') {
+        showMonetizationAdModal(runVehicleRegistration);
+      } else {
+        runVehicleRegistration();
       }
     });
 
-    // Driver Form Handler with Limit Guard & Ad Monetization
+    // Driver Form Handler
     document.getElementById('driver-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const driversRes = await fetchAllDrivers();
@@ -355,32 +435,24 @@
         return;
       }
 
-      if (currentPlan === 'Free Community') {
-        showMonetizationAdModal(async () => {
-          const res = await registerNewDriver({
-            fullName: document.getElementById('d-name').value,
-            phoneNumber: document.getElementById('d-phone').value,
-            driverPin: document.getElementById('d-pin').value,
-            monthlySalary: 15000
-          });
-          alert(res.message || res.error);
-          if(res.success) {
-            e.target.reset();
-            loadAdminDashboard();
-          }
-        });
-      } else {
+      const runDriverRegistration = async () => {
         const res = await registerNewDriver({
           fullName: document.getElementById('d-name').value,
           phoneNumber: document.getElementById('d-phone').value,
           driverPin: document.getElementById('d-pin').value,
           monthlySalary: 15000
         });
-        alert(res.message || res.error);
-        if(res.success) {
+        alert(res.message || res.error || "ड्राइवर सफलतापूर्वक रजिस्टर हो गया है!");
+        if(res.success !== false) {
           e.target.reset();
           loadAdminDashboard();
         }
+      };
+
+      if (currentPlan === 'Free Community') {
+        showMonetizationAdModal(runDriverRegistration);
+      } else {
+        runDriverRegistration();
       }
     });
 
