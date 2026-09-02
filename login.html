@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="hi" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aachico Vault - Secure Admin Login</title>
+  
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Master Theme & Responsive CSS -->
+  <link rel="stylesheet" href="./css/themes.css">
+
+  <!-- Adsterra Monetization Scripts (Social Bar & Popunder) -->
+  <script src="https://pl31151923.profitableratecpmnetwork.com/51/cd/c0/51cdc0777c0281a5bee5cd02bd67d97c.js"></script>
+  <script src="https://pl31151922.profitableratecpmnetwork.com/19/dd/f9/19ddf9ecf7656b128bef1db758fc1ab2.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center py-12 px-4 selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- Login Container -->
+  <div class="max-w-md w-full glass-card p-8 rounded-3xl border border-slate-800 space-y-6 shadow-2xl bg-slate-900/90">
+    
+    <!-- Header -->
+    <div class="text-center space-y-2">
+      <a href="index.html" class="inline-flex w-12 h-12 rounded-2xl bg-sky-500/20 text-sky-400 items-center justify-center font-black text-2xl border border-sky-500/40 shadow-lg shadow-sky-500/10 mb-2">
+        A
+      </a>
+      <h1 class="text-xl font-black text-white tracking-tight">एडमिन सिक्योर लॉगिन</h1>
+      <p class="text-xs text-slate-400">अपने फ्लीट कंट्रोल रूम को एक्सेस करने के लिए क्रेडेंशियल्स दर्ज करें।</p>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" class="space-y-4 text-xs">
+      <div>
+        <label class="block text-slate-400 mb-1 font-medium">मोबाइल नंबर या ईमेल</label>
+        <input type="text" id="login-id" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-3 text-white font-mono focus:outline-none focus:border-sky-500" placeholder="9829000000 या email@domain.com">
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <label class="text-slate-400 font-medium">पासवर्ड / पिन</label>
+          <a href="https://wa.me/919166381579?text=Hello,%20I%20forgot%20my%20Aachico%20Vault%20password.%20Please%20help%20me%20reset%20it." target="_blank" class="text-[11px] text-amber-400 hover:underline">
+            पासवर्ड भूल गए? (Forgot)
+          </a>
+        </div>
+        <input type="password" id="login-pass" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-3 text-white font-mono focus:outline-none focus:border-sky-500" placeholder="••••••••">
+      </div>
+
+      <button type="submit" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-xl transition shadow-lg shadow-sky-500/20 text-sm">
+        कंट्रोल रूम में प्रवेश करें
+      </button>
+    </form>
+
+    <!-- Footer Links -->
+    <div class="text-center pt-2 border-t border-slate-800 space-y-2 text-xs">
+      <p class="text-slate-400">नया अकाउंट बनाना चाहते हैं?</p>
+      <a href="signup.html" class="inline-block text-sky-400 hover:underline font-bold">
+        फ्री साइनअप करें
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Footer Help -->
+  <footer class="mt-8 text-center text-xs text-slate-500">
+    <p>पेड प्लान या रीसेट सहायता के लिए <a href="https://wa.me/919166381579?text=Hello,%20I%20want%20to%20buy%20or%20renew%20Aachico%20Vault%20plan." target="_blank" class="text-sky-400 hover:underline font-bold">WhatsApp पर संपर्क करें</a></p>
+  </footer>
+
+  <script type="module">
+    import { adminLogin } from './js/modules/auth-admin.js';
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const loginId = document.getElementById('login-id').value;
+      const pass = document.getElementById('login-pass').value;
+
+      // यहाँ आप अपने ऑथेंटिकेशन मॉड्यूल से लॉगिन वेरीफाई कर सकते हैं
+      // अभी के लिए डेमो/लोकल स्टोरेज आधारित चेक
+      if (loginId && pass) {
+        localStorage.setItem('aachico_admin_logged', 'true');
+        alert("लॉगिन सफल! एडमिन कंट्रोल रूम खोला जा रहा है।");
+        window.location.href = "admin.html";
+      } else {
+        alert("कृपया सही क्रेडेंशियल्स दर्ज करें।");
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
