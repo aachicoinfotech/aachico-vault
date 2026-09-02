@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="hi">
 <head>
   <meta charset="UTF-8" />
@@ -23,7 +22,6 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-rose-500 selection:text-slate-950 pb-20">
 
   <!-- ================= 1. ADMIN AUTH ================= -->
-
   <div id="adminAuthScreen" class="min-h-screen flex items-center justify-center p-4">
     <div class="glass-card w-full max-w-md p-8 rounded-3xl border border-rose-500/30 space-y-6 shadow-2xl">
       <div class="text-center space-y-2">
@@ -34,28 +32,24 @@
         <p class="text-xs text-slate-400">कंपनी कोड और मास्टर एडमिन पासवर्ड दर्ज करें</p>
       </div>
 
-```
-  <div class="space-y-4">
-    <div>
-      <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Company Code</label>
-      <input type="text" id="authCompCode" placeholder="उदा. RJ27-FLEET" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white uppercase focus:border-rose-500 font-mono text-center" />
+      <div class="space-y-4">
+        <div>
+          <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Company Code</label>
+          <input type="text" id="authCompCode" placeholder="उदा. RJ27-FLEET" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white uppercase focus:border-rose-500 font-mono text-center" />
+        </div>
+        <div>
+          <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Admin Password</label>
+          <input type="password" id="authPass" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:border-rose-500 text-center" />
+        </div>
+        <button onclick="loginAdmin()" class="w-full bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition flex items-center justify-center space-x-2 shadow-lg shadow-rose-500/20">
+          <span>कंट्रोल रूम में प्रवेश करें</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
     </div>
-    <div>
-      <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Admin Password</label>
-      <input type="password" id="authPass" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:border-rose-500 text-center" />
-    </div>
-    <button onclick="loginAdmin()" class="w-full bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition flex items-center justify-center space-x-2 shadow-lg shadow-rose-500/20">
-      <span>कंट्रोल रूम में प्रवेश करें</span>
-      <i data-lucide="arrow-right" class="w-4 h-4"></i>
-    </button>
-  </div>
-</div>
-```
-
   </div>
 
   <!-- ================= 2. ADMIN MAIN CONSOLE ================= -->
-
   <div id="adminMainConsole" class="hidden min-h-screen flex flex-col">
     <!-- Navbar -->
     <header class="glass-card border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
@@ -86,613 +80,605 @@
       </div>
     </header>
 
-```
-<!-- Navigation Tabs -->
-<div class="bg-slate-900/80 border-b border-slate-800 px-6 py-2 overflow-x-auto flex space-x-2">
-  <button onclick="switchAdminTab('tabOperations')" id="tabBtn-tabOperations" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-rose-500 text-slate-950 whitespace-nowrap">
-    ऑपरेशन्स व फ्लीट ऑडिट
-  </button>
-  <button onclick="switchAdminTab('tabLegalDocs')" id="tabBtn-tabLegalDocs" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 whitespace-nowrap">
-    6 लीगल पेपर्स व गाड़ी-वार PDF
-  </button>
-  <button onclick="switchAdminTab('tabBizSetup')" id="tabBtn-tabBizSetup" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 whitespace-nowrap">
-    बिज़नेस प्रोफ़ाइल व बैंक
-  </button>
-  <button onclick="switchAdminTab('tabFinancialPL')" id="tabBtn-tabFinancialPL" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 whitespace-nowrap">
-    प्रॉफ़िट & लॉस (P&L)
-  </button>
-  <button onclick="switchAdminTab('tabUdhariLedger')" id="tabBtn-tabUdhariLedger" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 whitespace-nowrap">
-    किस-किस की उधारी बाकी है
-  </button>
-</div>
-
-<main class="max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
-
-  <!-- ================= TAB 1: OPERATIONS & FLEET AUDIT ================= -->
-  <div id="tabOperations" class="space-y-6">
-    
-    <!-- KPIs -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="glass-card p-4 rounded-2xl border-l-4 border-emerald-500">
-        <p class="text-[11px] text-slate-400 font-bold uppercase">कस्टमर कैश कलेक्शन</p>
-        <h3 id="kpiTotalCash" class="text-xl font-black text-emerald-400 font-mono mt-1">₹0</h3>
-        <p class="text-[10px] text-slate-500">सभी ट्रिप्स से मिला कुल कैश</p>
-      </div>
-      <div class="glass-card p-4 rounded-2xl border-l-4 border-rose-500">
-        <p class="text-[11px] text-slate-400 font-bold uppercase">डीज़ल + टोल + अन्य खर्च</p>
-        <h3 id="kpiTotalExp" class="text-xl font-black text-rose-400 font-mono mt-1">₹0</h3>
-        <p class="text-[10px] text-slate-500">ड्राइवरों द्वारा किया गया व्यय</p>
-      </div>
-      <div class="glass-card p-4 rounded-2xl border-l-4 border-teal-500">
-        <p class="text-[11px] text-slate-400 font-bold uppercase">ड्राइवर हाथ में बाकी कैश</p>
-        <h3 id="kpiDriverInHand" class="text-xl font-black text-teal-300 font-mono mt-1">₹0</h3>
-        <p class="text-[10px] text-slate-500">मालिक को जमा होने योग्य राशि</p>
-      </div>
-      <div class="glass-card p-4 rounded-2xl border-l-4 border-sky-500">
-        <p class="text-[11px] text-slate-400 font-bold uppercase">पेंडिंग ट्रिप्स ऑडिट</p>
-        <h3 id="kpiPendingAudit" class="text-xl font-black text-sky-400 font-mono mt-1">0</h3>
-        <p class="text-[10px] text-slate-500">मंज़ूरी की प्रतीक्षा में ट्रिप्स</p>
-      </div>
+    <!-- Navigation Tabs -->
+    <div class="bg-slate-900/80 border-b border-slate-800 px-6 py-2 overflow-x-auto flex space-x-2">
+      <button onclick="switchAdminTab('tabOperations')" id="tabBtn-tabOperations" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-rose-500 text-slate-950 whitespace-nowrap">
+        ऑपरेशन्स व फ्लीट ऑडिट
+      </button>
+      <button onclick="switchAdminTab('tabLegalDocs')" id="tabBtn-tabLegalDocs" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 whitespace-nowrap">
+        6 लीगल पेपर्स व गाड़ी-वार PDF
+      </button>
+      <button onclick="switchAdminTab('tabBizSetup')" id="tabBtn-tabBizSetup" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 whitespace-nowrap">
+        बिज़नेस प्रोफ़ाइल व बैंक
+      </button>
+      <button onclick="switchAdminTab('tabFinancialPL')" id="tabBtn-tabFinancialPL" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 whitespace-nowrap">
+        प्रॉफ़िट & लॉस (P&L)
+      </button>
+      <button onclick="switchAdminTab('tabUdhariLedger')" id="tabBtn-tabUdhariLedger" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 whitespace-nowrap">
+        किस-किस की उधारी बाकी है
+      </button>
     </div>
 
-    <!-- Fleet & Driver Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
-      <!-- Fleet Vehicles -->
-      <div class="glass-card p-5 rounded-3xl space-y-4">
-        <h3 class="font-bold text-sm text-white flex items-center space-x-2">
-          <i data-lucide="car" class="w-4 h-4 text-sky-400"></i>
-          <span>फ्लीट गाड़ियाँ जोड़ें (Auto-Format Number)</span>
-        </h3>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="text-[10px] text-slate-400 block mb-1 font-semibold">गाड़ी नंबर</label>
-            <input type="text" id="inCarNo" placeholder="RJ27TA8199" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono uppercase" />
-          </div>
-          <div>
-            <label class="text-[10px] text-slate-400 block mb-1 font-semibold">मॉडल / वाहन प्रकार</label>
-            <input type="text" id="inCarModel" placeholder="Dzire / Ertiga" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white" />
-          </div>
-        </div>
-        <div>
-          <label class="text-[10px] text-slate-400 block mb-1 font-semibold">करंट ओडोमीटर KM</label>
-          <input type="number" id="inCarOdo" placeholder="52400" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
-        </div>
-        <button onclick="saveVehicle()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">
-          गाड़ी फ्लीट में शामिल करें
-        </button>
-
-        <div class="pt-2 border-t border-slate-800/80">
-          <p class="text-[11px] text-slate-400 font-bold mb-2 uppercase">फ्लीट सूची:</p>
-          <div id="fleetGrid" class="space-y-2 max-h-56 overflow-y-auto pr-1">
-            <span class="text-xs text-slate-500">लोड हो रहा है...</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Driver Onboarding -->
-      <div class="glass-card p-5 rounded-3xl space-y-4">
-        <h3 class="font-bold text-sm text-amber-400 flex items-center space-x-2">
-          <i data-lucide="user-check" class="w-4 h-4 text-amber-400"></i>
-          <span>ड्राइवर रजिस्टर व यूनीक PIN सेट करें</span>
-        </h3>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="text-[10px] text-slate-400 block mb-1 font-semibold">ड्राइवर का पूरा नाम</label>
-            <input type="text" id="inDrvName" placeholder="सुरेश शर्मा" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white" />
-          </div>
-          <div>
-            <label class="text-[10px] text-slate-400 block mb-1 font-semibold">मोबाइल नंबर</label>
-            <input type="tel" maxlength="10" id="inDrvPhone" placeholder="98XXXXXXXX" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="text-[10px] text-amber-400 block mb-1 font-semibold">यूनिक 4-Digit PIN</label>
-            <input type="password" maxlength="4" id="inDrvPin" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-sm text-amber-400 font-bold font-mono text-center tracking-widest" />
-          </div>
-          <div>
-            <label class="text-[10px] text-slate-400 block mb-1 font-semibold">मासिक वेतन / सैलरी</label>
-            <input type="number" id="inDrvSalary" placeholder="₹18000" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
-          </div>
-        </div>
-        <button onclick="saveDriver()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">
-          ड्राइवर जोड़ें (Auto-Unique Guard)
-        </button>
-
-        <div class="pt-2 border-t border-slate-800/80">
-          <p class="text-[11px] text-slate-400 font-bold mb-2 uppercase">ड्राइवर रोस्टर व कैश लेज़र:</p>
-          <div id="driverGrid" class="space-y-2 max-h-56 overflow-y-auto pr-1">
-            <span class="text-xs text-slate-500">लोड हो रहा है...</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Trips Audit Table -->
-    <div class="glass-card p-6 rounded-3xl space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div>
-          <h3 class="font-bold text-base text-white flex items-center space-x-2">
-            <i data-lucide="file-check-2" class="w-5 h-5 text-sky-400"></i>
-            <span>लाइव ट्रिप्स ऑडिट व बिल जनरेटर (Anti-Theft Approval Desk)</span>
-          </h3>
-          <p class="text-xs text-slate-400">अप्रूव्ड ट्रिप्स का A4 प्रोफेशनल टैक्स इनवॉइस और सपोर्टिंग पर्चियां</p>
-        </div>
-        <button onclick="refreshAll()" class="text-xs text-sky-400 hover:underline flex items-center space-x-1">
-          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-          <span>ताज़ा करें (Sync)</span>
-        </button>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-900 text-slate-400 font-mono text-[10px] uppercase">
-            <tr>
-              <th class="p-3">गाड़ी व ड्राइवर</th>
-              <th class="p-3">रीडिंग (Start ➔ End)</th>
-              <th class="p-3">डीज़ल व माइलेज</th>
-              <th class="p-3">टोल + पार्किंग</th>
-              <th class="p-3">कस्टमर कैश</th>
-              <th class="p-3">ड्राइवर हाथ में कैश</th>
-              <th class="p-3">ऑडिट स्टेटस</th>
-              <th class="p-3 text-right">एडमिन एक्शन व बिल</th>
-            </tr>
-          </thead>
-          <tbody id="tripsAuditTable" class="divide-y divide-slate-800 font-medium">
-            <tr><td colspan="8" class="p-4 text-center text-slate-500">डेटा सिंक हो रहा है...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ================= TAB 2: 6 LEGAL DOCUMENTS & CAR-WISE PDF SHARE ================= -->
-  <div id="tabLegalDocs" class="hidden space-y-6">
-    <div class="glass-card p-6 rounded-3xl space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h3 class="font-bold text-base text-white flex items-center space-x-2">
-            <i data-lucide="file-text" class="w-5 h-5 text-teal-400"></i>
-            <span>कमर्शियल टैक्सी लीगल पेपर्स व गाड़ी-वार PDF शेयर (6 Core Docs)</span>
-          </h3>
-          <p class="text-xs text-slate-400">RC, Insurance, Fitness, All India Permit, State Tax, PUC</p>
-        </div>
+      <!-- ================= TAB 1: OPERATIONS & FLEET AUDIT ================= -->
+      <div id="tabOperations" class="space-y-6">
         
-        <div class="flex items-center space-x-2 bg-slate-900 p-2 rounded-2xl border border-slate-800">
-          <select id="shareCarSelect" class="bg-slate-950 text-xs text-white p-2 rounded-xl font-mono border border-slate-700"></select>
-          <button onclick="shareCarSpecificPDF()" class="bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-3 py-2 rounded-xl text-xs flex items-center space-x-1.5 whitespace-nowrap">
-            <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-            <span>गाड़ी के पेपर्स शेयर करें</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs">
-        <p class="font-bold text-white uppercase text-[11px]">नई गाड़ी के पेपर्स अपडेट करें:</p>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
-          <div>
-            <label class="text-[10px] text-slate-400 block mb-1">गाड़ी नंबर चुनें</label>
-            <select id="docCarSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-mono"></select>
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="glass-card p-4 rounded-2xl border-l-4 border-emerald-500">
+            <p class="text-[11px] text-slate-400 font-bold uppercase">कस्टमर कैश कलेक्शन</p>
+            <h3 id="kpiTotalCash" class="text-xl font-black text-emerald-400 font-mono mt-1">₹0</h3>
+            <p class="text-[10px] text-slate-500">सभी ट्रिप्स से मिला कुल कैश</p>
           </div>
-          <div>
-            <label class="text-[10px] text-slate-400 block mb-1">दस्तावेज़ प्रकार</label>
-            <select id="docTypeSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-bold">
-              <option value="RC">RC (Registration Certificate)</option>
-              <option value="Insurance">Vehicle Insurance</option>
-              <option value="Fitness">Fitness Certificate</option>
-              <option value="Permit">National / State Permit</option>
-              <option value="Tax">Road / State Tax Slip</option>
-              <option value="PUC">PUC (Pollution Certificate)</option>
-            </select>
+          <div class="glass-card p-4 rounded-2xl border-l-4 border-rose-500">
+            <p class="text-[11px] text-slate-400 font-bold uppercase">डीज़ल + टोल + अन्य खर्च</p>
+            <h3 id="kpiTotalExp" class="text-xl font-black text-rose-400 font-mono mt-1">₹0</h3>
+            <p class="text-[10px] text-slate-500">ड्राइवरों द्वारा किया गया व्यय</p>
           </div>
-          <div>
-            <label class="text-[10px] text-slate-400 block mb-1">वैधता समाप्ति (Expiry Date)</label>
-            <input type="date" id="docExpiryDate" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-mono" />
+          <div class="glass-card p-4 rounded-2xl border-l-4 border-teal-500">
+            <p class="text-[11px] text-slate-400 font-bold uppercase">ड्राइवर हाथ में बाकी कैश</p>
+            <h3 id="kpiDriverInHand" class="text-xl font-black text-teal-300 font-mono mt-1">₹0</h3>
+            <p class="text-[10px] text-slate-500">मालिक को जमा होने योग्य राशि</p>
           </div>
-          <div>
-            <label class="text-[10px] text-slate-400 block mb-1">PDF / फोटो फ़ाइल</label>
-            <input type="file" id="docPdfFile" accept="image/*,.pdf" class="w-full text-[10px] text-slate-400 file:bg-teal-500 file:text-slate-950 file:border-0 file:rounded-lg file:px-2 file:py-1 file:font-bold cursor-pointer" />
+          <div class="glass-card p-4 rounded-2xl border-l-4 border-sky-500">
+            <p class="text-[11px] text-slate-400 font-bold uppercase">पेंडिंग ट्रिप्स ऑडिट</p>
+            <h3 id="kpiPendingAudit" class="text-xl font-black text-sky-400 font-mono mt-1">0</h3>
+            <p class="text-[10px] text-slate-500">मंज़ूरी की प्रतीक्षा में ट्रिप्स</p>
           </div>
         </div>
-        <button onclick="saveVehicleDocument()" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2 rounded-xl transition">
-          दस्तावेज़ और PDF सेव करें
-        </button>
-      </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-900 text-slate-400 font-mono text-[10px] uppercase">
-            <tr>
-              <th class="p-3">गाड़ी नंबर</th>
-              <th class="p-3">दस्तावेज़ नाम</th>
-              <th class="p-3">एक्सपायरी तिथि</th>
-              <th class="p-3">स्थिति (Alert Status)</th>
-              <th class="p-3 text-right">PDF / WhatsApp शेयर</th>
-            </tr>
-          </thead>
-          <tbody id="legalDocsTableBody" class="divide-y divide-slate-800 font-medium">
-            <tr><td colspan="5" class="p-4 text-center text-slate-500">डेटा लोड हो रहा है...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+        <!-- Fleet & Driver Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-  <!-- ================= TAB 3: BUSINESS PROFILE & EDITABLE BANKS ================= -->
-  <div id="tabBizSetup" class="hidden space-y-6">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      
-      <div class="glass-card p-6 rounded-3xl space-y-4">
-        <h3 class="font-bold text-sm text-white flex items-center space-x-2">
-          <i data-lucide="building-2" class="w-4 h-4 text-rose-400"></i>
-          <span>कंपनी प्रोफ़ाइल, ब्रांडिंग व लोगो (Fully Editable)</span>
-        </h3>
-        <div class="space-y-3 text-xs">
-          <div>
-            <label class="text-[10px] text-slate-400 block mb-1">कंपनी / ट्रेवेल्स का नाम</label>
-            <input type="text" id="bizName" placeholder="AACHICO TRAVELS RAJASTHAN" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white font-bold" />
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">GSTIN नंबर</label>
-              <input type="text" id="bizGstin" placeholder="08AAAAA0000A1Z5" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white uppercase font-mono" />
+          <!-- Fleet Vehicles -->
+          <div class="glass-card p-5 rounded-3xl space-y-4">
+            <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+              <i data-lucide="car" class="w-4 h-4 text-sky-400"></i>
+              <span>फ्लीट गाड़ियाँ जोड़ें (Auto-Format Number)</span>
+            </h3>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1 font-semibold">गाड़ी नंबर</label>
+                <input type="text" id="inCarNo" placeholder="RJ27TA8199" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono uppercase" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1 font-semibold">मॉडल / वाहन प्रकार</label>
+                <input type="text" id="inCarModel" placeholder="Dzire / Ertiga" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white" />
+              </div>
             </div>
             <div>
-              <label class="text-[10px] text-slate-400 block mb-1">PAN कार्ड नंबर</label>
-              <input type="text" id="bizPan" placeholder="AAAAA0000A" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white uppercase font-mono" />
+              <label class="text-[10px] text-slate-400 block mb-1 font-semibold">करंट ओडोमीटर KM</label>
+              <input type="number" id="inCarOdo" placeholder="52400" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
             </div>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">सपोर्ट मोबाइल / WhatsApp</label>
-              <input type="text" id="bizPhone" placeholder="98290XXXXX" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white font-mono" />
-            </div>
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">ईमेल आईडी</label>
-              <input type="email" id="bizEmail" placeholder="info@aachico.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white" />
-            </div>
-          </div>
-          <button onclick="saveBusinessProfile()" class="w-full bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold py-2.5 rounded-xl transition">
-            प्रोफ़ाइल व सेटिंग्स अपडेट करें (Save)
-          </button>
-        </div>
-      </div>
-
-      <div class="glass-card p-6 rounded-3xl space-y-4">
-        <h3 class="font-bold text-sm text-white flex items-center space-x-2">
-          <i data-lucide="landmark" class="w-4 h-4 text-rose-400"></i>
-          <span>मास्टर टैक्स लॉक व बैंक खाते (Add/Edit/Delete)</span>
-        </h3>
-        <div class="space-y-3 text-xs">
-          <div class="grid grid-cols-2 gap-2 bg-slate-900 p-3 rounded-2xl border border-slate-800">
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">मास्टर GST (%)</label>
-              <input type="number" id="masterGstRate" value="5" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-rose-400 font-mono font-bold" />
-            </div>
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">मास्टर TDS (%)</label>
-              <input type="number" id="masterTdsRate" value="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-rose-400 font-mono font-bold" />
-            </div>
-          </div>
-          <button onclick="saveMasterTax()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold py-2 rounded-xl transition">
-            टैक्स दरें अपडेट करें
-          </button>
-
-          <div class="pt-2 border-t border-slate-800 space-y-2">
-            <p class="font-bold text-white text-[11px] uppercase">कंपनी बैंक / UPI QR खाते:</p>
-            <input type="text" id="bankNameIn" placeholder="बैंक नाम (उदा. HDFC Current)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-white" />
-            <input type="text" id="bankAccIn" placeholder="खाता संख्या / UPI ID" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-white font-mono" />
-            <button onclick="addCompanyBank()" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2 rounded-xl transition">
-              नया बैंक खाता जोड़ें (Add Bank)
+            <button onclick="saveVehicle()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">
+              गाड़ी फ्लीट में शामिल करें
             </button>
-            <div id="adminBanksList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
-              <span class="text-slate-500 text-[10px]">बैंक खाते लोड हो रहे हैं...</span>
+
+            <div class="pt-2 border-t border-slate-800/80">
+              <p class="text-[11px] text-slate-400 font-bold mb-2 uppercase">फ्लीट सूची:</p>
+              <div id="fleetGrid" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                <span class="text-xs text-slate-500">लोड हो रहा है...</span>
+              </div>
             </div>
+          </div>
+
+          <!-- Driver Onboarding -->
+          <div class="glass-card p-5 rounded-3xl space-y-4">
+            <h3 class="font-bold text-sm text-amber-400 flex items-center space-x-2">
+              <i data-lucide="user-check" class="w-4 h-4 text-amber-400"></i>
+              <span>ड्राइवर रजिस्टर व यूनीक PIN सेट करें</span>
+            </h3>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1 font-semibold">ड्राइवर का पूरा नाम</label>
+                <input type="text" id="inDrvName" placeholder="सुरेश शर्मा" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1 font-semibold">मोबाइल नंबर</label>
+                <input type="tel" maxlength="10" id="inDrvPhone" placeholder="98XXXXXXXX" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] text-amber-400 block mb-1 font-semibold">यूनिक 4-Digit PIN</label>
+                <input type="password" maxlength="4" id="inDrvPin" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-sm text-amber-400 font-bold font-mono text-center tracking-widest" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1 font-semibold">मासिक वेतन / सैलरी</label>
+                <input type="number" id="inDrvSalary" placeholder="₹18000" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
+              </div>
+            </div>
+            <button onclick="saveDriver()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">
+              ड्राइवर जोड़ें (Auto-Unique Guard)
+            </button>
+
+            <div class="pt-2 border-t border-slate-800/80">
+              <p class="text-[11px] text-slate-400 font-bold mb-2 uppercase">ड्राइवर रोस्टर व कैश लेज़र:</p>
+              <div id="driverGrid" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                <span class="text-xs text-slate-500">लोड हो रहा है...</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Trips Audit Table -->
+        <div class="glass-card p-6 rounded-3xl space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-base text-white flex items-center space-x-2">
+                <i data-lucide="file-check-2" class="w-5 h-5 text-sky-400"></i>
+                <span>लाइव ट्रिप्स ऑडिट व बिल जनरेटर (Anti-Theft Approval Desk)</span>
+              </h3>
+              <p class="text-xs text-slate-400">अप्रूव्ड ट्रिप्स का A4 प्रोफेशनल टैक्स इनवॉइस और सपोर्टिंग पर्चियां</p>
+            </div>
+            <button onclick="refreshAll()" class="text-xs text-sky-400 hover:underline flex items-center space-x-1">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              <span>ताज़ा करें (Sync)</span>
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-900 text-slate-400 font-mono text-[10px] uppercase">
+                <tr>
+                  <th class="p-3">गाड़ी व ड्राइवर</th>
+                  <th class="p-3">रीडिंग (Start ➔ End)</th>
+                  <th class="p-3">डीज़ल व माइलेज</th>
+                  <th class="p-3">टोल + पार्किंग</th>
+                  <th class="p-3">कस्टमर कैश</th>
+                  <th class="p-3">ड्राइवर हाथ में कैश</th>
+                  <th class="p-3">ऑडिट स्टेटस</th>
+                  <th class="p-3 text-right">एडमिन एक्शन व बिल</th>
+                </tr>
+              </thead>
+              <tbody id="tripsAuditTable" class="divide-y divide-slate-800 font-medium">
+                <tr><td colspan="8" class="p-4 text-center text-slate-500">डेटा सिंक हो रहा है...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= TAB 2: 6 LEGAL DOCUMENTS & CAR-WISE PDF SHARE ================= -->
+      <div id="tabLegalDocs" class="hidden space-y-6">
+        <div class="glass-card p-6 rounded-3xl space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="font-bold text-base text-white flex items-center space-x-2">
+                <i data-lucide="file-text" class="w-5 h-5 text-teal-400"></i>
+                <span>कमर्शियल टैक्सी लीगल पेपर्स व गाड़ी-वार PDF शेयर (6 Core Docs)</span>
+              </h3>
+              <p class="text-xs text-slate-400">RC, Insurance, Fitness, All India Permit, State Tax, PUC</p>
+            </div>
+            
+            <div class="flex items-center space-x-2 bg-slate-900 p-2 rounded-2xl border border-slate-800">
+              <select id="shareCarSelect" class="bg-slate-950 text-xs text-white p-2 rounded-xl font-mono border border-slate-700"></select>
+              <button onclick="shareCarSpecificPDF()" class="bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-3 py-2 rounded-xl text-xs flex items-center space-x-1.5 whitespace-nowrap">
+                <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                <span>गाड़ी के पेपर्स शेयर करें</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs">
+            <p class="font-bold text-white uppercase text-[11px]">नई गाड़ी के पेपर्स अपडेट करें:</p>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1">गाड़ी नंबर चुनें</label>
+                <select id="docCarSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-mono"></select>
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1">दस्तावेज़ प्रकार</label>
+                <select id="docTypeSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-bold">
+                  <option value="RC">RC (Registration Certificate)</option>
+                  <option value="Insurance">Vehicle Insurance</option>
+                  <option value="Fitness">Fitness Certificate</option>
+                  <option value="Permit">National / State Permit</option>
+                  <option value="Tax">Road / State Tax Slip</option>
+                  <option value="PUC">PUC (Pollution Certificate)</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1">वैधता समाप्ति (Expiry Date)</label>
+                <input type="date" id="docExpiryDate" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-mono" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1">PDF / फोटो फ़ाइल</label>
+                <input type="file" id="docPdfFile" accept="image/*,.pdf" class="w-full text-[10px] text-slate-400 file:bg-teal-500 file:text-slate-950 file:border-0 file:rounded-lg file:px-2 file:py-1 file:font-bold cursor-pointer" />
+              </div>
+            </div>
+            <button onclick="saveVehicleDocument()" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2 rounded-xl transition">
+              दस्तावेज़ और PDF सेव करें
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-900 text-slate-400 font-mono text-[10px] uppercase">
+                <tr>
+                  <th class="p-3">गाड़ी नंबर</th>
+                  <th class="p-3">दस्तावेज़ नाम</th>
+                  <th class="p-3">एक्सपायरी तिथि</th>
+                  <th class="p-3">स्थिति (Alert Status)</th>
+                  <th class="p-3 text-right">PDF / WhatsApp शेयर</th>
+                </tr>
+              </thead>
+              <tbody id="legalDocsTableBody" class="divide-y divide-slate-800 font-medium">
+                <tr><td colspan="5" class="p-4 text-center text-slate-500">डेटा लोड हो रहा है...</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
 
-    </div>
-  </div>
+      <!-- ================= TAB 3: BUSINESS PROFILE & EDITABLE BANKS ================= -->
+      <div id="tabBizSetup" class="hidden space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <div class="glass-card p-6 rounded-3xl space-y-4">
+            <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+              <i data-lucide="building-2" class="w-4 h-4 text-rose-400"></i>
+              <span>कंपनी प्रोफ़ाइल, ब्रांडिंग व लोगो (Fully Editable)</span>
+            </h3>
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1">कंपनी / ट्रेवेल्स का नाम</label>
+                <input type="text" id="bizName" placeholder="AACHICO TRAVELS RAJASTHAN" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white font-bold" />
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-[10px] text-slate-400 block mb-1">GSTIN नंबर</label>
+                  <input type="text" id="bizGstin" placeholder="08AAAAA0000A1Z5" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white uppercase font-mono" />
+                </div>
+                <div>
+                  <label class="text-[10px] text-slate-400 block mb-1">PAN कार्ड नंबर</label>
+                  <input type="text" id="bizPan" placeholder="AAAAA0000A" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white uppercase font-mono" />
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-[10px] text-slate-400 block mb-1">सपोर्ट मोबाइल / WhatsApp</label>
+                  <input type="text" id="bizPhone" placeholder="98290XXXXX" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white font-mono" />
+                </div>
+                <div>
+                  <label class="text-[10px] text-slate-400 block mb-1">ईमेल आईडी</label>
+                  <input type="email" id="bizEmail" placeholder="info@aachico.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white" />
+                </div>
+              </div>
+              <button onclick="saveBusinessProfile()" class="w-full bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold py-2.5 rounded-xl transition">
+                प्रोफ़ाइल व सेटिंग्स अपडेट करें (Save)
+              </button>
+            </div>
+          </div>
 
-  <!-- ================= TAB 4: PROFIT & LOSS (P&L) ================= -->
-  <div id="tabFinancialPL" class="hidden space-y-6">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="glass-card p-5 rounded-2xl border-l-4 border-emerald-500">
-        <p class="text-[11px] text-slate-400 font-bold uppercase">कुल ट्रिप आय (Gross Billing)</p>
-        <h3 id="plGrossIncome" class="text-3xl font-black text-emerald-400 font-mono mt-1">₹0</h3>
-        <p class="text-[10px] text-slate-500">सभी अप्रूव्ड ट्रिप्स का कुल किराया</p>
-      </div>
-      <div class="glass-card p-5 rounded-2xl border-l-4 border-rose-500">
-        <p class="text-[11px] text-slate-400 font-bold uppercase">कुल फ्लीट खर्च (Diesel + Toll)</p>
-        <h3 id="plTotalExpense" class="text-3xl font-black text-rose-400 font-mono mt-1">₹0</h3>
-        <p class="text-[10px] text-slate-500">डीज़ल, टोल व पार्किंग व्यय</p>
-      </div>
-      <div class="glass-card p-5 rounded-2xl border-l-4 border-teal-500">
-        <p class="text-[11px] text-slate-400 font-bold uppercase">शुद्ध लाभ (Net Profit P&L)</p>
-        <h3 id="plNetProfit" class="text-3xl font-black text-teal-400 font-mono mt-1">₹0</h3>
-        <p class="text-[10px] text-slate-500">आय - खर्चे = असली मुनाफा</p>
-      </div>
-    </div>
+          <div class="glass-card p-6 rounded-3xl space-y-4">
+            <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+              <i data-lucide="landmark" class="w-4 h-4 text-rose-400"></i>
+              <span>मास्टर टैक्स लॉक व बैंक खाते (Add/Edit/Delete)</span>
+            </h3>
+            <div class="space-y-3 text-xs">
+              <div class="grid grid-cols-2 gap-2 bg-slate-900 p-3 rounded-2xl border border-slate-800">
+                <div>
+                  <label class="text-[10px] text-slate-400 block mb-1">मास्टर GST (%)</label>
+                  <input type="number" id="masterGstRate" value="5" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-rose-400 font-mono font-bold" />
+                </div>
+                <div>
+                  <label class="text-[10px] text-slate-400 block mb-1">मास्टर TDS (%)</label>
+                  <input type="number" id="masterTdsRate" value="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-rose-400 font-mono font-bold" />
+                </div>
+              </div>
+              <button onclick="saveMasterTax()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold py-2 rounded-xl transition">
+                टैक्स दरें अपडेट करें
+              </button>
 
-    <div class="glass-card p-6 rounded-3xl space-y-4">
-      <div class="flex items-center justify-between">
-        <h3 class="font-bold text-base text-white flex items-center space-x-2">
-          <i data-lucide="trending-up" class="w-5 h-5 text-teal-400"></i>
-          <span>मास्टर प्रॉफिट एंड लॉस (P&L Statement)</span>
-        </h3>
-        <button onclick="loadProfitAndLoss()" class="text-xs text-rose-400 hover:underline">डेटा रिफ्रेश करें</button>
-      </div>
-      <div id="plBreakdownBox" class="space-y-2 text-xs font-mono">
-        <p class="text-slate-500 text-center py-4">P&L डेटा लोड हो रहा है...</p>
-      </div>
-    </div>
-  </div>
+              <div class="pt-2 border-t border-slate-800 space-y-2">
+                <p class="font-bold text-white text-[11px] uppercase">कंपनी बैंक / UPI QR खाते:</p>
+                <input type="text" id="bankNameIn" placeholder="बैंक नाम (उदा. HDFC Current)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-white" />
+                <input type="text" id="bankAccIn" placeholder="खाता संख्या / UPI ID" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-white font-mono" />
+                <button onclick="addCompanyBank()" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2 rounded-xl transition">
+                  नया बैंक खाता जोड़ें (Add Bank)
+                </button>
+                <div id="adminBanksList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                  <span class="text-slate-500 text-[10px]">बैंक खाते लोड हो रहे हैं...</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-  <!-- ================= TAB 5: B2B UDHARI LEDGER ================= -->
-  <div id="tabUdhariLedger" class="hidden space-y-6">
-    <div class="glass-card p-6 rounded-3xl space-y-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="font-bold text-base text-white flex items-center space-x-2">
-            <i data-lucide="users-round" class="w-5 h-5 text-amber-400"></i>
-            <span>किस-किस की उधारी बाकी है (B2B Udhari & Recovery Ledger)</span>
-          </h3>
-          <p class="text-xs text-slate-400">होटल, ट्रैवल एजेंट्स और कॉर्पोरेट पार्टियों का मार्केट बकाया बहीखाता</p>
         </div>
-        <button onclick="loadUdhariLedger()" class="text-xs text-amber-400 hover:underline">रिफ्रेश</button>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-900 text-slate-400 font-mono text-[10px] uppercase">
-            <tr>
-              <th class="p-3">पार्टी / होटल का नाम</th>
-              <th class="p-3">कुल ट्रिप्स</th>
-              <th class="p-3">कुल बिल राशि</th>
-              <th class="p-3">जमा एडवांस</th>
-              <th class="p-3">कुल उधारी बाकी</th>
-              <th class="p-3 text-right">तकादा (WhatsApp)</th>
-            </tr>
-          </thead>
-          <tbody id="udhariTableBody" class="divide-y divide-slate-800 font-medium">
-            <tr><td colspan="6" class="p-4 text-center text-slate-500">उधारी लेज़र लोड हो रहा है...</td></tr>
-          </tbody>
-        </table>
+      <!-- ================= TAB 4: PROFIT & LOSS (P&L) ================= -->
+      <div id="tabFinancialPL" class="hidden space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="glass-card p-5 rounded-2xl border-l-4 border-emerald-500">
+            <p class="text-[11px] text-slate-400 font-bold uppercase">कुल ट्रिप आय (Gross Billing)</p>
+            <h3 id="plGrossIncome" class="text-3xl font-black text-emerald-400 font-mono mt-1">₹0</h3>
+            <p class="text-[10px] text-slate-500">सभी अप्रूव्ड ट्रिप्स का कुल किराया</p>
+          </div>
+          <div class="glass-card p-5 rounded-2xl border-l-4 border-rose-500">
+            <p class="text-[11px] text-slate-400 font-bold uppercase">कुल फ्लीट खर्च (Diesel + Toll)</p>
+            <h3 id="plTotalExpense" class="text-3xl font-black text-rose-400 font-mono mt-1">₹0</h3>
+            <p class="text-[10px] text-slate-500">डीज़ल, टोल व पार्किंग व्यय</p>
+          </div>
+          <div class="glass-card p-5 rounded-2xl border-l-4 border-teal-500">
+            <p class="text-[11px] text-slate-400 font-bold uppercase">शुद्ध लाभ (Net Profit P&L)</p>
+            <h3 id="plNetProfit" class="text-3xl font-black text-teal-400 font-mono mt-1">₹0</h3>
+            <p class="text-[10px] text-slate-500">आय - खर्चे = असली मुनाफा</p>
+          </div>
+        </div>
+
+        <div class="glass-card p-6 rounded-3xl space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-base text-white flex items-center space-x-2">
+              <i data-lucide="trending-up" class="w-5 h-5 text-teal-400"></i>
+              <span>मास्टर प्रॉफिट एंड लॉस (P&L Statement)</span>
+            </h3>
+            <button onclick="loadProfitAndLoss()" class="text-xs text-rose-400 hover:underline">डेटा रिफ्रेश करें</button>
+          </div>
+          <div id="plBreakdownBox" class="space-y-2 text-xs font-mono">
+            <p class="text-slate-500 text-center py-4">P&L डेटा लोड हो रहा है...</p>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-</main>
-```
+      <!-- ================= TAB 5: B2B UDHARI LEDGER ================= -->
+      <div id="tabUdhariLedger" class="hidden space-y-6">
+        <div class="glass-card p-6 rounded-3xl space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-bold text-base text-white flex items-center space-x-2">
+                <i data-lucide="users-round" class="w-5 h-5 text-amber-400"></i>
+                <span>किस-किस की उधारी बाकी है (B2B Udhari & Recovery Ledger)</span>
+              </h3>
+              <p class="text-xs text-slate-400">होटल, ट्रैवल एजेंट्स और कॉर्पोरेट पार्टियों का मार्केट बकाया बहीखाता</p>
+            </div>
+            <button onclick="loadUdhariLedger()" class="text-xs text-amber-400 hover:underline">रिफ्रेश</button>
+          </div>
 
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-900 text-slate-400 font-mono text-[10px] uppercase">
+                <tr>
+                  <th class="p-3">पार्टी / होटल का नाम</th>
+                  <th class="p-3">कुल ट्रिप्स</th>
+                  <th class="p-3">कुल बिल राशि</th>
+                  <th class="p-3">जमा एडवांस</th>
+                  <th class="p-3">कुल उधारी बाकी</th>
+                  <th class="p-3 text-right">तकादा (WhatsApp)</th>
+                </tr>
+              </thead>
+              <tbody id="udhariTableBody" class="divide-y divide-slate-800 font-medium">
+                <tr><td colspan="6" class="p-4 text-center text-slate-500">उधारी लेज़र लोड हो रहा है...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
   </div>
 
   <!-- ================= 3. A4 PROFESSIONAL TAX INVOICE & SUPPORTING RECEIPTS MODAL ================= -->
-
   <div id="printableInvoiceModal" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white text-slate-950 w-full max-w-4xl p-8 rounded-3xl space-y-6 shadow-2xl relative font-sans">
+      
+      <!-- PAGE 1: MAIN TAXI INVOICE (Strictly fits 1 A4 portrait page) -->
+      <div class="bg-white p-2 space-y-4 page-break">
+        
+        <!-- HEADER -->
+        <div class="flex justify-between items-start border-b-2 border-slate-900 pb-3">
+          <div class="flex items-start space-x-3">
+            <div class="w-12 h-12 bg-amber-600 rounded-xl flex items-center text-white font-black text-xl justify-center shadow">AT</div>
+            <div>
+              <h2 class="text-base font-black uppercase text-slate-900 tracking-wide">AACHICO TRAVELS RAJASTHAN</h2>
+              <p class="text-[11px] font-bold text-amber-700 tracking-wider">CAR RENTAL & TAXI SERVICE</p>
+              <p class="text-[10px] italic text-slate-600 font-serif">“Your Journey, Our Responsibility”</p>
+            </div>
+          </div>
+          <div class="text-right text-[10px] text-slate-700 space-y-0.5 font-mono">
+            <p id="invHeaderAddr">Address: उदयपुर, राजस्थान | Mobile: 98290XXXXX | WhatsApp: 98290XXXXX</p>
+            <p id="invHeaderContact">Email: info@aachico.com | GSTIN: 08AAAAA0000A1Z5</p>
+          </div>
+        </div>
 
-```
-  <!-- PAGE 1: MAIN TAXI INVOICE (Strictly fits 1 A4 portrait page) -->
-  <div class="bg-white p-2 space-y-4 page-break">
-    
-    <!-- HEADER -->
-    <div class="flex justify-between items-start border-b-2 border-slate-900 pb-3">
-      <div class="flex items-start space-x-3">
-        <div class="w-12 h-12 bg-amber-600 rounded-xl flex items-center text-white font-black text-xl justify-center shadow">AT</div>
-        <div>
-          <h2 class="text-base font-black uppercase text-slate-900 tracking-wide">AACHICO TRAVELS RAJASTHAN</h2>
-          <p class="text-[11px] font-bold text-amber-700 tracking-wider">CAR RENTAL & TAXI SERVICE</p>
-          <p class="text-[10px] italic text-slate-600 font-serif">“Your Journey, Our Responsibility”</p>
+        <!-- INVOICE TITLE -->
+        <div class="flex justify-between items-center bg-slate-900 text-white px-4 py-2 rounded-xl">
+          <span class="font-black text-xs tracking-widest uppercase">TAXI INVOICE / BILL</span>
+          <div class="text-[11px] font-mono space-x-3">
+            <span id="invNoText">Invoice No: ACT-001</span>
+            <span id="invBookingDate">Booking Date: 2026-09-02</span>
+            <span id="invDate">Trip Date: 2026-09-02</span>
+          </div>
+        </div>
+
+        <!-- CUSTOMER DETAILS -->
+        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-xs space-y-1">
+          <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider border-b pb-0.5">CUSTOMER DETAILS</p>
+          <div class="grid grid-cols-2 gap-2 pt-1 font-medium text-[11px]">
+            <p id="invCustomerName">Customer Name: राहुल जी | Mobile: 98290XXXXX</p>
+            <p id="invCustomerAddr">Address: Udaipur, Rajasthan</p>
+          </div>
+        </div>
+
+        <!-- TRIP / VEHICLE DETAILS -->
+        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-xs space-y-1 font-medium">
+          <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider border-b pb-0.5">TRIP / VEHICLE DETAILS</p>
+          <div class="grid grid-cols-4 gap-2 text-[11px] pt-1">
+            <p id="invVehicleType">Vehicle Type: Sedan</p>
+            <p id="invVehicleNo">Vehicle No.: RJ 27 TA 8199</p>
+            <p id="invDriverInfo">Driver: सुरेश जी</p>
+            <p>Trip Type: ☑ One Way □ Round Trip</p>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
+            <p id="invPickup">Pickup: Udaipur Junction</p>
+            <p id="invDrop">Drop: Nathdwara</p>
+          </div>
+          <div class="grid grid-cols-4 gap-2 text-[11px] pt-1 font-mono">
+            <p id="invTripTime">Trip Time: 10:00 AM</p>
+            <p id="invStartKm">Start KM: 52400</p>
+            <p id="invEndKm">End KM: 52500</p>
+            <p id="invTotalKm" class="font-bold text-rose-600">Total KM: 100 KM</p>
+          </div>
+        </div>
+
+        <!-- FARE DETAILS (4-Column Table) -->
+        <div class="space-y-1 text-xs">
+          <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider">FARE DETAILS</p>
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 text-[10px] font-mono border-b border-slate-300">
+                <th class="p-2">Particulars</th>
+                <th class="p-2 text-center">Qty / KM / Hours</th>
+                <th class="p-2 text-right">Rate (₹)</th>
+                <th class="p-2 text-right">Amount (₹)</th>
+              </tr>
+            </thead>
+            <tbody id="invFareTableBody" class="divide-y divide-slate-200 font-mono text-[11px]">
+              <!-- Injected dynamically -->
+            </tbody>
+          </table>
+          <div class="flex justify-end font-mono text-xs font-bold pt-1 space-x-4">
+            <span>Subtotal: <span id="invSubtotal">₹1460</span></span>
+            <span>Discount: ₹0</span>
+          </div>
+          <div class="bg-slate-900 text-white p-2 rounded-xl flex justify-between items-center font-mono text-xs font-bold">
+            <span>GRAND TOTAL:</span>
+            <span id="invGrandTotal" class="text-amber-400">₹1460</span>
+          </div>
+        </div>
+
+        <!-- TAX & PAYMENT (2-Column Layout) -->
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <!-- LEFT: TAX DETAILS -->
+          <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200 space-y-1 font-mono text-[11px]">
+            <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider border-b pb-0.5 font-sans">TAX DETAILS (IF APPLICABLE)</p>
+            <div class="flex justify-between pt-0.5"><span>Taxable Amount:</span> <span id="invTaxable">₹1460</span></div>
+            <div class="flex justify-between"><span>CGST:</span> <span id="invCgst">₹36.50</span></div>
+            <div class="flex justify-between"><span>SGST:</span> <span id="invSgst">₹36.50</span></div>
+            <div class="flex justify-between"><span>IGST:</span> <span id="invIgst">₹0.00</span></div>
+            <div class="flex justify-between font-bold border-t pt-0.5 text-slate-900"><span>Total Tax:</span> <span id="invTotalTax">₹73</span></div>
+          </div>
+
+          <!-- RIGHT: PAYMENT DETAILS -->
+          <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200 space-y-1 font-mono text-[11px]">
+            <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider border-b pb-0.5 font-sans">PAYMENT DETAILS</p>
+            <div class="flex justify-between pt-0.5"><span>Payment Mode:</span> <span class="font-bold">☑ Cash □ Bank Transfer</span></div>
+            <div class="flex justify-between"><span>Payment Status:</span> <span class="text-emerald-600 font-bold">☑ PAID □ PARTIAL □ UNPAID</span></div>
+            <div class="flex justify-between"><span>Amount Received:</span> <span id="invReceived" class="text-emerald-600">₹500</span></div>
+            <div class="flex justify-between font-bold text-rose-600"><span>Balance Due:</span> <span id="invBalance">₹960</span></div>
+            <div class="flex justify-between text-[10px] pt-0.5 border-t"><span>UPI ID:</span> <span class="font-bold text-slate-800">aachico@hdfc</span></div>
+          </div>
+        </div>
+
+        <!-- AMOUNT IN WORDS -->
+        <div class="bg-amber-50/60 p-2 rounded-xl border border-amber-200 text-xs font-mono text-[11px]">
+          <span class="font-bold text-amber-900 font-sans uppercase text-[10px]">Amount in Words:</span>
+          <p id="invAmountInWords" class="text-amber-950 font-bold capitalize mt-0.5">One Thousand Four Hundred Sixty Rupees Only</p>
+        </div>
+
+        <!-- TERMS & CONDITIONS -->
+        <div class="text-[9px] text-slate-600 space-y-0.5 border-t pt-1 font-sans">
+          <p class="font-bold text-slate-800 uppercase">TERMS & CONDITIONS:</p>
+          <p>1. Toll, parking, state tax and other applicable charges are payable as mentioned in the invoice.</p>
+          <p>2. Additional kilometres/hours will be charged as per the agreed tariff. Invoice should be checked before leaving.</p>
+          <p>3. Any dispute regarding the invoice should be reported to AACHICO TRAVELS RAJASTHAN within the applicable period.</p>
+          <p>4. This invoice is subject to agreed booking terms. <strong>All disputes are subject to Udaipur Jurisdiction only.</strong></p>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="pt-1 border-t flex justify-between items-end text-[10px] text-slate-700">
+          <div>
+            <p class="font-black uppercase tracking-wider text-slate-900 text-xs">THANK YOU FOR TRAVELLING WITH US</p>
+            <p class="font-bold text-amber-700">AACHICO TRAVELS RAJASTHAN</p>
+            <p class="text-[9px] text-slate-500 mt-0.5">This is a computer-generated invoice.</p>
+          </div>
+          <div class="text-center space-y-0.5">
+            <div class="w-28 h-10 border border-dashed border-slate-400 flex items-center justify-center rounded-lg text-[9px] text-slate-400 uppercase font-mono bg-slate-50">
+              [ Authorized Stamp ]
+            </div>
+            <p class="font-bold text-slate-900 text-[9px]">Customer Signature / Authorized Stamp</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PAGE 2 ONWARD: SUPPORTING RECEIPTS / PARCHIYAN -->
+      <div class="bg-white p-2 space-y-6 pt-6 border-t-2 border-dashed border-slate-300">
+        <div class="flex justify-between items-center border-b pb-2">
+          <div>
+            <h3 class="font-black text-sm text-slate-900 uppercase">AACHICO TRAVELS RAJASTHAN</h3>
+            <p class="text-xs font-bold text-amber-700">TRIP EXPENSE / SUPPORTING RECEIPTS</p>
+          </div>
+          <div class="text-right text-[11px] font-mono text-slate-600">
+            <p id="recInvNo">Invoice No: ACT-001</p>
+            <p id="recTripDate">Trip Date: 2026-09-02</p>
+            <p id="recVehicleNo">Vehicle No: RJ 27 TA 8199</p>
+          </div>
+        </div>
+
+        <!-- Receipt 1: Toll -->
+        <div class="border-2 border-dashed border-slate-300 p-4 rounded-2xl space-y-2 bg-slate-50/50">
+          <div class="flex justify-between items-center text-xs font-bold text-slate-800">
+            <span>TOLL RECEIPT / PARCHI (टोल पर्ची)</span>
+            <span class="text-rose-600 font-mono">Amount: ₹<span id="recTollAmt">0</span></span>
+          </div>
+          <div class="h-36 border border-slate-300 bg-white rounded-xl flex items-center justify-center text-slate-400 text-xs italic">
+            [ ATTACH / PASTE TOLL RECEIPT HERE ]
+          </div>
+        </div>
+
+        <!-- Receipt 2: Parking -->
+        <div class="border-2 border-dashed border-slate-300 p-4 rounded-2xl space-y-2 bg-slate-50/50">
+          <div class="flex justify-between items-center text-xs font-bold text-slate-800">
+            <span>PARKING RECEIPT / PARCHI (पार्किंग पर्ची)</span>
+            <span class="text-rose-600 font-mono">Amount: ₹<span id="recParkAmt">0</span></span>
+          </div>
+          <div class="h-28 border border-slate-300 bg-white rounded-xl flex items-center justify-center text-slate-400 text-xs italic">
+            [ ATTACH / PASTE PARKING RECEIPT HERE ]
+          </div>
+        </div>
+
+        <!-- Receipt 3: State/Border Tax -->
+        <div class="border-2 border-dashed border-slate-300 p-4 rounded-2xl space-y-2 bg-slate-50/50">
+          <div class="flex justify-between items-center text-xs font-bold text-slate-800">
+            <span>STATE / BORDER TAX RECEIPT / PARCHI (स्टेट/बॉर्डर टैक्स पर्ची)</span>
+            <span class="text-rose-600 font-mono">Amount: ₹<span id="recBorderAmt">0</span></span>
+          </div>
+          <div class="h-28 border border-slate-300 bg-white rounded-xl flex items-center justify-center text-slate-400 text-xs italic">
+            [ ATTACH / PASTE STATE / BORDER TAX RECEIPT HERE ]
+          </div>
+        </div>
+
+        <!-- Total Supporting Expenses -->
+        <div class="bg-slate-900 text-white p-3.5 rounded-xl flex justify-between items-center font-mono text-sm font-bold">
+          <span>TOTAL SUPPORTING EXPENSES:</span>
+          <span id="recTotalExpenses" class="text-amber-400">₹0</span>
         </div>
       </div>
-      <div class="text-right text-[10px] text-slate-700 space-y-0.5 font-mono">
-        <p id="invHeaderAddr">Address: उदयपुर, राजस्थान | Mobile: 98290XXXXX | WhatsApp: 98290XXXXX</p>
-        <p id="invHeaderContact">Email: info@aachico.com | GSTIN: 08AAAAA0000A1Z5</p>
+
+      <!-- Action Buttons -->
+      <div class="flex space-x-3 pt-4 border-t print:hidden">
+        <button onclick="window.print()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center space-x-2">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span>A4 बिल प्रिंट करें (Print / PDF)</span>
+        </button>
+        <button onclick="shareInvoiceWhatsApp()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center space-x-2">
+          <i data-lucide="share-2" class="w-4 h-4"></i>
+          <span>WhatsApp पर शेयर करें</span>
+        </button>
+        <button onclick="closeModal('printableInvoiceModal')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-4 py-3 rounded-xl text-xs">
+          बंद करें
+        </button>
       </div>
+
     </div>
-
-    <!-- INVOICE TITLE -->
-    <div class="flex justify-between items-center bg-slate-900 text-white px-4 py-2 rounded-xl">
-      <span class="font-black text-xs tracking-widest uppercase">TAXI INVOICE / BILL</span>
-      <div class="text-[11px] font-mono space-x-3">
-        <span id="invNoText">Invoice No: —</span>
-        <span id="invBookingDate">Booking Date: —</span>
-        <span id="invDate">Trip Date: —</span>
-      </div>
-    </div>
-
-    <!-- CUSTOMER DETAILS -->
-    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-xs space-y-1">
-      <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider border-b pb-0.5">CUSTOMER DETAILS</p>
-      <div class="grid grid-cols-2 gap-2 pt-1 font-medium text-[11px]">
-        <p id="invCustomerName">Customer Name: राहुल जी | Mobile: 98290XXXXX</p>
-        <p id="invCustomerAddr">Address: Udaipur, Rajasthan</p>
-      </div>
-    </div>
-
-    <!-- TRIP / VEHICLE DETAILS -->
-    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-xs space-y-1 font-medium">
-      <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider border-b pb-0.5">TRIP / VEHICLE DETAILS</p>
-      <div class="grid grid-cols-4 gap-2 text-[11px] pt-1">
-        <p id="invVehicleType">Vehicle Type: Sedan</p>
-        <p id="invVehicleNo">Vehicle No.: RJ 27 TA 8199</p>
-        <p id="invDriverInfo">Driver: सुरेश जी</p>
-        <p>Trip Type: ☑ One Way □ Round Trip</p>
-      </div>
-      <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
-        <p id="invPickup">Pickup: Udaipur Junction</p>
-        <p id="invDrop">Drop: Nathdwara</p>
-      </div>
-      <div class="grid grid-cols-4 gap-2 text-[11px] pt-1 font-mono">
-        <p id="invTripTime">Trip Time: 10:00 AM</p>
-        <p id="invStartKm">Start KM: 52400</p>
-        <p id="invEndKm">End KM: 52500</p>
-        <p id="invTotalKm" class="font-bold text-rose-600">Total KM: 100 KM</p>
-      </div>
-    </div>
-
-    <!-- FARE DETAILS (4-Column Table) -->
-    <div class="space-y-1 text-xs">
-      <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider">FARE DETAILS</p>
-      <table class="w-full text-left border-collapse text-xs">
-        <thead>
-          <tr class="bg-slate-100 text-slate-700 text-[10px] font-mono border-b border-slate-300">
-            <th class="p-2">Particulars</th>
-            <th class="p-2 text-center">Qty / KM / Hours</th>
-            <th class="p-2 text-right">Rate (₹)</th>
-            <th class="p-2 text-right">Amount (₹)</th>
-          </tr>
-        </thead>
-        <tbody id="invFareTableBody" class="divide-y divide-slate-200 font-mono text-[11px]">
-          <!-- Injected dynamically -->
-        </tbody>
-      </table>
-      <div class="flex justify-end font-mono text-xs font-bold pt-1 space-x-4">
-        <span>Subtotal: <span id="invSubtotal">₹0</span></span>
-        <span>Discount: ₹0</span>
-      </div>
-      <div class="bg-slate-900 text-white p-2 rounded-xl flex justify-between items-center font-mono text-xs font-bold">
-        <span>GRAND TOTAL:</span>
-        <span id="invGrandTotal" class="text-amber-400">₹0</span>
-      </div>
-    </div>
-
-    <!-- TAX & PAYMENT (2-Column Layout) -->
-    <div class="grid grid-cols-2 gap-3 text-xs">
-      <!-- LEFT: TAX DETAILS -->
-      <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200 space-y-1 font-mono text-[11px]">
-        <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider border-b pb-0.5 font-sans">TAX DETAILS (IF APPLICABLE)</p>
-        <div class="flex justify-between pt-0.5"><span>Taxable Amount:</span> <span id="invTaxable">₹0</span></div>
-        <div class="flex justify-between"><span>CGST:</span> <span id="invCgst">₹0.00</span></div>
-        <div class="flex justify-between"><span>SGST:</span> <span id="invSgst">₹0.00</span></div>
-        <div class="flex justify-between"><span>IGST:</span> <span id="invIgst">₹0.00</span></div>
-        <div class="flex justify-between font-bold border-t pt-0.5 text-slate-900"><span>Total Tax:</span> <span id="invTotalTax">₹0.00</span></div>
-      </div>
-
-      <!-- RIGHT: PAYMENT DETAILS -->
-      <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200 space-y-1 font-mono text-[11px]">
-        <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider border-b pb-0.5 font-sans">PAYMENT DETAILS</p>
-        <div class="flex justify-between pt-0.5"><span>Payment Mode:</span> <span class="font-bold">☑ Cash □ Bank Transfer</span></div>
-        <div class="flex justify-between"><span>Payment Status:</span> <span class="text-emerald-600 font-bold">☑ PAID □ PARTIAL □ UNPAID</span></div>
-        <div class="flex justify-between"><span>Amount Received:</span> <span id="invReceived" class="text-emerald-600">₹0</span></div>
-        <div class="flex justify-between font-bold text-rose-600"><span>Balance Due:</span> <span id="invBalance">₹0</span></div>
-        <div class="flex justify-between text-[10px] pt-0.5 border-t"><span>UPI ID:</span> <span class="font-bold text-slate-800">aachico@hdfc</span></div>
-      </div>
-    </div>
-
-    <!-- AMOUNT IN WORDS -->
-    <div class="bg-amber-50/60 p-2 rounded-xl border border-amber-200 text-xs font-mono text-[11px]">
-      <span class="font-bold text-amber-900 font-sans uppercase text-[10px]">Amount in Words:</span>
-      <p id="invAmountInWords" class="text-amber-950 font-bold capitalize mt-0.5">Zero Rupees Only</p>
-    </div>
-
-    <!-- TERMS & CONDITIONS -->
-    <div class="text-[9px] text-slate-600 space-y-0.5 border-t pt-1 font-sans">
-      <p class="font-bold text-slate-800 uppercase">TERMS & CONDITIONS:</p>
-      <p>1. Toll, parking, state tax and other applicable charges are payable as mentioned in the invoice.</p>
-      <p>2. Additional kilometres/hours will be charged as per the agreed tariff. Invoice should be checked before leaving.</p>
-      <p>3. Any dispute regarding the invoice should be reported to AACHICO TRAVELS RAJASTHAN within the applicable period.</p>
-      <p>4. This invoice is subject to agreed booking terms. <strong>All disputes are subject to Udaipur Jurisdiction only.</strong></p>
-    </div>
-
-    <!-- FOOTER -->
-    <div class="pt-1 border-t flex justify-between items-end text-[10px] text-slate-700">
-      <div>
-        <p class="font-black uppercase tracking-wider text-slate-900 text-xs">THANK YOU FOR TRAVELLING WITH US</p>
-        <p class="font-bold text-amber-700">AACHICO TRAVELS RAJASTHAN</p>
-        <p class="text-[9px] text-slate-500 mt-0.5">This is a computer-generated invoice.</p>
-      </div>
-      <div class="text-center space-y-0.5">
-        <div class="w-28 h-10 border border-dashed border-slate-400 flex items-center justify-center rounded-lg text-[9px] text-slate-400 uppercase font-mono bg-slate-50">
-          [ Authorized Stamp ]
-        </div>
-        <p class="font-bold text-slate-900 text-[9px]">Customer Signature / Authorized Stamp</p>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- PAGE 2 ONWARD: SUPPORTING RECEIPTS / PARCHIYAN -->
-  <div class="bg-white p-2 space-y-6 pt-6 border-t-2 border-dashed border-slate-300">
-    <div class="flex justify-between items-center border-b pb-2">
-      <div>
-        <h3 class="font-black text-sm text-slate-900 uppercase">AACHICO TRAVELS RAJASTHAN</h3>
-        <p class="text-xs font-bold text-amber-700">TRIP EXPENSE / SUPPORTING RECEIPTS</p>
-      </div>
-      <div class="text-right text-[11px] font-mono text-slate-600">
-        <p id="recInvNo">Invoice No: —</p>
-        <p id="recTripDate">Trip Date: —</p>
-        <p id="recVehicleNo">Vehicle No: RJ 27 TA 8199</p>
-      </div>
-    </div>
-
-    <!-- Receipt 1: Toll -->
-    <div class="border-2 border-dashed border-slate-300 p-4 rounded-2xl space-y-2 bg-slate-50/50">
-      <div class="flex justify-between items-center text-xs font-bold text-slate-800">
-        <span>TOLL RECEIPT / PARCHI (टोल पर्ची)</span>
-        <span class="text-rose-600 font-mono">Amount: ₹<span id="recTollAmt">0</span></span>
-      </div>
-      <div class="h-36 border border-slate-300 bg-white rounded-xl flex items-center justify-center text-slate-400 text-xs italic">
-        [ ATTACH / PASTE TOLL RECEIPT HERE ]
-      </div>
-    </div>
-
-    <!-- Receipt 2: Parking -->
-    <div class="border-2 border-dashed border-slate-300 p-4 rounded-2xl space-y-2 bg-slate-50/50">
-      <div class="flex justify-between items-center text-xs font-bold text-slate-800">
-        <span>PARKING RECEIPT / PARCHI (पार्किंग पर्ची)</span>
-        <span class="text-rose-600 font-mono">Amount: ₹<span id="recParkAmt">0</span></span>
-      </div>
-      <div class="h-28 border border-slate-300 bg-white rounded-xl flex items-center justify-center text-slate-400 text-xs italic">
-        [ ATTACH / PASTE PARKING RECEIPT HERE ]
-      </div>
-    </div>
-
-    <!-- Receipt 3: State/Border Tax -->
-    <div class="border-2 border-dashed border-slate-300 p-4 rounded-2xl space-y-2 bg-slate-50/50">
-      <div class="flex justify-between items-center text-xs font-bold text-slate-800">
-        <span>STATE / BORDER TAX RECEIPT / PARCHI (स्टेट/बॉर्डर टैक्स पर्ची)</span>
-        <span class="text-rose-600 font-mono">Amount: ₹<span id="recBorderAmt">0</span></span>
-      </div>
-      <div class="h-28 border border-slate-300 bg-white rounded-xl flex items-center justify-center text-slate-400 text-xs italic">
-        [ ATTACH / PASTE STATE / BORDER TAX RECEIPT HERE ]
-      </div>
-    </div>
-
-    <!-- Total Supporting Expenses -->
-    <div class="bg-slate-900 text-white p-3.5 rounded-xl flex justify-between items-center font-mono text-sm font-bold">
-      <span>TOTAL SUPPORTING EXPENSES:</span>
-      <span id="recTotalExpenses" class="text-amber-400">₹0</span>
-    </div>
-  </div>
-
-  <!-- Action Buttons -->
-  <div class="flex space-x-3 pt-4 border-t print:hidden">
-    <button onclick="window.print()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center space-x-2">
-      <i data-lucide="printer" class="w-4 h-4"></i>
-      <span>A4 बिल प्रिंट करें (Print / PDF)</span>
-    </button>
-    <button onclick="shareInvoiceWhatsApp()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center space-x-2">
-      <i data-lucide="share-2" class="w-4 h-4"></i>
-      <span>WhatsApp पर शेयर करें</span>
-    </button>
-    <button onclick="closeModal('printableInvoiceModal')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-4 py-3 rounded-xl text-xs">
-      बंद करें
-    </button>
-  </div>
-
-</div>
-```
-
   </div>
 
   <!-- MASTER RESET MODAL -->
-
   <div id="masterResetModal" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
     <div class="glass-card w-full max-w-md p-8 rounded-3xl border border-rose-600 space-y-5 text-center shadow-2xl">
       <div class="w-16 h-16 mx-auto rounded-full bg-rose-500/20 text-rose-500 flex items-center justify-center border border-rose-500/40">
@@ -1174,162 +1160,90 @@
       if(!t) return;
       activeInvoiceTrip = t;
 
-      const money = n => Number(n || 0).toFixed(2);
-      const num = n => Number(n || 0);
-      const clean = v => (v == null ? "" : String(v).trim());
-      const today = new Date().toISOString().slice(0, 10);
-      const tripDate = clean(t.tripDate || t.date || t.submittedAt?.slice(0, 10) || today);
-      const invNo = clean(t.invoiceNumber || `ACT-${new Date().getFullYear()}-${tripId.slice(-6).toUpperCase()}`);
+      document.getElementById('invHeaderAddr').innerText = `Address: उदयपुर, राजस्थान | Mobile: ${businessProfile.phone || '98290XXXXX'} | WhatsApp: ${businessProfile.phone || '98290XXXXX'}`;
+      document.getElementById('invHeaderContact').innerText = `Email: ${businessProfile.email || 'info@aachico.com'} | GSTIN: ${businessProfile.gstin || '08AAAAA0000A1Z5'}`;
 
-      const customerState = clean(t.customerState || t.billToState || "");
-      const companyState = clean(businessProfile.state || "");
-      const sameState = t.gstMode ? t.gstMode !== "IGST" : (!customerState || !companyState || customerState.toLowerCase() === companyState.toLowerCase());
-      const gstRate = num(t.gstRate != null ? t.gstRate : (businessProfile.gstRate != null ? businessProfile.gstRate : 0));
-
-      document.getElementById('invHeaderAddr').innerText =
-        [businessProfile.address, businessProfile.state ? `${businessProfile.state}${businessProfile.stateCode ? ` (${businessProfile.stateCode})` : ''}` : ''].filter(Boolean).join(' | ') ||
-        `Address: ${businessProfile.address || '—'}`;
-      document.getElementById('invHeaderContact').innerText =
-        `Mobile: ${businessProfile.phone || '—'} | Email: ${businessProfile.email || '—'} | GSTIN: ${businessProfile.gstin || '—'} | PAN: ${businessProfile.pan || '—'}`;
+      const invNo = `ACT-2026-${tripId.slice(-4).toUpperCase()}`;
+      const tripDate = t.submittedAt ? t.submittedAt.slice(0, 10) : '2026-09-02';
 
       document.getElementById('invNoText').innerText = `Invoice No: ${invNo}`;
-      document.getElementById('invBookingDate').innerText = `Booking Date: ${clean(t.bookingDate || t.createdAt?.slice?.(0,10) || tripDate || today)}`;
+      document.getElementById('invBookingDate').innerText = `Booking Date: ${tripDate}`;
       document.getElementById('invDate').innerText = `Trip Date: ${tripDate}`;
       document.getElementById('recInvNo').innerText = `Invoice No: ${invNo}`;
       document.getElementById('recTripDate').innerText = `Trip Date: ${tripDate}`;
-      document.getElementById('recVehicleNo').innerText = `Vehicle No: ${clean(t.carNumber) || '—'}`;
+      document.getElementById('recVehicleNo').innerText = `Vehicle No: ${t.carNumber}`;
 
-      document.getElementById('invCustomerName').innerText =
-        `Customer: ${clean(t.customerName || t.customerCompany || '') || '—'} | Mobile: ${clean(t.customerPhone) || '—'}`;
-      document.getElementById('invCustomerAddr').innerText =
-        `Address: ${clean(t.customerAddress || t.billingAddress) || '—'}${t.customerGstin ? ` | GSTIN: ${t.customerGstin}` : ''}`;
+      document.getElementById('invCustomerName').innerText = `Customer Name: ${t.customerName || 'राहुल जी'} | Mobile: ${t.customerPhone || '98290XXXXX'}`;
+      document.getElementById('invCustomerAddr').innerText = `Address: Udaipur, Rajasthan`;
 
-      const car = loadedCars.find(c => c.carNumber === t.carNumber);
-      document.getElementById('invVehicleType').innerText = `Vehicle Type: ${clean(t.vehicleType || car?.carModel) || '—'}`;
-      document.getElementById('invVehicleNo').innerText = `Vehicle No.: ${clean(t.carNumber) || '—'}`;
-      document.getElementById('invDriverInfo').innerText = `Driver: ${clean(t.driverName) || '—'}`;
-      document.getElementById('invTripTime').innerText = `Trip Time: ${clean(t.tripTime || t.startTime) || '—'}`;
-      document.getElementById('invPickup').innerText = `Pickup: ${clean(t.pickup || t.pickupLocation) || '—'}`;
-      document.getElementById('invDrop').innerText = `Drop: ${clean(t.drop || t.dropLocation || t.route) || '—'}`;
+      document.getElementById('invVehicleType').innerText = `Vehicle Type: Sedan`;
+      document.getElementById('invVehicleNo').innerText = `Vehicle No.: ${t.carNumber}`;
+      document.getElementById('invDriverInfo').innerText = `Driver: ${t.driverName || 'सुरेश जी'}`;
+      document.getElementById('invTripTime').innerText = `Trip Time: 10:00 AM`;
+      document.getElementById('invPickup').innerText = `Pickup: ${t.pickup || 'Udaipur Junction'}`;
+      document.getElementById('invDrop').innerText = `Drop: ${t.drop || t.route || 'Nathdwara'}`;
 
-      const startKm = num(t.startKm);
-      const endKm = num(t.endKm);
-      const totalKm = num(t.totalKm || (endKm > startKm ? endKm - startKm : 0));
-      document.getElementById('invStartKm').innerText = `Start KM: ${startKm || '—'}`;
-      document.getElementById('invEndKm').innerText = `End KM: ${endKm || '—'}`;
+      const startKm = t.startKm || 52400;
+      const endKm = t.endKm || 52500;
+      const totalKm = t.totalKm || (endKm - startKm);
+      document.getElementById('invStartKm').innerText = `Start KM: ${startKm}`;
+      document.getElementById('invEndKm').innerText = `End KM: ${endKm}`;
       document.getElementById('invTotalKm').innerText = `Total KM: ${totalKm} KM`;
 
-      // Billing values are taken only from actual trip data. No fabricated defaults.
-      const packageFare = num(t.packageFare != null ? t.packageFare : (t.baseFare != null ? t.baseFare : t.fare));
-      const ratePerKm = num(t.ratePerKm);
-      const baseFare = packageFare || (ratePerKm > 0 ? totalKm * ratePerKm : 0);
-      const extraKm = num(t.extraKm);
-      const extraKmRate = num(t.extraKmRate);
-      const extraKmAmount = num(t.extraKmAmount != null ? t.extraKmAmount : extraKm * extraKmRate);
-      const extraHours = num(t.extraHours);
-      const extraHourRate = num(t.extraHourRate);
-      const extraHourAmount = num(t.extraHourAmount != null ? t.extraHourAmount : extraHours * extraHourRate);
-      const toll = num(t.tollTax != null ? t.tollTax : t.toll);
-      const parking = num(t.parking);
-      const borderTax = num(t.borderTax || t.stateTax);
-      const allowance = num(t.driverAllowance || t.bata);
-      const nightHalt = num(t.nightHalt);
-      const otherCharges = num(t.otherCharges);
-      const discount = num(t.discount);
+      const rate = t.ratePerKm || 11;
+      const baseFare = totalKm * rate;
+      const toll = t.tollTax || 260;
+      const parking = t.parking || 100;
+      const borderTax = t.borderTax || 0;
+      const allowance = t.driverAllowance || 0;
 
-      const rows = [
-        ['Vehicle Hire / Package Fare', '1', baseFare > 0 ? money(baseFare) : '0.00', baseFare],
-        ['Extra KM', `${extraKm} KM`, extraKmRate > 0 ? money(extraKmRate) : '0.00', extraKmAmount],
-        ['Extra Hours', `${extraHours} Hrs`, extraHourRate > 0 ? money(extraHourRate) : '0.00', extraHourAmount],
-        ['Driver Allowance / Bata', allowance > 0 ? '1' : '0', money(allowance), allowance],
-        ['Toll Tax', toll > 0 ? '1' : '0', money(toll), toll],
-        ['Parking Charges', parking > 0 ? '1' : '0', money(parking), parking],
-        ['State / Border Tax', borderTax > 0 ? '1' : '0', money(borderTax), borderTax],
-        ['Night Halt', nightHalt > 0 ? '1' : '0', money(nightHalt), nightHalt],
-        ['Other Charges', otherCharges > 0 ? '1' : '0', money(otherCharges), otherCharges]
-      ];
+      const tbody = document.getElementById('invFareTableBody');
+      tbody.innerHTML = `
+        <tr><td class="p-2">Base / Package Fare</td><td class="p-2 text-center">${totalKm} KM</td><td class="p-2 text-right">₹${rate}</td><td class="p-2 text-right font-bold">₹${baseFare}</td></tr>
+        <tr><td class="p-2">Extra KM</td><td class="p-2 text-center">0</td><td class="p-2 text-right">₹0</td><td class="p-2 text-right font-bold">₹0</td></tr>
+        <tr><td class="p-2">Extra Hours</td><td class="p-2 text-center">0</td><td class="p-2 text-right">₹0</td><td class="p-2 text-right font-bold">₹0</td></tr>
+        <tr><td class="p-2">Driver Allowance / Bata</td><td class="p-2 text-center">1</td><td class="p-2 text-right">₹${allowance}</td><td class="p-2 text-right font-bold">₹${allowance}</td></tr>
+        <tr><td class="p-2">Toll Tax</td><td class="p-2 text-center">1</td><td class="p-2 text-right">₹${toll}</td><td class="p-2 text-right font-bold">₹${toll}</td></tr>
+        <tr><td class="p-2">Parking Charges</td><td class="p-2 text-center">1</td><td class="p-2 text-right">₹${parking}</td><td class="p-2 text-right font-bold">₹${parking}</td></tr>
+        <tr><td class="p-2">State / Border Tax</td><td class="p-2 text-center">1</td><td class="p-2 text-right">₹${borderTax}</td><td class="p-2 text-right font-bold">₹${borderTax}</td></tr>
+        <tr><td class="p-2">Other Charges</td><td class="p-2 text-center">0</td><td class="p-2 text-right">₹0</td><td class="p-2 text-right font-bold">₹0</td></tr>
+      `;
 
-      const visibleRows = rows.filter(r => r[3] > 0 || ['Vehicle Hire / Package Fare'].includes(r[0]));
-      document.getElementById('invFareTableBody').innerHTML = visibleRows.map(r =>
-        `<tr><td class="p-2">${r[0]}</td><td class="p-2 text-center">${r[1]}</td><td class="p-2 text-right">₹${r[2]}</td><td class="p-2 text-right font-bold">₹${money(r[3])}</td></tr>`
-      ).join('');
+      const subtotal = baseFare + toll + parking + borderTax + allowance;
+      document.getElementById('invSubtotal').innerText = `₹${subtotal}`;
+      document.getElementById('invGrandTotal').innerText = `₹${subtotal}`;
 
-      const subtotal = visibleRows.reduce((sum, r) => sum + r[3], 0);
-      const taxable = Math.max(0, subtotal - discount);
-      const cgst = sameState ? taxable * gstRate / 2 : 0;
-      const sgst = sameState ? taxable * gstRate / 2 : 0;
-      const igst = sameState ? 0 : taxable * gstRate;
-      const totalTax = cgst + sgst + igst;
-      const preRoundTotal = taxable + totalTax;
-      const grandTotal = Math.round(preRoundTotal);
-      const roundOff = grandTotal - preRoundTotal;
+      const taxable = subtotal;
+      const cgst = taxable * 0.025;
+      const sgst = taxable * 0.025;
+      const totalTax = cgst + sgst;
 
-      const paid = num(t.advancePaid) + num(t.amountPaid);
-      const balance = Math.max(0, grandTotal - paid);
-      const paymentStatus = balance <= 0 ? 'PAID' : paid > 0 ? 'PARTIAL' : 'UNPAID';
+      document.getElementById('invTaxable').innerText = `₹${taxable}`;
+      document.getElementById('invCgst').innerText = `₹${cgst.toFixed(2)}`;
+      document.getElementById('invSgst').innerText = `₹${sgst.toFixed(2)}`;
+      document.getElementById('invIgst').innerText = `₹0.00`;
+      document.getElementById('invTotalTax').innerText = `₹${totalTax.toFixed(2)}`;
 
-      document.getElementById('invSubtotal').innerText = `₹${money(subtotal)}`;
-      const discountNode = document.querySelector('#invSubtotal')?.parentElement?.querySelector('span:last-child');
-      if(discountNode) discountNode.innerText = `Discount: ₹${money(discount)}`;
-      document.getElementById('invTaxable').innerText = `₹${money(taxable)}`;
-      document.getElementById('invCgst').innerText = `₹${money(cgst)}`;
-      document.getElementById('invSgst').innerText = `₹${money(sgst)}`;
-      document.getElementById('invIgst').innerText = `₹${money(igst)}`;
-      document.getElementById('invTotalTax').innerText = `₹${money(totalTax)}`;
-      document.getElementById('invGrandTotal').innerText = `₹${money(grandTotal)}`;
-      document.getElementById('invReceived').innerText = `₹${money(paid)}`;
-      document.getElementById('invBalance').innerText = `₹${money(balance)}`;
-      document.getElementById('invAmountInWords').innerText = `${numberToWordsINR(grandTotal)} Rupees Only`;
+      const advance = t.advancePaid || 500;
+      const balance = Math.max(0, (taxable + totalTax) - advance);
 
-      const paymentNode = document.querySelector('#invReceived')?.closest('div')?.parentElement;
-      if(paymentNode) {
-        const text = paymentNode.innerText;
-        paymentNode.innerHTML = `
-          <p class="font-bold text-slate-900 uppercase text-[10px] tracking-wider border-b pb-0.5 font-sans">PAYMENT DETAILS</p>
-          <div class="flex justify-between pt-0.5"><span>Payment Mode:</span><span class="font-bold">${clean(t.paymentMode) || '—'}</span></div>
-          <div class="flex justify-between"><span>Payment Status:</span><span class="font-bold">${paymentStatus}</span></div>
-          <div class="flex justify-between"><span>Total Paid:</span><span class="text-emerald-600">₹${money(paid)}</span></div>
-          <div class="flex justify-between font-bold text-rose-600"><span>Balance Due:</span><span>₹${money(balance)}</span></div>
-          <div class="flex justify-between text-[10px] pt-0.5 border-t"><span>UPI ID:</span><span class="font-bold text-slate-800">${businessProfile.upi || '—'}</span></div>
-        `;
-      }
+      document.getElementById('invReceived').innerText = `₹${advance}`;
+      document.getElementById('invBalance').innerText = `₹${balance.toFixed(2)}`;
+      document.getElementById('invAmountInWords').innerText = `Rupees Only (${(taxable + totalTax).toFixed(0)} INR)`;
 
-      document.getElementById('recTollAmt').innerText = money(toll);
-      document.getElementById('recParkAmt').innerText = money(parking);
-      document.getElementById('recBorderAmt').innerText = money(borderTax);
-      document.getElementById('recTotalExpenses').innerText = `₹${money(toll + parking + borderTax)}`;
+      // Supporting Receipts data
+      document.getElementById('recTollAmt').innerText = toll;
+      document.getElementById('recParkAmt').innerText = parking;
+      document.getElementById('recBorderAmt').innerText = borderTax;
+      document.getElementById('recTotalExpenses').innerText = `₹${toll + parking + borderTax}`;
 
       openModal('printableInvoiceModal');
-      lucide.createIcons();
-    };
-
-    function numberToWordsINR(value) {
-      const n = Math.round(Number(value) || 0);
-      if(n === 0) return 'Zero';
-      const ones = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
-      const tens = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
-      const two = x => x < 20 ? ones[x] : `${tens[Math.floor(x/10)]}${x%10 ? ' ' + ones[x%10] : ''}`;
-      const under1000 = x => x < 100 ? two(x) : `${ones[Math.floor(x/100)]} Hundred${x%100 ? ' ' + two(x%100) : ''}`;
-      let out = '';
-      if(n >= 10000000) { out += under1000(Math.floor(n/10000000)) + ' Crore '; n %= 10000000; }
-      if(n >= 100000) { out += under1000(Math.floor(n/100000)) + ' Lakh '; n %= 100000; }
-      if(n >= 1000) { out += under1000(Math.floor(n/1000)) + ' Thousand '; n %= 1000; }
-      if(n > 0) out += under1000(n);
-      return out.trim();
-    }
-
-    window.printInvoiceOnly = function() {
-      window.print();
-    };
-
-    window.printInvoiceWithReceipts = function() {
-      window.print();
     };
 
     window.shareInvoiceWhatsApp = function() {
-  const t = activeInvoiceTrip;
-      const due = t.invoiceBalance != null ? Number(t.invoiceBalance) : Number(t.netCashInHand || 0);
-      const msg = encodeURIComponent(`AACHICO TRAVELS RAJASTHAN - Tax Invoice\nInvoice No: ACT-${new Date().getFullYear()}-${t.id.slice(-6).toUpperCase()}\nकस्टमर: ${t.customerName || 'Party'}\nगाड़ी: ${t.carNumber || '—'}\nकुल KM: ${t.totalKm || 0}\nBalance Due: ₹${due.toFixed(2)}\nधन्यवाद!`);
+      if(!activeInvoiceTrip) return;
+      const t = activeInvoiceTrip;
+      const msg = encodeURIComponent(`AACHICO TRAVELS RAJASTHAN - Tax Invoice\nInvoice No: ACT-2026-${t.id.slice(-4).toUpperCase()}\nकस्टमर: ${t.customerName || 'Party'}\nगाड़ी: ${t.carNumber}\nकुल KM: ${t.totalKm}\nअंतिम देय राशि: ₹${t.netCashInHand || 960}\nन्यायिक क्षेत्र: उदयपुर कोर्ट\nधन्यवाद!`);
       window.open(`https://wa.me/?text=${msg}`, '_blank');
     };
 
@@ -1354,7 +1268,7 @@
         loadedTrips.forEach(t => {
           if(t.status === 'Approved') {
             tripsCount++;
-            grossIncome += (Number(t.packageFare ?? t.baseFare ?? t.fare ?? 0) || (Number(t.ratePerKm || 0) * Number(t.totalKm || 0)));
+            grossIncome += (t.totalKm || 0) * (t.ratePerKm || 11);
             totalExpense += Number(t.totalExpense || 0);
           }
         });
@@ -1381,8 +1295,8 @@
             const party = t.customerName || 'Other Guest';
             if(!udhariMap[party]) udhariMap[party] = { count: 0, totalDue: 0, adv: 0 };
             udhariMap[party].count++;
-            udhariMap[party].totalDue += Number(t.invoiceBalance != null ? Number(t.invoiceBalance) : Number(t.netCashInHand || 0));
-            udhariMap[party].adv += Number(Number(t.advancePaid || 0));
+            udhariMap[party].totalDue += Number(t.netCashInHand || 960);
+            udhariMap[party].adv += Number(t.advancePaid || 500);
           }
         });
         const keys = Object.keys(udhariMap);
@@ -1452,6 +1366,5 @@
       navigator.serviceWorker.register('./sw.js');
     }
   </script>
-
 </body>
 </html>
