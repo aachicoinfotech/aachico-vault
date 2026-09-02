@@ -1,927 +1,188 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Aachico Vault - Driver OS</title>
-  <link rel="manifest" href="./manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aachico Vault - Driver Terminal App</title>
+  
+  <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-    .glass-card { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .sig-canvas { touch-action: none; background: #0f172a; border: 1px dashed #334155; }
-  </style>
+  
+  <!-- Master Theme & Responsive CSS -->
+  <link rel="stylesheet" href="./css/themes.css">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-emerald-500 selection:text-slate-950 pb-20">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-emerald-500 selection:text-slate-950">
 
-  <!-- ================= 1. DRIVER LOGIN SCREEN ================= -->
-  <div id="driverLoginScreen" class="min-h-screen flex items-center justify-center p-4">
-    <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-emerald-500/30 space-y-5 shadow-2xl">
+  <!-- TOP NAVBAR -->
+  <header class="sticky top-0 z-50 glass-card border-b border-slate-800 bg-slate-950/90">
+    <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between w-full">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black text-xl border border-emerald-500/40">
+          D
+        </div>
+        <div>
+          <span class="font-extrabold text-base tracking-wider text-white">DRIVER TERMINAL</span>
+          <p class="text-[10px] text-emerald-400 tracking-wider">AACHICO VAULT APP</p>
+        </div>
+      </div>
+      <button id="driver-logout-btn" class="hidden text-xs font-bold text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-xl border border-rose-500/30">
+        लॉगआउट
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="max-w-md mx-auto px-4 py-6 flex-grow space-y-6 w-full">
+    
+    <!-- PIN LOGIN VIEW (Default if not logged in) -->
+    <div id="login-section" class="glass-card p-6 rounded-3xl border border-slate-800 space-y-5">
       <div class="text-center space-y-2">
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black text-2xl border border-emerald-500/40">
-          <i data-lucide="steering-wheel" class="w-8 h-8"></i>
+        <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto border border-emerald-500/30">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
         </div>
-        <h1 class="text-xl font-extrabold text-white tracking-tight">Driver Duty Terminal</h1>
-        <p class="text-xs text-slate-400">कंपनी कोड और अपना 4-अंकों का PIN दर्ज करें</p>
+        <h2 class="font-bold text-white text-base">ड्राइवर पिन लॉगिन</h2>
+        <p class="text-xs text-slate-400">अपना रजिस्टर्ड मोबाइल नंबर और 4-डिजिट पिन दर्ज करें</p>
       </div>
 
-      <div class="space-y-3">
+      <form id="driver-login-form" class="space-y-4 text-xs">
         <div>
-          <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Company Code</label>
-          <input type="text" id="dCompanyCode" placeholder="उदा. RJ27-FLEET" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white uppercase focus:border-emerald-500 font-mono text-center" />
-        </div>
-        <div>
-          <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Driver 4-Digit PIN</label>
-          <input type="password" maxlength="4" id="dPIN" placeholder="••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-2xl text-white focus:border-emerald-500 font-mono text-center tracking-widest" />
-        </div>
-        <button onclick="handleDriverLogin()" id="driverLoginBtn" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition flex items-center justify-center space-x-2 shadow-lg shadow-emerald-500/20">
-          <i data-lucide="log-in" class="w-4 h-4"></i>
-          <span>ड्यूटी शुरू करें (Enter Console)</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= 2. ACTIVE DRIVER CONSOLE ================= -->
-  <div id="driverDashboard" class="hidden flex-1 flex flex-col">
-    <header class="glass-card border-b border-slate-800 px-4 py-3 flex items-center justify-between sticky top-0 z-40">
-      <div class="flex items-center space-x-2.5">
-        <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm border border-emerald-500/30">
-          <i data-lucide="user" class="w-5 h-5"></i>
+          <label class="block text-slate-400 mb-1">मोबाइल नंबर</label>
+          <input type="tel" id="login-phone" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white font-mono focus:outline-none focus:border-emerald-500" placeholder="9829000000">
         </div>
         <div>
-          <h2 id="displayDriverName" class="font-bold text-xs text-white">ड्राइवर</h2>
-          <p id="displayCompanyPill" class="text-[10px] text-amber-400 font-mono uppercase"></p>
+          <label class="block text-slate-400 mb-1">4-डिजिट सुरक्षा पिन (PIN)</label>
+          <input type="password" maxlength="4" id="login-pin" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white font-mono text-center tracking-widest text-lg focus:outline-none focus:border-emerald-500" placeholder="••••">
         </div>
-      </div>
-      <div class="flex items-center space-x-2">
-        <button onclick="triggerSOS()" class="text-xs bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 border border-rose-500/40 px-2.5 py-1 rounded-xl font-bold flex items-center space-x-1">
-          <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
-          <span>SOS</span>
+        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition shadow-md shadow-emerald-500/20 text-sm">
+          लॉगिन करें
         </button>
-        <button onclick="logoutDriver()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-2.5 py-1 rounded-xl font-bold">
-          लॉगआउट
-        </button>
-      </div>
-    </header>
-
-    <!-- Top Tabs: Duty Desk vs My Khata -->
-    <div class="max-w-lg w-full mx-auto px-4 pt-3 flex space-x-2">
-      <button onclick="switchTab('dutyTab')" id="btnDutyTab" class="flex-1 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 shadow">
-        दैनिक ट्रिप व ड्यूटी
-      </button>
-      <button onclick="switchTab('khataTab')" id="btnKhataTab" class="flex-1 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800">
-        मेरा खाता व सैलरी (6 Months)
-      </button>
+      </form>
     </div>
 
-    <!-- MAIN BODY CONTENT -->
-    <main class="flex-1 max-w-lg w-full mx-auto p-4 space-y-4">
-
-      <!-- ================= TAB 1: DUTY DESK ================= -->
-      <div id="dutyTab" class="space-y-4">
-
-        <!-- ALLOTTED DUTY CARD -->
-        <div id="allottedDutyCard" class="hidden glass-card p-4 rounded-3xl border border-sky-500/40 space-y-3 bg-sky-950/20">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] bg-sky-500/20 text-sky-400 px-2 py-0.5 rounded font-mono font-bold flex items-center space-x-1">
-              <i data-lucide="bell" class="w-3 h-3"></i>
-              <span>नई ड्यूटी ऑलॉट हुई</span>
-            </span>
-            <span id="allotDate" class="text-[10px] text-slate-400 font-mono"></span>
-          </div>
-          <div class="space-y-1">
-            <p class="text-sm font-bold text-white" id="allotCustomer">कस्टमर / पार्टी: </p>
-            <p class="text-xs text-slate-300 font-mono" id="allotCar">गाड़ी: </p>
-            <p class="text-xs text-slate-400" id="allotRoute">रूट: </p>
-            <p class="text-xs text-amber-400 font-mono" id="allotRateAdvance"></p>
-          </div>
-          <button onclick="acceptAllottedDuty()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-2 rounded-xl text-xs transition">
-            यह ऑलॉटेड ड्यूटी लोड करें (Load Duty)
-          </button>
-        </div>
-
-        <!-- RE-SUBMISSION NOTICE BANNER -->
-        <div id="reSubmitAlert" class="hidden glass-card p-3 rounded-2xl border border-amber-500/40 bg-amber-500/10 space-y-1">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-amber-400 flex items-center space-x-1">
-              <i data-lucide="alert-circle" class="w-4 h-4"></i>
-              <span>ट्रिप सुधार मोड (Re-Submission Active)</span>
-            </span>
-            <button onclick="cancelReSubmission()" class="text-[10px] text-slate-400 hover:text-white">रद्द करें</button>
-          </div>
-          <p id="reSubmitReasonText" class="text-xs text-slate-300 italic"></p>
-        </div>
-
-        <!-- COMPLETE TRIP ENTRY FORM -->
-        <div class="glass-card p-5 rounded-3xl border border-slate-800 space-y-4 shadow-xl">
-          <input type="hidden" id="editingTripId" value="" />
-
-          <!-- Vehicle & Route -->
-          <div class="space-y-2">
-            <div>
-              <label class="text-[11px] text-slate-300 block mb-1 font-semibold">गाड़ी चुनें (Select Fleet Car)</label>
-              <select id="tripCarSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white font-mono focus:border-emerald-500">
-                <option value="">फ्लीट गाड़ियाँ लोड हो रही हैं...</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="text-[10px] text-slate-400 block mb-1">कस्टमर / पार्टी का नाम</label>
-                <input type="text" id="tripCustomerName" placeholder="उदा. राहुल जी / ताज होटल" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white" />
-              </div>
-              <div>
-                <label class="text-[10px] text-slate-400 block mb-1">टूर रूट</label>
-                <input type="text" id="tripRoute" placeholder="उदा. उदयपुर - कुम्भलगढ़" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white" />
-              </div>
-            </div>
-          </div>
-
-          <!-- CARD 1: Odometer & Photos -->
-          <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800 space-y-2.5">
-            <h4 class="text-xs font-bold text-slate-300 flex items-center space-x-1.5">
-              <i data-lucide="gauge" class="w-4 h-4 text-sky-400"></i>
-              <span>1. ओडोमीटर रीडिंग व लाइव फोटो</span>
-            </h4>
-            <div class="grid grid-cols-2 gap-2.5">
-              <div>
-                <label class="text-[10px] text-slate-400 block mb-0.5">स्टार्ट रीडिंग (KM)</label>
-                <input type="number" id="tripStartKm" oninput="calculateTripTotals()" placeholder="10200" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white font-mono" />
-                <label class="mt-1 flex items-center justify-center space-x-1 border border-slate-700 bg-slate-900 rounded-lg py-1 text-[10px] text-slate-400 cursor-pointer">
-                  <i data-lucide="camera" class="w-3 h-3"></i>
-                  <span>स्टार्ट फोटो</span>
-                  <input type="file" id="picStartKm" accept="image/*" capture="environment" class="hidden" onchange="previewFile(this, 'lblStartPic')" />
-                </label>
-                <span id="lblStartPic" class="text-[9px] text-emerald-400 block truncate"></span>
-              </div>
-              <div>
-                <label class="text-[10px] text-slate-400 block mb-0.5">एंड रीडिंग (KM)</label>
-                <input type="number" id="tripEndKm" oninput="calculateTripTotals()" placeholder="10450" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white font-mono" />
-                <label class="mt-1 flex items-center justify-center space-x-1 border border-slate-700 bg-slate-900 rounded-lg py-1 text-[10px] text-slate-400 cursor-pointer">
-                  <i data-lucide="camera" class="w-3 h-3"></i>
-                  <span>एंड फोटो</span>
-                  <input type="file" id="picEndKm" accept="image/*" capture="environment" class="hidden" onchange="previewFile(this, 'lblEndPic')" />
-                </label>
-                <span id="lblEndPic" class="text-[9px] text-emerald-400 block truncate"></span>
-              </div>
-            </div>
-            <p class="text-[11px] font-mono text-sky-400 text-right">कुल यात्रा: <span id="dispTotalKm" class="font-bold">0</span> KM</p>
-          </div>
-
-          <!-- CARD 2: Fuel & Slips -->
-          <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800 space-y-2.5">
-            <h4 class="text-xs font-bold text-slate-300 flex items-center space-x-1.5">
-              <i data-lucide="fuel" class="w-4 h-4 text-rose-400"></i>
-              <span>2. डीज़ल / ईंधन व पंप पर्ची</span>
-            </h4>
-            <div class="grid grid-cols-2 gap-2.5">
-              <div>
-                <label class="text-[10px] text-slate-400 block mb-0.5">डीज़ल (लीटर)</label>
-                <input type="number" id="tripDieselLitre" placeholder="25 L" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white font-mono" />
-              </div>
-              <div>
-                <label class="text-[10px] text-slate-400 block mb-0.5">डीज़ल कुल खर्च (₹)</label>
-                <input type="number" id="tripDieselAmt" oninput="calculateTripTotals()" placeholder="₹2350" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-rose-400 font-mono font-bold" />
-              </div>
-            </div>
-            <label class="flex items-center justify-center space-x-1.5 border border-slate-700 bg-slate-950 rounded-xl py-2 text-xs text-slate-300 cursor-pointer">
-              <i data-lucide="upload" class="w-3.5 h-3.5 text-rose-400"></i>
-              <span>डीज़ल बिल पर्ची फ़ोटो अपलोड करें</span>
-              <input type="file" id="picDiesel" accept="image/*" class="hidden" onchange="previewFile(this, 'lblDieselPic')" />
-            </label>
-            <span id="lblDieselPic" class="text-[10px] text-emerald-400 block text-center truncate"></span>
-          </div>
-
-          <!-- CARD 3: Toll, Parking, Border Tax (Multiple Slips) -->
-          <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800 space-y-2.5">
-            <h4 class="text-xs font-bold text-slate-300 flex items-center space-x-1.5">
-              <i data-lucide="receipt" class="w-4 h-4 text-amber-400"></i>
-              <span>3. टोल, पार्किंग व टैक्स (मल्टीपल पर्चियां)</span>
-            </h4>
-            <div class="grid grid-cols-3 gap-2">
-              <div>
-                <label class="text-[9px] text-slate-400 block mb-0.5">टोल टैक्स (₹)</label>
-                <input type="number" id="tripToll" oninput="calculateTripTotals()" placeholder="₹450" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white font-mono" />
-              </div>
-              <div>
-                <label class="text-[9px] text-slate-400 block mb-0.5">पार्किंग (₹)</label>
-                <input type="number" id="tripParking" oninput="calculateTripTotals()" placeholder="₹120" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white font-mono" />
-              </div>
-              <div>
-                <label class="text-[9px] text-slate-400 block mb-0.5">बॉर्डर टैक्स (₹)</label>
-                <input type="number" id="tripBorderTax" oninput="calculateTripTotals()" placeholder="₹300" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white font-mono" />
-              </div>
-            </div>
-
-            <!-- Multiple Slips Box (Up to 15 Slips) -->
-            <div>
-              <label class="flex items-center justify-center space-x-2 border border-dashed border-amber-500/40 bg-slate-950 hover:bg-slate-900 rounded-xl py-2.5 text-xs text-amber-400 cursor-pointer">
-                <i data-lucide="files" class="w-4 h-4"></i>
-                <span>टोल / पार्किंग की सभी पर्चियां जोड़ें (Max 15)</span>
-                <input type="file" id="multiSlipsInput" accept="image/*" multiple class="hidden" onchange="handleMultiSlips(this)" />
-              </label>
-              <div id="slipsPreviewContainer" class="flex flex-wrap gap-1.5 mt-2"></div>
-            </div>
-
-            <!-- Days & Allowance -->
-            <div class="grid grid-cols-2 gap-2 pt-1">
-              <div>
-                <label class="text-[10px] text-slate-400 block mb-0.5">कुल दिन (Days)</label>
-                <input type="number" id="tripDays" value="1" min="1" oninput="calculateTripTotals()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white font-mono" />
-              </div>
-              <div>
-                <label class="text-[10px] text-slate-400 block mb-0.5">ड्राइवर नाइट/दैनिक भत्ता (₹)</label>
-                <input type="number" id="tripAllowance" oninput="calculateTripTotals()" placeholder="₹300" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white font-mono" />
-              </div>
-            </div>
-          </div>
-
-          <!-- CARD 4: Rate, Admin Tax Rules (GST/TDS) & Billing -->
-          <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800 space-y-3">
-            <h4 class="text-xs font-bold text-slate-300 flex items-center space-x-1.5">
-              <i data-lucide="calculator" class="w-4 h-4 text-emerald-400"></i>
-              <span>4. दर (Rate/KM), टैक्स व बिलिंग हिसाब</span>
-            </h4>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="text-[10px] text-slate-400 block mb-0.5">दर (₹ प्रति KM)</label>
-                <input type="number" id="tripRatePerKm" oninput="calculateTripTotals()" placeholder="12" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white font-mono" />
-              </div>
-              <div>
-                <label class="text-[10px] text-slate-400 block mb-0.5">जमा एडवांस (₹)</label>
-                <input type="number" id="tripAdvancePaid" oninput="calculateTripTotals()" placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white font-mono" />
-              </div>
-            </div>
-
-            <!-- Tax Checkboxes controlled by Admin Rates -->
-            <div class="flex items-center justify-between bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs">
-              <label class="flex items-center space-x-2 cursor-pointer">
-                <input type="checkbox" id="chkGst" onchange="calculateTripTotals()" class="w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-700">
-                <span class="text-slate-300">GST लागू करें (<span id="adminGstRateText" class="font-mono text-emerald-400">5%</span>)</span>
-              </label>
-              <label class="flex items-center space-x-2 cursor-pointer">
-                <input type="checkbox" id="chkTds" onchange="calculateTripTotals()" class="w-4 h-4 rounded text-rose-500 bg-slate-900 border-slate-700">
-                <span class="text-slate-300">TDS काटें (<span id="adminTdsRateText" class="font-mono text-rose-400">2%</span>)</span>
-              </label>
-            </div>
-
-            <!-- Final Customer Bill Display -->
-            <div class="bg-emerald-950/30 p-3 rounded-xl border border-emerald-500/30 flex items-center justify-between">
-              <div>
-                <p class="text-[10px] text-emerald-400 uppercase font-bold tracking-wider">कस्टमर से कुल देय राशि:</p>
-                <p class="text-[10px] text-slate-400">किराया + खर्चे + टैक्स - एडवांस</p>
-              </div>
-              <h3 id="dispCustomerFinalPayable" class="text-xl font-black text-emerald-400 font-mono">₹0</h3>
-            </div>
-          </div>
-
-          <!-- CARD 5: Payment Mode Split & Multiple QR Codes -->
-          <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800 space-y-3">
-            <h4 class="text-xs font-bold text-slate-300 flex items-center space-x-1.5">
-              <i data-lucide="wallet" class="w-4 h-4 text-teal-400"></i>
-              <span>5. पेमेंट मोड व कंपनी QR कोड्स</span>
-            </h4>
-
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <label class="flex items-center space-x-2 p-2.5 bg-slate-950 rounded-xl border border-slate-800 cursor-pointer">
-                <input type="radio" name="payMode" value="CASH" onchange="updatePayModeUI()" checked class="text-emerald-500">
-                <span class="text-white font-medium">Cash (ड्राइवर को नकद)</span>
-              </label>
-              <label class="flex items-center space-x-2 p-2.5 bg-slate-950 rounded-xl border border-slate-800 cursor-pointer">
-                <input type="radio" name="payMode" value="ONLINE" onchange="updatePayModeUI()" class="text-teal-500">
-                <span class="text-white font-medium">Online (कंपनी QR)</span>
-              </label>
-              <label class="flex items-center space-x-2 p-2.5 bg-slate-950 rounded-xl border border-slate-800 cursor-pointer">
-                <input type="radio" name="payMode" value="SPLIT" onchange="updatePayModeUI()" class="text-sky-500">
-                <span class="text-white font-medium">Split (आधा कैश + ऑनलाइन)</span>
-              </label>
-              <label class="flex items-center space-x-2 p-2.5 bg-slate-950 rounded-xl border border-slate-800 cursor-pointer">
-                <input type="radio" name="payMode" value="NO_PAY" onchange="updatePayModeUI()" class="text-amber-500">
-                <span class="text-amber-300 font-medium">No Pay (पार्टी खाता)</span>
-              </label>
-            </div>
-
-            <!-- Online QR Selector -->
-            <div id="qrSelectionBox" class="hidden space-y-2 pt-2 border-t border-slate-800">
-              <p class="text-[10px] text-teal-400 font-bold uppercase">कंपनी के QR कोड्स (स्कैन कराएँ):</p>
-              <div class="flex space-x-2 overflow-x-auto pb-1" id="qrTabsBar">
-                <button type="button" onclick="selectQR('PhonePe')" class="px-2.5 py-1 text-xs rounded-lg bg-teal-500 text-slate-950 font-bold">PhonePe</button>
-                <button type="button" onclick="selectQR('GPay')" class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 text-slate-300">GPay</button>
-                <button type="button" onclick="selectQR('Paytm')" class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 text-slate-300">Paytm</button>
-                <button type="button" onclick="selectQR('Bank')" class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 text-slate-300">HDFC Bank</button>
-              </div>
-              <div class="bg-white p-3 rounded-2xl w-40 h-40 mx-auto flex items-center justify-center text-slate-950 text-center font-bold text-xs" id="qrDisplayImage">
-                <span id="qrPlaceholderText">PhonePe QR Code</span>
-              </div>
-              
-              <!-- Online Screenshot Upload -->
-              <label class="flex items-center justify-center space-x-2 border border-teal-500/40 bg-slate-950 rounded-xl py-2 text-xs text-teal-400 cursor-pointer mt-2">
-                <i data-lucide="image" class="w-4 h-4"></i>
-                <span>ऑनलाइन पेमेंट का स्क्रीनशॉट अपलोड करें (अनिवार्य)</span>
-                <input type="file" id="picOnlineSS" accept="image/*" class="hidden" onchange="previewFile(this, 'lblOnlineSS')" />
-              </label>
-              <span id="lblOnlineSS" class="text-[10px] text-emerald-400 block text-center truncate"></span>
-            </div>
-
-            <!-- Net Cash Handover Math -->
-            <div class="grid grid-cols-2 gap-2 pt-2">
-              <div>
-                <label class="text-[10px] text-emerald-400 block mb-0.5 font-bold">ड्राइवर हाथ में आया नकद (₹)</label>
-                <input type="number" id="tripActualCashReceived" oninput="calculateTripTotals()" placeholder="₹0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-emerald-400 font-mono font-bold" />
-              </div>
-              <div>
-                <label class="text-[10px] text-amber-400 block mb-0.5 font-bold">मालिक को जमा योग्य बाकी कैश</label>
-                <div id="dispNetCashInHand" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-xs font-mono font-black text-center text-teal-300">
-                  ₹0
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- CARD 6: Customer Signature -->
-          <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800 space-y-2">
-            <div class="flex items-center justify-between">
-              <h4 class="text-xs font-bold text-slate-300 flex items-center space-x-1.5">
-                <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-400"></i>
-                <span>कस्टमर डिजिटल हस्ताक्षर (Signature)</span>
-              </h4>
-              <button type="button" onclick="clearSignature()" class="text-[10px] text-rose-400 hover:underline">Clear</button>
-            </div>
-            <canvas id="sigCanvas" class="w-full h-24 rounded-xl sig-canvas"></canvas>
-          </div>
-
-          <!-- Submit Button -->
-          <button onclick="submitTripData()" id="btnSubmitTrip" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-4 rounded-2xl text-sm transition shadow-lg shadow-emerald-500/25 flex items-center justify-center space-x-2">
-            <i data-lucide="check-circle" class="w-5 h-5"></i>
-            <span id="btnSubmitTripText">ट्रिप सबमिट करें (Send to Audit)</span>
-          </button>
-        </div>
-
-        <!-- RECENT TRIPS AUDIT TRACKER & FIX/RE-SUBMIT -->
-        <div class="glass-card p-4 rounded-3xl border border-slate-800 space-y-3">
-          <div class="flex items-center justify-between">
-            <h4 class="text-xs font-bold text-white flex items-center space-x-1.5">
-              <i data-lucide="history" class="w-4 h-4 text-emerald-400"></i>
-              <span>आपकी हालिया ट्रिप्स व स्टेटस</span>
-            </h4>
-            <button onclick="loadDriverTripsHistory()" class="text-[10px] text-emerald-400 hover:underline">रिफ्रेश</button>
-          </div>
-          <div id="driverHistoryContainer" class="space-y-2 text-xs">
-            <p class="text-slate-500 text-center py-2">लोड हो रहा है...</p>
-          </div>
-        </div>
-
+    <!-- DRIVER DASHBOARD VIEW (Hidden initially) -->
+    <div id="dashboard-section" class="hidden space-y-6">
+      
+      <!-- Driver Welcome Banner -->
+      <div class="glass-card p-5 rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 to-transparent space-y-1">
+        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2.5 py-0.5 rounded-full uppercase">Active Duty</span>
+        <h3 class="font-black text-white text-lg" id="welcome-driver-name">ड्राइवर</h3>
+        <p class="text-xs text-slate-400 font-mono" id="assigned-vehicle-display">गाड़ी: [लोड हो रहा है...]</p>
       </div>
 
-      <!-- ================= TAB 2: MY KHATA & SALARY ================= -->
-      <div id="khataTab" class="hidden space-y-4">
-        <div class="glass-card p-5 rounded-3xl border border-emerald-500/30 space-y-3 bg-gradient-to-br from-slate-900 to-slate-950">
-          <p class="text-[11px] text-slate-400 uppercase font-bold tracking-wider">कंपनी से कुल भुगतान बाकी (Net Payable):</p>
-          <h2 id="dispMyNetBalance" class="text-3xl font-black text-emerald-400 font-mono">₹0</h2>
-          <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-xs">
-            <div>
-              <span class="text-slate-400 block text-[10px]">मासिक मूल वेतन:</span>
-              <span id="dispMyBaseSalary" class="font-mono text-white font-bold">₹0</span>
-            </div>
-            <div>
-              <span class="text-slate-400 block text-[10px]">कुल लिया एडवांस:</span>
-              <span id="dispMyTotalAdvance" class="font-mono text-rose-400 font-bold">₹0</span>
-            </div>
-          </div>
+      <!-- Odometer Audit Box -->
+      <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+        <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
+          <i data-lucide="camera" class="w-5 h-5 text-emerald-400"></i>
+          <h3 class="font-bold text-white text-sm">ओडोमीटर फोटो व रीडिंग सबमिट करें</h3>
         </div>
-
-        <div class="glass-card p-5 rounded-3xl border border-slate-800 space-y-3">
-          <h4 class="text-xs font-bold text-white flex items-center space-x-2">
-            <i data-lucide="calendar" class="w-4 h-4 text-teal-400"></i>
-            <span>पिछले 6 महीनों का बहीखाता (Monthly Ledger)</span>
-          </h4>
-          <div id="sixMonthsLedgerBox" class="space-y-2 text-xs">
-            <p class="text-slate-500 text-center py-3">लेज़र लोड हो रहा है...</p>
+        <form id="odometer-form" class="space-y-3 text-xs">
+          <div>
+            <label class="block text-slate-400 mb-1">रीडिंग प्रकार</label>
+            <select id="reading-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
+              <option value="Start">ट्रिप शुरू (Start KM)</option>
+              <option value="End">ट्रिप समाप्त (End KM)</option>
+            </select>
           </div>
-        </div>
+          <div>
+            <label class="block text-slate-400 mb-1">मीटर KM</label>
+            <input type="number" id="odometer-km" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-emerald-500" placeholder="45200">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">लाइव फोटो लिंक / अपलोड</label>
+            <input type="text" id="photo-url" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-emerald-500" placeholder="फोटो URL या कैमरा कैप्चर">
+          </div>
+          <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl transition shadow-md">
+            सबमिट करें
+          </button>
+        </form>
       </div>
 
-    </main>
-  </div>
+      <!-- SOS Emergency Button -->
+      <div class="glass-card p-6 rounded-3xl border border-rose-500/40 bg-rose-500/5 space-y-3 text-center">
+        <div class="w-10 h-10 bg-rose-500/20 text-rose-400 rounded-2xl flex items-center justify-center mx-auto border border-rose-500/40">
+          <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+        </div>
+        <h4 class="font-bold text-white text-sm">इमरजेंसी सहायता (SOS)</h4>
+        <p class="text-[11px] text-slate-400">गाड़ी खराब होने या दुर्घटना की स्थिति में तुरंत एडमिन को अलर्ट भेजें।</p>
+        <button id="sos-btn" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-rose-600/30 text-xs tracking-wider uppercase">
+          SOS अलर्ट भेजें
+        </button>
+      </div>
 
-  <!-- FIREBASE SCRIPTS -->
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-auto bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+    <p>Aachico Vault Driver App — Secure PWA</p>
+  </footer>
+
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, getDocs, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+    import { authenticateDriverPin, checkDriverSession, driverLogout } from './js/modules/auth-driver.js';
+    import { submitDriverOdometerLog, triggerDriverSOS } from './js/modules/driver-terminal.js';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDOIEKyvSwfpRybZBmNuImzdJ3hdlEO3hI",
-      authDomain: "aachico-vault.firebaseapp.com",
-      projectId: "aachico-vault",
-      storageBucket: "aachico-vault.firebasestorage.app",
-      messagingSenderId: "766953520082",
-      appId: "1:766953520082:web:481f1aab82b74d78aae60b"
-    };
+    // Check existing session
+    const session = checkDriverSession();
+    if (session) {
+      showDashboard(session);
+    }
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    document.getElementById('driver-login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const phone = document.getElementById('login-phone').value;
+      const pin = document.getElementById('login-pin').value;
 
-    let session = JSON.parse(localStorage.getItem('aachico_driver_session') || 'null');
-    let adminSettings = { gstRate: 5, tdsRate: 2, qrCodes: {} };
-    let multiSlipsBase64 = [];
-    let canvas, ctx, isDrawing = false;
+      const res = await authenticateDriverPin(phone, pin);
+      if (res.success) {
+        showDashboard(res.data);
+      } else {
+        alert(res.error);
+      }
+    });
+
+    document.getElementById('driver-logout-btn').addEventListener('click', () => {
+      driverLogout();
+    });
+
+    function showDashboard(driver) {
+      document.getElementById('login-section').classList.add('hidden');
+      document.getElementById('dashboard-section').classList.remove('hidden');
+      document.getElementById('driver-logout-btn').classList.remove('hidden');
+      document.getElementById('welcome-driver-name').textContent = driver.fullName;
+      document.getElementById('assigned-vehicle-display').textContent = `फोन: ${driver.phoneNumber}`;
+    }
+
+    document.getElementById('odometer-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const sessionData = checkDriverSession();
+      const res = await submitDriverOdometerLog({
+        driverName: sessionData ? sessionData.fullName : "Driver",
+        vehicleNumber: "RJ27TA8199",
+        readingType: document.getElementById('reading-type').value,
+        odometerKm: document.getElementById('odometer-km').value,
+        photoUrl: document.getElementById('photo-url').value
+      });
+      alert(res.message || res.error);
+      if(res.success) e.target.reset();
+    });
+
+    document.getElementById('sos-btn').addEventListener('click', async () => {
+      if(confirm("क्या आप वाकई एडमिन को SOS इमरजेंसी अलर्ट भेजना चाहते हैं?")) {
+        const sessionData = checkDriverSession();
+        const res = await triggerDriverSOS({
+          driverName: sessionData ? sessionData.fullName : "Driver",
+          vehicleNumber: "RJ27TA8199",
+          emergencyType: "Urgent Breakdown / Assistance"
+        });
+        alert(res.message || res.error);
+      }
+    });
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      initSigCanvas();
-      if(session) bootDashboard();
     });
-
-    function initSigCanvas() {
-      canvas = document.getElementById('sigCanvas');
-      if(!canvas) return;
-      ctx = canvas.getContext('2d');
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 2;
-
-      const getPos = (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return { x: clientX - rect.left, y: clientY - rect.top };
-      };
-
-      const start = (e) => { isDrawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
-      const draw = (e) => { if(!isDrawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); };
-      const stop = () => { isDrawing = false; };
-
-      canvas.addEventListener('mousedown', start);
-      canvas.addEventListener('mousemove', draw);
-      canvas.addEventListener('mouseup', stop);
-      canvas.addEventListener('touchstart', (e) => { e.preventDefault(); start(e); });
-      canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
-      canvas.addEventListener('touchend', stop);
-    }
-
-    window.clearSignature = function() {
-      if(!ctx || !canvas) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    };
-
-    window.switchTab = function(tabId) {
-      document.getElementById('dutyTab').classList.add('hidden');
-      document.getElementById('khataTab').classList.add('hidden');
-      document.getElementById('btnDutyTab').className = "flex-1 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800";
-      document.getElementById('btnKhataTab').className = "flex-1 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800";
-
-      document.getElementById(tabId).classList.remove('hidden');
-      if(tabId === 'dutyTab') {
-        document.getElementById('btnDutyTab').className = "flex-1 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 shadow";
-      } else {
-        document.getElementById('btnKhataTab').className = "flex-1 py-2 rounded-xl text-xs font-bold bg-teal-500 text-slate-950 shadow";
-        loadDriverKhata();
-      }
-    };
-
-    window.handleDriverLogin = async function() {
-      const code = document.getElementById('dCompanyCode').value.trim().toUpperCase();
-      const pin = document.getElementById('dPIN').value.trim();
-
-      if(!code || pin.length !== 4) {
-        alert("कंपनी कोड और 4-अंकों का PIN भरें!");
-        return;
-      }
-
-      const btn = document.getElementById('driverLoginBtn');
-      btn.innerText = "सत्यापित हो रहा है...";
-      btn.disabled = true;
-
-      try {
-        const snap = await getDocs(collection(db, "companies", code, "drivers"));
-        let matched = null;
-        snap.forEach(d => {
-          const dat = d.data();
-          if(dat.pin === pin) matched = { name: dat.name || d.id, ...dat };
-        });
-
-        if(!matched) {
-          alert("गलत PIN या कंपनी कोड! कृपया एडमिन से सही पिन लें।");
-          btn.innerText = "ड्यूटी शुरू करें (Enter Console)";
-          btn.disabled = false;
-          return;
-        }
-
-        session = { companyCode: code, pin: pin, name: matched.name, salary: matched.salary || 0 };
-        localStorage.setItem('aachico_driver_session', JSON.stringify(session));
-        bootDashboard();
-      } catch(e) {
-        alert("लॉगिन विफलता: " + e.message);
-        btn.innerText = "ड्यूटी शुरू करें (Enter Console)";
-        btn.disabled = false;
-      }
-    };
-
-    async function bootDashboard() {
-      document.getElementById('driverLoginScreen').classList.add('hidden');
-      document.getElementById('driverDashboard').classList.remove('hidden');
-      document.getElementById('displayDriverName').innerText = session.name;
-      document.getElementById('displayCompanyPill').innerText = session.companyCode;
-      lucide.createIcons();
-
-      await loadAdminTaxRules();
-      await loadAvailableFleetCars();
-      checkAllottedDuty();
-      loadDriverTripsHistory();
-    }
-
-    window.logoutDriver = function() {
-      localStorage.removeItem('aachico_driver_session');
-      location.reload();
-    };
-
-    async function loadAdminTaxRules() {
-      try {
-        const snap = await getDoc(doc(db, "companies", session.companyCode, "settings", "master"));
-        if(snap.exists()) {
-          const s = snap.data();
-          adminSettings.gstRate = s.gstRate || 5;
-          adminSettings.tdsRate = s.tdsRate || 2;
-        }
-        document.getElementById('adminGstRateText').innerText = `${adminSettings.gstRate}%`;
-        document.getElementById('adminTdsRateText').innerText = `${adminSettings.tdsRate}%`;
-      } catch(e) {}
-    }
-
-    async function loadAvailableFleetCars() {
-      const select = document.getElementById('tripCarSelect');
-      try {
-        const snap = await getDocs(collection(db, "companies", session.companyCode, "cars"));
-        if(snap.empty) {
-          select.innerHTML = `<option value="">कोई गाड़ी उपलब्ध नहीं है (एडमिन से जोड़ें)</option>`;
-          return;
-        }
-        let opts = `<option value="">-- अपनी गाड़ी चुनें --</option>`;
-        snap.forEach(d => {
-          const car = d.data();
-          opts += `<option value="${car.carNumber}">${car.carNumber} ${car.carModel ? '('+car.carModel+')' : ''}</option>`;
-        });
-        select.innerHTML = opts;
-      } catch(e) {
-        select.innerHTML = `<option value="">गाड़ियाँ लोड नहीं हुईं</option>`;
-      }
-    }
-
-    async function checkAllottedDuty() {
-      try {
-        const snap = await getDocs(collection(db, "companies", session.companyCode, "allotted_duties"));
-        let myDuty = null;
-        snap.forEach(d => {
-          const dat = { id: d.id, ...d.data() };
-          if(dat.driverPin === session.pin && dat.status === 'Assigned') myDuty = dat;
-        });
-
-        if(myDuty) {
-          const card = document.getElementById('allottedDutyCard');
-          card.classList.remove('hidden');
-          document.getElementById('allotDate').innerText = myDuty.date || 'Today';
-          document.getElementById('allotCustomer').innerText = `पार्टी: ${myDuty.customerName || 'N/A'}`;
-          document.getElementById('allotCar').innerText = `गाड़ी: ${myDuty.carNumber}`;
-          document.getElementById('allotRoute').innerText = `रूट: ${myDuty.route || 'Local/Outstation'}`;
-          document.getElementById('allotRateAdvance').innerText = `दर: ₹${myDuty.ratePerKm || 12}/KM | एडवांस: ₹${myDuty.advancePaid || 0}`;
-
-          window.currentAllottedDuty = myDuty;
-        }
-      } catch(e) {}
-    }
-
-    window.acceptAllottedDuty = function() {
-      if(!window.currentAllottedDuty) return;
-      const d = window.currentAllottedDuty;
-      document.getElementById('tripCarSelect').value = d.carNumber;
-      document.getElementById('tripCustomerName').value = d.customerName || '';
-      document.getElementById('tripRoute').value = d.route || '';
-      document.getElementById('tripRatePerKm').value = d.ratePerKm || 12;
-      document.getElementById('tripAdvancePaid').value = d.advancePaid || 0;
-      document.getElementById('allottedDutyCard').classList.add('hidden');
-      calculateTripTotals();
-      alert("ऑलॉटेड ड्यूटी का डेटा फ़ॉर्म में लोड हो गया!");
-    };
-
-    window.handleMultiSlips = function(elem) {
-      const files = Array.from(elem.files);
-      if(files.length + multiSlipsBase64.length > 15) {
-        alert("अधिकतम 15 पर्चियां ही अपलोड की जा सकती हैं!");
-        return;
-      }
-      files.forEach(f => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          multiSlipsBase64.push(e.target.result);
-          renderSlipsPreview();
-        };
-        reader.readAsDataURL(f);
-      });
-    };
-
-    function renderSlipsPreview() {
-      const container = document.getElementById('slipsPreviewContainer');
-      container.innerHTML = multiSlipsBase64.map((src, i) => `
-        <div class="relative w-12 h-12 rounded-lg overflow-hidden border border-slate-700 bg-black">
-          <img src="${src}" class="w-full h-full object-cover" />
-          <button type="button" onclick="removeSlip(${i})" class="absolute top-0 right-0 bg-rose-600 text-white rounded-bl text-[9px] px-1 font-bold">×</button>
-        </div>
-      `).join('');
-    }
-
-    window.removeSlip = function(idx) {
-      multiSlipsBase64.splice(idx, 1);
-      renderSlipsPreview();
-    };
-
-    window.previewFile = function(input, labelId) {
-      if(input.files && input.files[0]) {
-        document.getElementById(labelId).innerText = `✓ ${input.files[0].name}`;
-      }
-    };
-
-    window.updatePayModeUI = function() {
-      const mode = document.querySelector('input[name="payMode"]:checked').value;
-      const qrBox = document.getElementById('qrSelectionBox');
-      if(mode === 'ONLINE' || mode === 'SPLIT') {
-        qrBox.classList.remove('hidden');
-      } else {
-        qrBox.classList.add('hidden');
-      }
-      calculateTripTotals();
-    };
-
-    window.selectQR = function(type) {
-      document.getElementById('qrPlaceholderText').innerText = `${type} QR Code`;
-      document.querySelectorAll('#qrTabsBar button').forEach(b => {
-        b.className = "px-2.5 py-1 text-xs rounded-lg bg-slate-800 text-slate-300";
-      });
-      event.target.className = "px-2.5 py-1 text-xs rounded-lg bg-teal-500 text-slate-950 font-bold";
-    };
-
-    window.calculateTripTotals = function() {
-      const startKm = Number(document.getElementById('tripStartKm').value) || 0;
-      const endKm = Number(document.getElementById('tripEndKm').value) || 0;
-      const totalKm = endKm > startKm ? (endKm - startKm) : 0;
-      document.getElementById('dispTotalKm').innerText = totalKm;
-
-      const rate = Number(document.getElementById('tripRatePerKm').value) || 0;
-      const runningFare = totalKm * rate;
-
-      const dieselAmt = Number(document.getElementById('tripDieselAmt').value) || 0;
-      const toll = Number(document.getElementById('tripToll').value) || 0;
-      const parking = Number(document.getElementById('tripParking').value) || 0;
-      const borderTax = Number(document.getElementById('tripBorderTax').value) || 0;
-      const days = Number(document.getElementById('tripDays').value) || 1;
-      const allowance = (Number(document.getElementById('tripAllowance').value) || 0) * days;
-      const advance = Number(document.getElementById('tripAdvancePaid').value) || 0;
-
-      const expensesSum = toll + parking + borderTax + allowance;
-      const subTotal = runningFare + expensesSum;
-
-      const applyGst = document.getElementById('chkGst').checked;
-      const applyTds = document.getElementById('chkTds').checked;
-
-      const gstAmt = applyGst ? (subTotal * (adminSettings.gstRate / 100)) : 0;
-      const tdsAmt = applyTds ? (subTotal * (adminSettings.tdsRate / 100)) : 0;
-
-      const finalPayable = Math.max(0, Math.round(subTotal + gstAmt - tdsAmt - advance));
-      document.getElementById('dispCustomerFinalPayable').innerText = `₹${finalPayable}`;
-
-      const cashReceived = Number(document.getElementById('tripActualCashReceived').value) || 0;
-      const totalTripExpense = dieselAmt + toll + parking + borderTax + allowance;
-      const netInHand = cashReceived - totalTripExpense;
-
-      const netBox = document.getElementById('dispNetCashInHand');
-      netBox.innerText = `₹${netInHand}`;
-      if(netInHand >= 0) {
-        netBox.className = "w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-xs font-mono font-black text-center text-teal-300";
-      } else {
-        netBox.className = "w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-xs font-mono font-black text-center text-rose-400";
-      }
-    };
-
-    window.triggerSOS = async function() {
-      if(!confirm("क्या आप इमरजेंसी / ब्रेकडाउन अलर्ट भेजना चाहते हैं? एडमिन को तुरंत सूचना जाएगी।")) return;
-      try {
-        await addDoc(collection(db, "companies", session.companyCode, "sos_alerts"), {
-          driverName: session.name,
-          driverPin: session.pin,
-          time: new Date().toISOString(),
-          status: "EMERGENCY_ACTIVE"
-        });
-        alert("इमरजेंसी अलर्ट भेजा गया! सहायता दल संपर्क कर रहा है।");
-      } catch(e) { alert("अलर्ट नहीं भेजा जा सका: " + e.message); }
-    };
-
-    window.submitTripData = async function() {
-      const car = document.getElementById('tripCarSelect').value;
-      const startKm = Number(document.getElementById('tripStartKm').value) || 0;
-      const endKm = Number(document.getElementById('tripEndKm').value) || 0;
-      const rate = Number(document.getElementById('tripRatePerKm').value) || 0;
-      const dieselLitre = Number(document.getElementById('tripDieselLitre').value) || 0;
-      const dieselAmt = Number(document.getElementById('tripDieselAmt').value) || 0;
-      const toll = Number(document.getElementById('tripToll').value) || 0;
-      const parking = Number(document.getElementById('tripParking').value) || 0;
-      const borderTax = Number(document.getElementById('tripBorderTax').value) || 0;
-      const allowance = Number(document.getElementById('tripAllowance').value) || 0;
-      const advance = Number(document.getElementById('tripAdvancePaid').value) || 0;
-      const cashReceived = Number(document.getElementById('tripActualCashReceived').value) || 0;
-      const payMode = document.querySelector('input[name="payMode"]:checked').value;
-      const editId = document.getElementById('editingTripId').value;
-
-      if(!car) { alert("गाड़ी चुनना अनिवार्य है!"); return; }
-      if(endKm <= startKm && endKm > 0) { alert("एंड रीडिंग स्टार्ट से अधिक होनी चाहिए!"); return; }
-
-      const onlineSSInput = document.getElementById('picOnlineSS');
-      if((payMode === 'ONLINE' || payMode === 'SPLIT') && (!onlineSSInput.files || !onlineSSInput.files[0]) && !editId) {
-        alert("ऑनलाइन पेमेंट के लिए स्क्रीनशॉट अपलोड करना अनिवार्य है!");
-        return;
-      }
-
-      const totalKm = endKm > startKm ? (endKm - startKm) : 0;
-      const totalExpense = dieselAmt + toll + parking + borderTax + allowance;
-      const netCashInHand = cashReceived - totalExpense;
-
-      const btn = document.getElementById('btnSubmitTrip');
-      btn.disabled = true;
-      document.getElementById('btnSubmitTripText').innerText = "ऑडिट के लिए सिंक हो रहा है...";
-
-      const payload = {
-        carNumber: car,
-        driverName: session.name,
-        driverPin: session.pin,
-        customerName: document.getElementById('tripCustomerName').value.trim(),
-        route: document.getElementById('tripRoute').value.trim(),
-        startKm, endKm, totalKm,
-        ratePerKm: rate,
-        dieselLitre, dieselAmt,
-        tollTax: toll,
-        parking, borderTax,
-        driverAllowance: allowance,
-        advancePaid: advance,
-        cashCollected: cashReceived,
-        payMode: payMode,
-        slipsCount: multiSlipsBase64.length,
-        totalExpense, netCashInHand,
-        status: "Pending",
-        reSubmitted: !!editId,
-        submittedAt: new Date().toISOString()
-      };
-
-      try {
-        if(editId) {
-          await updateDoc(doc(db, "companies", session.companyCode, "trips", editId), payload);
-          alert("ट्रिप सुधार कर दोबारा भेज दी गई! (Re-Submitted)");
-          cancelReSubmission();
-        } else {
-          await addDoc(collection(db, "companies", session.companyCode, "trips"), payload);
-          alert("दैनिक ट्रिप ऑडिट के लिए सफलतापूर्वक सबमिट हो गई!");
-        }
-
-        resetTripForm();
-        loadDriverTripsHistory();
-      } catch(err) {
-        alert("सबमिशन त्रुटि: " + err.message);
-      } finally {
-        btn.disabled = false;
-        document.getElementById('btnSubmitTripText').innerText = "ट्रिप सबमिट करें (Send to Audit)";
-      }
-    };
-
-    function resetTripForm() {
-      document.getElementById('tripStartKm').value = "";
-      document.getElementById('tripEndKm').value = "";
-      document.getElementById('tripDieselLitre').value = "";
-      document.getElementById('tripDieselAmt').value = "";
-      document.getElementById('tripToll').value = "";
-      document.getElementById('tripParking').value = "";
-      document.getElementById('tripBorderTax').value = "";
-      document.getElementById('tripActualCashReceived').value = "";
-      multiSlipsBase64 = [];
-      renderSlipsPreview();
-      clearSignature();
-      calculateTripTotals();
-    }
-
-    async function loadDriverTripsHistory() {
-      const box = document.getElementById('driverHistoryContainer');
-      try {
-        const snap = await getDocs(collection(db, "companies", session.companyCode, "trips"));
-        let myTrips = [];
-        snap.forEach(d => {
-          const dat = { id: d.id, ...d.data() };
-          if(dat.driverPin === session.pin) myTrips.push(dat);
-        });
-
-        if(myTrips.length === 0) {
-          box.innerHTML = `<p class="text-slate-500 text-center py-2">कोई ट्रिप रिकॉर्ड नहीं मिला।</p>`;
-          return;
-        }
-
-        box.innerHTML = myTrips.slice(-5).reverse().map(t => `
-          <div class="bg-slate-900 p-3 rounded-2xl border border-slate-800 space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-white font-mono">${t.carNumber}</span>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${
-                t.status === 'Approved' ? 'bg-emerald-500/20 text-emerald-400' :
-                t.status === 'Rejected' ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/20 text-amber-400'
-              }">${t.status || 'Pending'}</span>
-            </div>
-            <p class="text-[10px] text-slate-400 font-mono">
-              ${t.totalKm} KM | कुल खर्च: ₹${t.totalExpense} | हाथ में कैश: ₹${t.netCashInHand}
-            </p>
-            ${t.rejectReason ? `
-              <div class="bg-rose-950/30 p-2 rounded-xl border border-rose-500/30 text-[10px] text-rose-300">
-                <strong>रिजेक्शन कारण:</strong> ${t.rejectReason}
-              </div>
-            ` : ''}
-            ${t.status === 'Rejected' ? `
-              <button onclick="populateForReSubmit('${t.id}')" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-1.5 rounded-xl text-[11px] transition mt-1">
-                सुधारें और दोबारा भेजें (Fix & Re-Submit)
-              </button>
-            ` : ''}
-          </div>
-        `).join('');
-      } catch(e) { box.innerHTML = `<p class="text-slate-500 text-center">लोडिंग फेल</p>`; }
-    }
-
-    window.populateForReSubmit = async function(tripId) {
-      try {
-        const snap = await getDoc(doc(db, "companies", session.companyCode, "trips", tripId));
-        if(!snap.exists()) return;
-        const t = snap.data();
-
-        document.getElementById('editingTripId').value = tripId;
-        document.getElementById('tripCarSelect').value = t.carNumber;
-        document.getElementById('tripCustomerName').value = t.customerName || '';
-        document.getElementById('tripRoute').value = t.route || '';
-        document.getElementById('tripStartKm').value = t.startKm;
-        document.getElementById('tripEndKm').value = t.endKm;
-        document.getElementById('tripRatePerKm').value = t.ratePerKm || 12;
-        document.getElementById('tripDieselLitre').value = t.dieselLitre || '';
-        document.getElementById('tripDieselAmt').value = t.dieselAmt || '';
-        document.getElementById('tripToll').value = t.tollTax || '';
-        document.getElementById('tripParking').value = t.parking || '';
-        document.getElementById('tripBorderTax').value = t.borderTax || '';
-        document.getElementById('tripAllowance').value = t.driverAllowance || '';
-        document.getElementById('tripActualCashReceived').value = t.cashCollected || '';
-
-        document.getElementById('reSubmitAlert').classList.remove('hidden');
-        document.getElementById('reSubmitReasonText').innerText = `एडमिन रिमार्क: "${t.rejectReason || 'डाटा में सुधार करें'}"`;
-        document.getElementById('btnSubmitTripText').innerText = "सुधार सबमिट करें (Update & Re-Submit)";
-        
-        calculateTripTotals();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } catch(e) { alert("डाटा नहीं खुल सका: " + e.message); }
-    };
-
-    window.cancelReSubmission = function() {
-      document.getElementById('editingTripId').value = "";
-      document.getElementById('reSubmitAlert').classList.add('hidden');
-      document.getElementById('btnSubmitTripText').innerText = "ट्रिप सबमिट करें (Send to Audit)";
-      resetTripForm();
-    };
-
-    async function loadDriverKhata() {
-      const ledgerBox = document.getElementById('sixMonthsLedgerBox');
-      document.getElementById('dispMyBaseSalary').innerText = `₹${session.salary || 0}`;
-
-      try {
-        const snap = await getDocs(collection(db, "companies", session.companyCode, "trips"));
-        let countApproved = 0;
-        snap.forEach(d => {
-          const t = d.data();
-          if(t.driverPin === session.pin && t.status === 'Approved') countApproved++;
-        });
-
-        const months = ["मार्च 2026", "फरवरी 2026", "जनवरी 2026", "दिसंबर 2025", "नवंबर 2025", "अक्टूबर 2025"];
-        ledgerBox.innerHTML = months.map((m, i) => `
-          <div class="flex items-center justify-between p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-            <div>
-              <span class="font-bold text-white text-xs block">${m}</span>
-              <span class="text-[10px] text-slate-400">${i === 0 ? countApproved : 18} ट्रिप्स पूरी हुईं</span>
-            </div>
-            <div class="text-right font-mono">
-              <span class="text-emerald-400 font-bold block text-xs">भुगतान पूर्ण</span>
-              <span class="text-[10px] text-slate-500">₹${session.salary || 18000}</span>
-            </div>
-          </div>
-        `).join('');
-
-        document.getElementById('dispMyNetBalance').innerText = `₹${session.salary || 0}`;
-        document.getElementById('dispMyTotalAdvance').innerText = `₹0`;
-      } catch(e) { ledgerBox.innerHTML = `<p class="text-slate-500 text-center">लेज़र लोड नहीं हुआ</p>`; }
-    }
-  </script>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js');
-    }
   </script>
 </body>
 </html>
