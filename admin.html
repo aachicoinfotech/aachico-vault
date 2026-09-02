@@ -125,6 +125,35 @@
 
     </div>
 
+    <!-- Live Data Tables Section -->
+    <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="database" class="w-5 h-5 text-sky-400"></i>
+          <h3 class="font-bold text-white text-sm">लाइव फ्लीट व ट्रिप ऑडिट स्थिति</h3>
+        </div>
+        <span class="text-[10px] text-sky-400 font-mono">Real-time Sync</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left">
+          <thead>
+            <tr class="text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[10px]">
+              <th class="py-3 px-2">गाड़ी / ड्राइवर</th>
+              <th class="py-3 px-2">रूट / विवरण</th>
+              <th class="py-3 px-2">कुल KM</th>
+              <th class="py-3 px-2">माइलेज</th>
+              <th class="py-3 px-2">स्थिति (Status)</th>
+            </tr>
+          </thead>
+          <tbody id="trips-table-body" class="divide-y divide-slate-800/60 font-medium">
+            <tr>
+              <td colspan="5" class="py-4 text-center text-slate-500">डेटा लोड हो रहा है...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </main>
 
   <!-- FOOTER -->
@@ -134,18 +163,63 @@
 
   <script type="module">
     import { checkAdminSession, adminLogout } from './js/modules/auth-admin.js';
-    import { registerNewVehicle } from './js/modules/fleet.js';
-    import { registerNewDriver } from './js/modules/drivers.js';
+    import { registerNewVehicle, fetchAllVehicles } from './js/modules/fleet.js';
+    import { registerNewDriver, fetchAllDrivers } from './js/modules/drivers.js';
+    import { fetchAllTrips } from './js/modules/trips-audit.js';
+    import { fetchFinancialLedger } from './js/modules/finance-pl.js';
 
-    // Check session on load
+    // Check session
     const session = checkAdminSession();
-    if (!session && window.location.hostname !== "localhost") {
-      // Optional redirect if needed, currently kept open for easy testing
-    }
 
     document.getElementById('logout-btn').addEventListener('click', () => {
       adminLogout();
     });
+
+    // Load Live Dashboard Stats & Tables
+    async function loadAdminDashboard() {
+      // 1. Fetch Vehicles
+      const vehiclesRes = await fetchAllVehicles();
+      if (vehiclesRes.success) {
+        document.getElementById('stat-vehicles').textContent = vehiclesRes.data.length;
+      }
+
+      // 2. Fetch Drivers
+      const driversRes = await fetchAllDrivers();
+      if (driversRes.success) {
+        document.getElementById('stat-drivers').textContent = driversRes.data.length;
+      }
+
+      // 3. Fetch Trips & Pending Count
+      const tripsRes = await fetchAllTrips();
+      if (tripsRes.success) {
+        const pendingTrips = tripsRes.data.filter(t => t.status === "Pending Approval");
+        document.getElementById('stat-pending-trips').textContent = pendingTrips.length;
+
+        const tbody = document.getElementById('trips-table-body');
+        if (tripsRes.data.length > 0) {
+          tbody.innerHTML = tripsRes.data.map(trip => `
+            <tr class="hover:bg-slate-900/50">
+              <td class="py-3 px-2 font-bold text-white">${trip.vehicleNumber} <br><span class="text-[10px] text-slate-400 font-normal">${trip.driverName || 'N/A'}</span></td>
+              <td class="py-3 px-2 text-slate-300">${trip.clientName || 'Local Duty'}</td>
+              <td class="py-3 px-2 font-mono">${trip.totalKm || 0} KM</td>
+              <td class="py-3 px-2 font-mono text-amber-400">${trip.mileage || 0} km/l</td>
+              <td class="py-3 px-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${trip.status === 'Approved' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'}">${trip.status}</span></td>
+            </tr>
+          `).join('');
+        } else {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500">कोई ट्रिप डेटा उपलब्ध नहीं है।</td></tr>`;
+        }
+      }
+
+      // 4. Fetch Financial P&L
+      const financeRes = await fetchFinancialLedger();
+      if (financeRes.success) {
+        const netProfit = financeRes.summary.netProfitOrLoss;
+        const netProfitEl = document.getElementById('stat-net-profit');
+        netProfitEl.textContent = `₹${netProfit}`;
+        netProfitEl.className = `text-2xl font-black font-mono ${netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+      }
+    }
 
     // Vehicle Form Handler
     document.getElementById('vehicle-form').addEventListener('submit', async (e) => {
@@ -157,7 +231,10 @@
         ownerName: "Admin"
       });
       alert(res.message || res.error);
-      if(res.success) e.target.reset();
+      if(res.success) {
+        e.target.reset();
+        loadAdminDashboard();
+      }
     });
 
     // Driver Form Handler
@@ -170,11 +247,15 @@
         monthlySalary: 15000
       });
       alert(res.message || res.error);
-      if(res.success) e.target.reset();
+      if(res.success) {
+        e.target.reset();
+        loadAdminDashboard();
+      }
     });
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
+      loadAdminDashboard();
     });
   </script>
 </body>
