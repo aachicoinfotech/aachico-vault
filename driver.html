@@ -4,27 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Aachico Vault - Driver Companion</title>
-  
+  <link rel="manifest" href="./manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     .glass-card { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950 pb-10">
 
-  <!-- ================= OFFLINE STATUS BANNER ================= -->
-  <div id="offlineBanner" class="hidden bg-amber-500 text-slate-950 text-center py-1.5 px-4 text-xs font-bold flex items-center justify-center space-x-1.5 sticky top-0 z-50 shadow-md">
-    <i data-lucide="wifi-off" class="w-3.5 h-3.5"></i>
-    <span>ऑफ़लाइन मोड - डेटा आपके फ़ोन में सुरक्षित है</span>
-  </div>
-
-  <!-- ================= DRIVER PIN LOGIN SCREEN ================= -->
+  <!-- ================= DRIVER LOGIN SCREEN ================= -->
   <div id="driverLoginScreen" class="min-h-screen flex items-center justify-center p-4">
-    <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-emerald-500/30 space-y-6 shadow-2xl">
+    <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-emerald-500/30 space-y-5 shadow-2xl">
       <div class="text-center space-y-2">
         <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black text-2xl border border-emerald-500/40">
           <i data-lucide="steering-wheel" class="w-8 h-8"></i>
@@ -33,7 +26,7 @@
         <p class="text-xs text-slate-400">अपनी कंपनी और 4-डिजिट पिन दर्ज करें</p>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-3">
         <div>
           <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Company Code</label>
           <input type="text" id="driverCompanyCode" placeholder="उदा. RJ27-FLEET" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white uppercase focus:outline-none focus:border-emerald-500 font-mono text-center" />
@@ -48,15 +41,32 @@
         </button>
       </div>
 
-      <div class="text-center">
-        <a href="index.html" class="text-xs text-slate-500 hover:text-slate-400">← मुख्य वेबसाइट</a>
+      <!-- Forgot PIN Trigger -->
+      <div class="text-center pt-2">
+        <button onclick="openForgotPinModal()" class="text-xs text-amber-400 hover:underline">पिन भूल गए? (Forgot PIN?)</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ================= FORGOT PIN MODAL ================= -->
+  <div id="forgotPinModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-slate-700 space-y-4">
+      <div class="text-center space-y-1">
+        <h3 class="font-bold text-base text-white">ड्राइवर पिन रिकवरी</h3>
+        <p class="text-xs text-slate-400">सुरक्षा कारणों से ड्राइवर पिन केवल कंपनी एडमिन बदल सकता है।</p>
+      </div>
+      <div class="bg-slate-900 p-3 rounded-xl text-xs space-y-2 border border-slate-800">
+        <p class="text-slate-300">कृपया अपने ट्रांसपोर्ट मालिक / कंपनी एडमिन को कॉल करके नया 4-अंकों का पिन सेट करने को कहें।</p>
+        <p class="text-amber-400 font-bold">मालिक अपने Admin Portal से 1 सेकंड में नया PIN अपडेट कर देगा।</p>
+      </div>
+      <button onclick="closeForgotPinModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 rounded-xl text-xs transition">
+        वापस लॉगिन स्क्रीन पर जाएँ
+      </button>
     </div>
   </div>
 
   <!-- ================= DRIVER ACTIVE DASHBOARD ================= -->
   <div id="driverDashboard" class="hidden flex-1 flex flex-col">
-    <!-- Driver Navbar -->
     <header class="glass-card border-b border-slate-800 px-4 py-3 flex items-center justify-between sticky top-0 z-40">
       <div class="flex items-center space-x-2.5">
         <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm border border-emerald-500/30">
@@ -67,109 +77,73 @@
           <p id="displayCompanyPill" class="text-[10px] text-amber-400 font-mono">RJ27-FLEET</p>
         </div>
       </div>
-      <button onclick="logoutDriver()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-xl flex items-center space-x-1">
-        <i data-lucide="power" class="w-3 h-3 text-rose-400"></i>
-        <span>ड्यूटी ऑफ</span>
-      </button>
+      <div class="flex items-center space-x-2">
+        <button onclick="openChangePinModal()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 px-2.5 py-1.5 rounded-xl">
+          पिन बदलें
+        </button>
+        <button onclick="logoutDriver()" class="text-xs bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 px-3 py-1.5 rounded-xl">
+          ड्यूटी ऑफ
+        </button>
+      </div>
     </header>
 
-    <!-- Main Duty Form -->
     <main class="flex-1 max-w-lg w-full mx-auto p-4 space-y-4">
-      
-      <!-- 4-Card Live Ledger Summary -->
-      <div class="grid grid-cols-2 gap-2 text-xs">
-        <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl">
-          <span class="text-slate-400 text-[10px] block">पॉकेट एडवांस</span>
-          <span id="ledgerAdvance" class="font-mono font-bold text-amber-400 text-base">₹0</span>
-        </div>
-        <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl">
-          <span class="text-slate-400 text-[10px] block">कलेक्टेड कैश</span>
-          <span id="ledgerCash" class="font-mono font-bold text-emerald-400 text-base">₹0</span>
-        </div>
-        <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl">
-          <span class="text-slate-400 text-[10px] block">डीज़ल व टोल खर्चे</span>
-          <span id="ledgerExpenses" class="font-mono font-bold text-rose-400 text-base">₹0</span>
-        </div>
-        <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl">
-          <span class="text-slate-400 text-[10px] block">नेट बैलेंस (Due/Claim)</span>
-          <span id="ledgerBalance" class="font-mono font-bold text-blue-400 text-base">₹0</span>
-        </div>
-      </div>
-
-      <!-- TRIP FORM -->
       <div class="glass-card p-5 rounded-3xl border border-slate-800 space-y-4">
         <h3 class="font-bold text-sm text-white flex items-center space-x-2 border-b border-slate-800 pb-2">
           <i data-lucide="map-pin" class="w-4 h-4 text-emerald-400"></i>
-          <span>ट्रिप एंट्री व मीटर ऑडिट (Trip Logger)</span>
+          <span>ट्रिप एंट्री व मीटर ऑडिट</span>
         </h3>
-
-        <!-- Car Selection -->
         <div>
-          <label class="text-[11px] text-slate-400 block mb-1">गाड़ी चुनें (Select Car Number)</label>
-          <input type="text" id="tripCarNumber" placeholder="उदा. RJ-27-TA-1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-white font-mono uppercase focus:border-emerald-500" />
+          <label class="text-[11px] text-slate-400 block mb-1">गाड़ी नंबर</label>
+          <input type="text" id="tripCarNumber" placeholder="RJ-27-TA-1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-white font-mono uppercase focus:border-emerald-500" />
         </div>
-
-        <!-- 2-Phase Meter Reading -->
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="text-[10px] text-slate-400 block mb-1">स्टार्ट KM (Start)</label>
+            <label class="text-[10px] text-slate-400 block mb-1">स्टार्ट KM</label>
             <input type="number" id="tripStartKm" placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-sm text-white font-mono" />
           </div>
           <div>
-            <label class="text-[10px] text-slate-400 block mb-1">एंड KM (End)</label>
+            <label class="text-[10px] text-slate-400 block mb-1">एंड KM</label>
             <input type="number" id="tripEndKm" placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-sm text-white font-mono" />
           </div>
         </div>
-
-        <!-- Compressed Camera Meter Photo Upload -->
-        <div class="space-y-1.5">
-          <label class="text-[11px] text-slate-400 block">ओडोमीटर फोटो (Anti-Tamper Live Photo)</label>
-          <div class="flex items-center space-x-2">
-            <label class="flex-1 cursor-pointer bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl p-3 text-center text-xs text-slate-300 flex items-center justify-center space-x-2 transition">
-              <i data-lucide="camera" class="w-4 h-4 text-amber-400"></i>
-              <span id="photoStatusText">कैमरा से फोटो खींचें</span>
-              <input type="file" id="meterPhotoInput" accept="image/*" capture="environment" class="hidden" onchange="handlePhotoCompression(event)" />
-            </label>
-          </div>
-          <div id="photoPreviewContainer" class="hidden mt-2 relative">
-            <img id="photoPreview" class="w-full h-36 object-cover rounded-xl border border-slate-700" />
-            <span id="compressedSizeTag" class="absolute bottom-2 right-2 bg-slate-950/80 text-[10px] font-mono text-emerald-400 px-2 py-0.5 rounded">Compressed: 180 KB</span>
-          </div>
-        </div>
-
-        <!-- Financial Entries -->
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="text-[10px] text-slate-400 block mb-1">डीज़ल (लीटर)</label>
-            <input type="number" id="tripDieselLitres" placeholder="0 L" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
+            <input type="number" id="tripDiesel" placeholder="0 L" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
           </div>
           <div>
-            <label class="text-[10px] text-slate-400 block mb-1">रास्ते का खर्च (₹)</label>
-            <input type="number" id="tripExpenses" placeholder="₹0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" oninput="updateLedgerCalculations()" />
+            <label class="text-[10px] text-slate-400 block mb-1">खर्च (₹)</label>
+            <input type="number" id="tripExp" placeholder="₹0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono" />
           </div>
         </div>
-
-        <div>
-          <label class="text-[10px] text-slate-400 block mb-1">कस्टमर से प्राप्त कैश (₹)</label>
-          <input type="number" id="tripCashCollected" placeholder="₹0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-sm text-emerald-400 font-mono font-bold" oninput="updateLedgerCalculations()" />
-        </div>
-
-        <!-- Submit Button -->
-        <button onclick="submitTripData()" id="submitBtn" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition flex items-center justify-center space-x-2 shadow-lg shadow-emerald-500/20 mt-2">
-          <i data-lucide="check-circle" class="w-4 h-4"></i>
-          <span>ट्रिप सबमिट करें (Sync Trip)</span>
+        <button onclick="submitTrip()" id="tripSubmitBtn" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition">
+          ट्रिप सबमिट करें (Sync Trip)
         </button>
       </div>
-
     </main>
   </div>
 
-  <!-- ================= FIREBASE & OFFLINE ENGINE ================= -->
+  <!-- CHANGE PIN MODAL -->
+  <div id="changePinModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-slate-700 space-y-4">
+      <h3 class="font-bold text-base text-white text-center">अपना PIN बदलें</h3>
+      <div class="space-y-3">
+        <div>
+          <label class="text-[11px] text-slate-400 block mb-1">नया 4-अंकों का PIN</label>
+          <input type="password" maxlength="4" id="newDriverPinInput" placeholder="••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-xl font-mono text-white" />
+        </div>
+        <button onclick="updateDriverSelfPin()" class="w-full bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs">PIN सेव करें</button>
+        <button onclick="closeChangePinModal()" class="w-full bg-slate-800 text-slate-300 py-2 rounded-xl text-xs">रद्द करें</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIREBASE LOGIC & AUTO-UPDATER -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, addDoc, collection, updateDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
-    // Your Exact Live Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyDOIEKyvSwfpRybZBmNuImzdJ3hdlEO3hI",
       authDomain: "aachico-vault.firebaseapp.com",
@@ -182,55 +156,30 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let activeSession = null;
-    let compressedPhotoBase64 = null;
+    let session = JSON.parse(localStorage.getItem('aachico_driver_session') || 'null');
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      window.addEventListener('online', updateNetworkStatus);
-      window.addEventListener('offline', updateNetworkStatus);
-      updateNetworkStatus();
-
-      const saved = localStorage.getItem('aachico_driver_session');
-      if(saved) {
-        activeSession = JSON.parse(saved);
-        openDriverDashboard();
-      }
+      if(session) showDashboard();
     });
-
-    function updateNetworkStatus() {
-      const banner = document.getElementById('offlineBanner');
-      if(!navigator.onLine) {
-        banner.classList.remove('hidden');
-      } else {
-        banner.classList.add('hidden');
-      }
-    }
 
     window.handleDriverLogin = function() {
       const code = document.getElementById('driverCompanyCode').value.trim().toUpperCase();
       const pin = document.getElementById('driverPIN').value.trim();
-
       if(!code || pin.length !== 4) {
-        alert("कृपया सही कंपनी कोड और 4-अंकों का पिन डालें!");
+        alert("कंपनी कोड और 4-अंकों का पिन सही दर्ज करें!");
         return;
       }
-
-      activeSession = {
-        companyCode: code,
-        driverPin: pin,
-        driverName: "ड्राइवर #" + pin
-      };
-
-      localStorage.setItem('aachico_driver_session', JSON.stringify(activeSession));
-      openDriverDashboard();
+      session = { companyCode: code, pin: pin, name: "ड्राइवर #" + pin };
+      localStorage.setItem('aachico_driver_session', JSON.stringify(session));
+      showDashboard();
     };
 
-    function openDriverDashboard() {
+    function showDashboard() {
       document.getElementById('driverLoginScreen').classList.add('hidden');
       document.getElementById('driverDashboard').classList.remove('hidden');
-      document.getElementById('displayCompanyPill').innerText = activeSession.companyCode;
-      document.getElementById('displayDriverName').innerText = activeSession.driverName;
+      document.getElementById('displayCompanyPill').innerText = session.companyCode;
+      document.getElementById('displayDriverName').innerText = session.name;
       lucide.createIcons();
     }
 
@@ -239,127 +188,64 @@
       location.reload();
     };
 
-    // Client-Side Image Compression to WebP (150-200 KB)
-    window.handlePhotoCompression = function(event) {
-      const file = event.target.files[0];
-      if(!file) return;
+    window.openForgotPinModal = () => document.getElementById('forgotPinModal').classList.remove('hidden');
+    window.closeForgotPinModal = () => document.getElementById('forgotPinModal').classList.add('hidden');
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-          
-          // Max dimension limit 1280px
-          const maxDim = 1280;
-          if (width > height && width > maxDim) {
-            height = Math.round((height * maxDim) / width);
-            width = maxDim;
-          } else if (height > maxDim) {
-            width = Math.round((width * maxDim) / height);
-            height = maxDim;
-          }
+    window.openChangePinModal = () => document.getElementById('changePinModal').classList.remove('hidden');
+    window.closeChangePinModal = () => document.getElementById('changePinModal').classList.add('hidden');
 
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-
-          // Watermark with Date and Time
-          const now = new Date().toLocaleString('en-IN');
-          ctx.font = 'bold 24px sans-serif';
-          ctx.fillStyle = 'rgba(245, 158, 11, 0.9)';
-          ctx.fillText(`AACHICO AUDIT: ${now}`, 20, height - 30);
-
-          // Compress to WebP at 0.7 quality
-          compressedPhotoBase64 = canvas.toDataURL('image/webp', 0.7);
-          
-          // Show preview
-          document.getElementById('photoPreview').src = compressedPhotoBase64;
-          document.getElementById('photoPreviewContainer').classList.remove('hidden');
-          document.getElementById('photoStatusText').innerText = "फोटो सेव हो गई (Compressed)";
-          
-          const approxKb = Math.round((compressedPhotoBase64.length * (3/4)) / 1024);
-          document.getElementById('compressedSizeTag').innerText = `Compressed: ${approxKb} KB`;
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    };
-
-    window.updateLedgerCalculations = function() {
-      const exp = parseFloat(document.getElementById('tripExpenses').value) || 0;
-      const cash = parseFloat(document.getElementById('tripCashCollected').value) || 0;
-      
-      document.getElementById('ledgerCash').innerText = `₹${cash}`;
-      document.getElementById('ledgerExpenses').innerText = `₹${exp}`;
-      document.getElementById('ledgerBalance').innerText = `₹${cash - exp}`;
-    };
-
-    // Submit Trip Data to Firebase & Offline Fallback
-    window.submitTripData = async function() {
-      const car = document.getElementById('tripCarNumber').value.trim().toUpperCase();
-      const startKm = parseFloat(document.getElementById('tripStartKm').value) || 0;
-      const endKm = parseFloat(document.getElementById('tripEndKm').value) || 0;
-      const diesel = parseFloat(document.getElementById('tripDieselLitres').value) || 0;
-      const exp = parseFloat(document.getElementById('tripExpenses').value) || 0;
-      const cash = parseFloat(document.getElementById('tripCashCollected').value) || 0;
-
-      if(!car) {
-        alert("कृपया गाड़ी नंबर दर्ज करें!");
+    window.updateDriverSelfPin = async function() {
+      const newPin = document.getElementById('newDriverPinInput').value.trim();
+      if(newPin.length !== 4) {
+        alert("PIN ठीक 4 अंकों का होना चाहिए!");
         return;
       }
+      session.pin = newPin;
+      localStorage.setItem('aachico_driver_session', JSON.stringify(session));
+      alert("PIN सफलतापूर्वक अपडेट हो गया!");
+      closeChangePinModal();
+    };
 
-      const tripPayload = {
-        carNumber: car,
-        driverName: activeSession.driverName,
-        driverPin: activeSession.driverPin,
-        startKm: startKm,
-        endKm: endKm,
-        dieselLitres: diesel,
-        expenses: exp,
-        cashCollected: cash,
-        meterPhotoUrl: compressedPhotoBase64 || null,
-        status: "pending_audit",
-        timestamp: new Date().toISOString()
-      };
+    window.submitTrip = async function() {
+      const car = document.getElementById('tripCarNumber').value.trim().toUpperCase();
+      const start = document.getElementById('tripStartKm').value;
+      const end = document.getElementById('tripEndKm').value;
+      const diesel = document.getElementById('tripDiesel').value;
+      const exp = document.getElementById('tripExp').value;
 
-      const btn = document.getElementById('submitBtn');
-      btn.innerText = "सिंक हो रहा है...";
+      if(!car) { alert("गाड़ी नंबर दर्ज करें!"); return; }
+
+      const btn = document.getElementById('tripSubmitBtn');
+      btn.innerText = "सेव हो रहा है...";
       btn.disabled = true;
 
       try {
-        if(navigator.onLine) {
-          await addDoc(collection(db, "companies", activeSession.companyCode, "trips"), tripPayload);
-          alert("ट्रिप सफलतापूर्वक सबमिट हो गई!");
-        } else {
-          // Offline storage
-          let offlineTrips = JSON.parse(localStorage.getItem('aachico_offline_trips') || '[]');
-          offlineTrips.push(tripPayload);
-          localStorage.setItem('aachico_offline_trips', JSON.stringify(offlineTrips));
-          alert("ऑफ़लाइन मोड: ट्रिप फ़ोन में सेव हो गई है, नेटवर्क आते ही कंपनी एडमिन को दिख जाएगी।");
-        }
-
-        // Reset inputs
+        await addDoc(collection(db, "companies", session.companyCode, "trips"), {
+          carNumber: car,
+          driverPin: session.pin,
+          startKm: Number(start),
+          endKm: Number(end),
+          dieselLitres: Number(diesel),
+          expenses: Number(exp),
+          timestamp: new Date().toISOString()
+        });
+        alert("ट्रिप सफलतापूर्वक सबमिट हो गई!");
         document.getElementById('tripStartKm').value = "";
         document.getElementById('tripEndKm').value = "";
-        document.getElementById('tripDieselLitres').value = "";
-        document.getElementById('tripExpenses').value = "";
-        document.getElementById('tripCashCollected').value = "";
-        document.getElementById('photoPreviewContainer').classList.add('hidden');
-        document.getElementById('photoStatusText').innerText = "कैमरा से फोटो खींचें";
-        compressedPhotoBase64 = null;
-
       } catch (err) {
         alert("एरर: " + err.message);
       } finally {
-        btn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i><span>ट्रिप सबमिट करें (Sync Trip)</span>`;
+        btn.innerText = "ट्रिप सबमिट करें (Sync Trip)";
         btn.disabled = false;
-        lucide.createIcons();
       }
     };
+  </script>
+
+  <!-- AUTO-UPDATER SERVICE WORKER -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
   </script>
 </body>
 </html>
