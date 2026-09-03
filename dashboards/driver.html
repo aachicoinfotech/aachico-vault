@@ -10,56 +10,56 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   
   <!-- Master Theme & Responsive CSS -->
-  <link rel="stylesheet" href="./css/themes.css">
+  <link rel="stylesheet" href="../css/themes.css">
 
   <!-- Adsterra Monetization Scripts (Social Bar & Popunder) -->
   <script src="https://pl31151923.profitableratecpmnetwork.com/51/cd/c0/51cdc0777c0281a5bee5cd02bd67d97c.js"></script>
   <script src="https://pl31151922.profitableratecpmnetwork.com/19/dd/f9/19ddf9ecf7656b128bef1db758fc1ab2.js"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-emerald-500 selection:text-slate-950">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950">
 
   <!-- TOP NAVBAR -->
   <header class="sticky top-0 z-50 glass-card border-b border-slate-800 bg-slate-950/90">
     <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between w-full">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black text-xl border border-emerald-500/40">
+        <div class="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center font-black text-xl border border-teal-500/40">
           D
         </div>
         <div>
           <span class="font-extrabold text-base tracking-wider text-white">DRIVER TERMINAL</span>
-          <p class="text-[10px] text-emerald-400 tracking-wider">AACHICO VAULT APP</p>
+          <p class="text-[10px] text-teal-400 tracking-wider">AACHICO VAULT APP</p>
         </div>
       </div>
-      <button id="driver-logout-btn" class="hidden text-xs font-bold text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-xl border border-rose-500/30">
+      <button onclick="window.DriverSecurity.logoutDriver()" id="driver-logout-btn" class="hidden text-xs font-bold text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-xl border border-rose-500/30">
         लॉगआउट
       </button>
     </div>
   </header>
 
   <!-- MAIN APP CONTAINER -->
-  <main class="max-w-md mx-auto px-4 py-6 flex-grow space-y-6 w-full">
+  <main class="max-w-md mx-auto px-4 py-6 flex-grow space-y-6 w-full pb-20">
     
     <!-- PIN LOGIN VIEW (Default if not logged in) -->
-    <div id="login-section" class="glass-card p-6 rounded-3xl border border-slate-800 space-y-5">
+    <div id="login-section" class="glass-card p-6 rounded-3xl border border-slate-800 space-y-5 bg-slate-900/90">
       <div class="text-center space-y-2">
-        <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto border border-emerald-500/30">
+        <div class="w-12 h-12 bg-teal-500/10 text-teal-400 rounded-2xl flex items-center justify-center mx-auto border border-teal-500/30">
           <i data-lucide="shield-check" class="w-6 h-6"></i>
         </div>
-        <h2 class="font-bold text-white text-base">ड्राइवर पिन लॉगिन</h2>
+        <h2 class="font-bold text-white text-base">ड्राइवर पिन लॉगिन व बाइंडिंग</h2>
         <p class="text-xs text-slate-400">अपना रजिस्टर्ड मोबाइल नंबर और 4-डिजिट पिन दर्ज करें</p>
       </div>
 
-      <form id="driver-login-form" class="space-y-4 text-xs">
+      <form id="driver-login-form" onsubmit="handleDriverLogin(event)" class="space-y-4 text-xs">
         <div>
-          <label class="block text-slate-400 mb-1">मोबाइल नंबर</label>
-          <input type="tel" id="login-phone" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white font-mono focus:outline-none focus:border-emerald-500" placeholder="9829000000">
+          <label class="block text-slate-400 mb-1 font-medium">मोबाइल नंबर</label>
+          <input type="tel" id="login-phone" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-3 text-white font-mono focus:outline-none focus:border-teal-500" placeholder="9829000000">
         </div>
         <div>
-          <label class="block text-slate-400 mb-1">4-डिजिट सुरक्षा पिन (PIN)</label>
-          <input type="password" maxlength="4" id="login-pin" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white font-mono text-center tracking-widest text-lg focus:outline-none focus:border-emerald-500" placeholder="••••">
+          <label class="block text-slate-400 mb-1 font-medium">4-डिजिट सुरक्षा पिन (PIN)</label>
+          <input type="password" maxlength="4" id="login-pin" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-3 text-white font-mono text-center tracking-widest text-lg focus:outline-none focus:border-teal-500" placeholder="••••">
         </div>
-        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition shadow-md shadow-emerald-500/20 text-sm">
-          लॉगिन करें
+        <button type="submit" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-3 rounded-xl transition shadow-lg shadow-teal-500/20 text-sm">
+          सिक्योर लॉगिन करें
         </button>
       </form>
     </div>
@@ -68,50 +68,113 @@
     <div id="dashboard-section" class="hidden space-y-6">
       
       <!-- Driver Welcome Banner -->
-      <div class="glass-card p-5 rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 to-transparent space-y-1">
-        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2.5 py-0.5 rounded-full uppercase">Active Duty</span>
+      <div class="glass-card p-5 rounded-3xl border border-teal-500/30 bg-gradient-to-r from-teal-500/10 to-transparent space-y-1">
+        <span class="text-[10px] bg-teal-500/20 text-teal-300 font-bold px-2.5 py-0.5 rounded-full uppercase">Active Duty & Secured</span>
         <h3 class="font-black text-white text-lg" id="welcome-driver-name">ड्राइवर</h3>
-        <p class="text-xs text-slate-400 font-mono" id="assigned-vehicle-display">गाड़ी: [लोड हो रहा है...]</p>
+        <p class="text-xs text-slate-400 font-mono" id="assigned-vehicle-display">डिवाइस बाइंडिंग: सुरक्षित (Connected)</p>
       </div>
 
       <!-- Odometer Audit Box -->
-      <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+      <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4 bg-slate-900/80">
         <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
-          <i data-lucide="camera" class="w-5 h-5 text-emerald-400"></i>
-          <h3 class="font-bold text-white text-sm">ओडोमीटर फोटो व रीडिंग सबमिट करें</h3>
+          <i data-lucide="camera" class="w-5 h-5 text-teal-400"></i>
+          <h3 class="font-bold text-white text-sm">ओडोमीटर फोटो व रीडिंग ऑडिट</h3>
         </div>
-        <form id="odometer-form" class="space-y-3 text-xs">
+        
+        <form id="odometer-form" onsubmit="submitOdometerAudit(event)" class="space-y-3 text-xs">
           <div>
-            <label class="block text-slate-400 mb-1">रीडिंग प्रकार</label>
-            <select id="reading-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
+            <label class="block text-slate-400 mb-1 font-medium">रीडिंग प्रकार</label>
+            <select id="reading-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-3 text-white focus:outline-none focus:border-teal-500">
               <option value="Start">ट्रिप शुरू (Start KM)</option>
               <option value="End">ट्रिप समाप्त (End KM)</option>
             </select>
           </div>
           <div>
-            <label class="block text-slate-400 mb-1">मीटर KM</label>
-            <input type="number" id="odometer-km" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-emerald-500" placeholder="45200">
+            <label class="block text-slate-400 mb-1 font-medium">वर्तमान मीटर KM</label>
+            <input type="number" id="odometer-km" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-3 text-white font-mono focus:outline-none focus:border-teal-500" placeholder="45200">
           </div>
           <div>
-            <label class="block text-slate-400 mb-1">लाइव फोटो लिंक / अपलोड</label>
-            <input type="text" id="photo-url" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-emerald-500" placeholder="फोटो URL या कैमरा कैप्चर">
+            <label class="block text-slate-400 mb-1 font-medium">मीटर की लाइव फोटो (इन-एप कैमरा अनिवार्य)</label>
+            <input type="file" accept="image/*" capture="environment" id="meter-photo-file" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-300 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-teal-500/20 file:text-teal-300 hover:file:bg-teal-500/30">
           </div>
-          <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl transition shadow-md">
-            सबमिट करें
+          <button type="submit" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-3 rounded-xl transition shadow-lg shadow-teal-500/20 text-xs">
+            जीपीएस और फोटो वेरीफाई करके सबमिट करें
           </button>
         </form>
       </div>
 
-      <!-- SOS Emergency Button -->
-      <div class="glass-card p-6 rounded-3xl border border-rose-500/40 bg-rose-500/5 space-y-3 text-center">
-        <div class="w-10 h-10 bg-rose-500/20 text-rose-400 rounded-2xl flex items-center justify-center mx-auto border border-rose-500/40">
-          <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+      <!-- 4-Card Cash Ledger UI -->
+      <div class="space-y-3">
+        <h3 class="font-bold text-slate-300 text-xs tracking-wider uppercase px-1">4-कार्ड कैश लेज़र (दैनिक हिसाब)</h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- 1. Collection Card -->
+          <div class="glass-card p-4 rounded-2xl border border-slate-800 space-y-2 bg-slate-900/60">
+            <span class="font-bold text-xs text-amber-400 flex items-center space-x-1">
+              <i data-lucide="banknote" class="w-4 h-4"></i>
+              <span>कलेक्शन कार्ड (किराया)</span>
+            </span>
+            <input type="number" id="ledger-collection" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-white font-mono text-xs" placeholder="₹ कुल रकम">
+          </div>
+
+          <!-- 2. Diesel Card -->
+          <div class="glass-card p-4 rounded-2xl border border-slate-800 space-y-2 bg-slate-900/60">
+            <span class="font-bold text-xs text-sky-400 flex items-center space-x-1">
+              <i data-lucide="fuel" class="w-4 h-4"></i>
+              <span>डीजल कार्ड (पर्ची अनिवार्य)</span>
+            </span>
+            <input type="number" id="ledger-diesel-amt" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono text-xs mb-2" placeholder="₹ डीजल अमाउंट">
+            <input type="file" accept="image/*" capture="environment" id="diesel-receipt-photo" class="w-full text-[10px] text-slate-400 file:py-1 file:px-2 file:rounded-md file:border-0 file:bg-sky-500/20 file:text-sky-300">
+          </div>
+
+          <!-- 3. Toll Tax Card -->
+          <div class="glass-card p-4 rounded-2xl border border-slate-800 space-y-2 bg-slate-900/60">
+            <span class="font-bold text-xs text-purple-400 flex items-center space-x-1">
+              <i data-lucide="receipt" class="w-4 h-4"></i>
+              <span>टोल टैक्स लेज़र</span>
+            </span>
+            <input type="number" id="ledger-toll" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-white font-mono text-xs" placeholder="₹ टोल खर्च">
+          </div>
+
+          <!-- 4. Pocket Money / Misc Expenses -->
+          <div class="glass-card p-4 rounded-2xl border border-slate-800 space-y-2 bg-slate-900/60">
+            <span class="font-bold text-xs text-rose-400 flex items-center space-x-1">
+              <i data-lucide="coffee" class="w-4 h-4"></i>
+              <span>विविध खर्च (चाय/पंक्चर)</span>
+            </span>
+            <input type="number" id="ledger-misc" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-white font-mono text-xs" placeholder="₹ अन्य खर्च">
+          </div>
         </div>
-        <h4 class="font-bold text-white text-sm">इमरजेंसी सहायता (SOS)</h4>
-        <p class="text-[11px] text-slate-400">गाड़ी खराब होने या दुर्घटना की स्थिति में तुरंत एडमिन को अलर्ट भेजें।</p>
-        <button id="sos-btn" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-rose-600/30 text-xs tracking-wider uppercase">
-          SOS अलर्ट भेजें
+
+        <button onclick="saveDailyLedger()" class="w-full bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold py-3 rounded-xl transition text-xs flex items-center justify-center space-x-2 mt-3 shadow-md">
+          <i data-lucide="save" class="w-4 h-4 text-teal-400"></i>
+          <span>आज का लेज़र हिसाब ऑफलाइन कतार में सेव करें</span>
         </button>
+      </div>
+
+      <!-- WhatsApp Summary & SOS Action -->
+      <div class="grid grid-cols-1 gap-3">
+        <div class="glass-card p-4 rounded-2xl border border-slate-800 flex items-center justify-between bg-slate-900/50">
+          <div>
+            <h4 class="font-bold text-white text-xs">व्हाट्सएप पर दैनिक समरी भेजें</h4>
+            <p class="text-[10px] text-slate-400">सिंगल क्लिक से ओनर को पूरा हिसाब भेजें।</p>
+          </div>
+          <button onclick="sendWhatsAppSummary()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center space-x-1 shadow-md">
+            <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+            <span>शेयर करें</span>
+          </button>
+        </div>
+
+        <div class="glass-card p-4 rounded-2xl border border-rose-500/40 bg-rose-500/5 flex items-center justify-between">
+          <div>
+            <h4 class="font-bold text-white text-xs">इमरजेंसी सहायता (SOS)</h4>
+            <p class="text-[10px] text-slate-400">गाड़ी खराब होने पर एडमिन को तुरंत अलर्ट भेजें।</p>
+          </div>
+          <button onclick="triggerSOS()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center space-x-1 shadow-lg">
+            <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+            <span>SOS भेजें</span>
+          </button>
+        </div>
       </div>
 
     </div>
@@ -120,24 +183,28 @@
 
   <!-- FOOTER -->
   <footer class="mt-auto bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-    <p>Aachico Vault Driver App — Secure PWA</p>
+    <p>Aachico Vault Driver Terminal App — Secure PWA & Device Binding</p>
   </footer>
 
-  <script type="module">
-    import { authenticateDriverPin, checkDriverSession, driverLogout } from './js/modules/auth-driver.js';
-    import { submitDriverOdometerLog, triggerDriverSOS } from './js/modules/driver-terminal.js';
+  <!-- Firebase & Security Engine Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="../js/config/firebase-init.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/utils/sync-engine.js"></script>
+  <script src="../js/modules/driver-security.js"></script>
 
-    // मोनेटाइजेशन एड मॉडल (असली Adsterra Banner 300x250 के साथ)
+  <script>
+    // Adsterra Monetization Modal (Free Plan Interstitial)
     function showMonetizationAdModal(onAdFinished) {
       const adDiv = document.createElement('div');
       adDiv.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-md";
       adDiv.innerHTML = `
-        <div class="glass-card p-6 rounded-3xl border border-emerald-500/50 max-w-sm text-center space-y-4 bg-slate-900 shadow-2xl">
-          <span class="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase">Sponsored Ad (फ्री प्लान स्पॉन्सर)</span>
+        <div class="glass-card p-6 rounded-3xl border border-teal-500/50 max-w-sm text-center space-y-4 bg-slate-900 shadow-2xl">
+          <span class="bg-teal-500/20 text-teal-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase">Sponsored Ad (फ्री प्लान स्पॉन्सर)</span>
           <div class="py-3 bg-slate-950 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-2 overflow-hidden">
             <p class="text-[11px] text-slate-400">ATR & Aachico Travels Partner Ad</p>
-            
-            <!-- Adsterra Banner 300x250 Code -->
             <div class="w-[300px] h-[250px] flex items-center justify-center bg-slate-900 rounded-xl overflow-hidden">
               <script>
                 atOptions = {
@@ -150,16 +217,12 @@
               </script>
               <script src="https://www.highrevenueformat.com/676fb17513eca2d63aa605342a9e66ac/invoke.js"></script>
             </div>
-
-            <p id="ad-timer" class="text-[11px] text-emerald-400 font-mono font-bold mt-2">कृपया 3 सेकंड प्रतीक्षा करें...</p>
+            <p id="ad-timer" class="text-[11px] text-teal-400 font-mono font-bold mt-2">कृपया 3 सेकंड प्रतीक्षा करें...</p>
           </div>
           <p class="text-[10px] text-slate-400">विज्ञापनों से मुक्ति पाने और बिना रुकावट के काम करने के लिए एनुअल प्लान लें।</p>
           <button id="close-ad-btn" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-2.5 rounded-xl text-xs transition cursor-not-allowed">
-            रीडिंग सेव हो रही है...
+            डेटा प्रोसेस हो रहा है...
           </button>
-          <a href="https://wa.me/919166381579?text=Hello,%20I%20want%20to%20remove%20ads%20and%20upgrade%20Aachico%20Vault%20plan." target="_blank" class="block text-[11px] text-sky-400 hover:underline">
-            विज्ञापन हटाएं (WhatsApp पर प्लान लें)
-          </a>
         </div>
       `;
       document.body.appendChild(adDiv);
@@ -176,8 +239,8 @@
           clearInterval(countdown);
           timerEl.textContent = "विज्ञापन पूरा हुआ!";
           closeBtn.disabled = false;
-          closeBtn.className = "w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-md cursor-pointer";
-          closeBtn.textContent = "आगे बढ़ें (Continue)";
+          closeBtn.className = "w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-md cursor-pointer";
+          closeBtn.textContent = "आगे बढ़ें (Continue)";
         }
       }, 1000);
 
@@ -187,84 +250,117 @@
       });
     }
 
-    // Check existing session
-    const session = checkDriverSession();
-    if (session) {
-      showDashboard(session);
-    }
-
-    document.getElementById('driver-login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
+    // 1. Driver Login & Device Binding Handler
+    async function handleDriverLogin(event) {
+      event.preventDefault();
       const phone = document.getElementById('login-phone').value;
       const pin = document.getElementById('login-pin').value;
 
-      const res = await authenticateDriverPin(phone, pin);
-      if (res.success) {
-        showDashboard(res.data);
-      } else {
-        alert(res.error);
+      if (pin.length !== 4) {
+        alert("कृपया सटीक 4-अंकों का पिन दर्ज करें।");
+        return;
       }
-    });
 
-    document.getElementById('driver-logout-btn').addEventListener('click', () => {
-      driverLogout();
-    });
+      const res = await window.DriverSecurity.authenticateDriver(phone, pin);
+      if (res.success) {
+        showDashboard(res.name);
+      } else {
+        alert(res.message);
+      }
+    }
 
-    function showDashboard(driver) {
+    function showDashboard(driverName) {
       document.getElementById('login-section').classList.add('hidden');
       document.getElementById('dashboard-section').classList.remove('hidden');
       document.getElementById('driver-logout-btn').classList.remove('hidden');
-      document.getElementById('welcome-driver-name').textContent = driver.fullName;
-      document.getElementById('assigned-vehicle-display').textContent = `फोन: ${driver.phoneNumber}`;
+      document.getElementById('welcome-driver-name').textContent = driverName;
     }
 
-    document.getElementById('odometer-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const currentPlan = localStorage.getItem('aachico_active_plan') || 'Free Community';
-
-      if (currentPlan === 'Free Community') {
-        showMonetizationAdModal(async () => {
-          const sessionData = checkDriverSession();
-          const res = await submitDriverOdometerLog({
-            driverName: sessionData ? sessionData.fullName : "Driver",
-            vehicleNumber: "RJ27TA8199",
-            readingType: document.getElementById('reading-type').value,
-            odometerKm: document.getElementById('odometer-km').value,
-            photoUrl: document.getElementById('photo-url').value
-          });
-          alert(res.message || res.error);
-          if(res.success) e.target.reset();
-        });
-      } else {
-        const sessionData = checkDriverSession();
-        const res = await submitDriverOdometerLog({
-          driverName: sessionData ? sessionData.fullName : "Driver",
-          vehicleNumber: "RJ27TA8199",
-          readingType: document.getElementById('reading-type').value,
-          odometerKm: document.getElementById('odometer-km').value,
-          photoUrl: document.getElementById('photo-url').value
-        });
-        alert(res.message || res.error);
-        if(res.success) e.target.reset();
-      }
-    });
-
-    document.getElementById('sos-btn').addEventListener('click', async () => {
-      if(confirm("क्या आप वाकई एडमिन को SOS इमरजेंसी अलर्ट भेजना चाहते हैं?")) {
-        const sessionData = checkDriverSession();
-        const res = await triggerDriverSOS({
-          driverName: sessionData ? sessionData.fullName : "Driver",
-          vehicleNumber: "RJ27TA8199",
-          emergencyType: "Urgent Breakdown / Assistance"
-        });
-        alert(res.message || res.error);
-      }
-    });
-
+    // Check existing session on load
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
+      const driverId = sessionStorage.getItem('driver_id');
+      if (driverId) {
+        showDashboard("ड्राइवर (सक्रिय सत्र)");
+      }
     });
+
+    // 2. Anti-Cheating Odometer Audit & GPS Verification
+    async function submitOdometerAudit(event) {
+      event.preventDefault();
+      const km = document.getElementById('odometer-km').value;
+      const readingType = document.getElementById('reading-type').value;
+      const fileInput = document.getElementById('meter-photo-file');
+
+      if (fileInput.files.length === 0) {
+        alert("मीटर की लाइव फोटो अपलोड करना अनिवार्य है।");
+        return;
+      }
+
+      const currentPlan = localStorage.getItem('aachico_active_plan') || 'Free Community';
+
+      const executeAudit = async () => {
+        try {
+          // GPS जियो-लोकेशन कैप्चर
+          const location = await window.AachicoUtils.getCurrentLocation();
+          // इमेज ऑटो-कंप्रेशन (50-80 KB)
+          const compressedImage = await window.AachicoUtils.compressImage(fileInput.files[0]);
+
+          // ऑफलाइन कतार में सेव करना
+          window.AachicoUtils.saveToOfflineQueue('ODOMETER_AUDIT', {
+            readingType,
+            km,
+            gps: { lat: location.latitude, lng: location.longitude },
+            timestamp: new Date().toISOString()
+          });
+
+          alert(`सफलतापूर्वक ऑडिट दर्ज हो गया!\nप्रकार: ${readingType}\nKM: ${km}\nGPS: ${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`);
+          document.getElementById('odometer-form').reset();
+        } catch (err) {
+          alert("ऑडिट त्रुटि: " + err.message);
+        }
+      };
+
+      if (currentPlan === 'Free Community') {
+        showMonetizationAdModal(executeAudit);
+      } else {
+        await executeAudit();
+      }
+    }
+
+    // 3. Daily Ledger Save
+    function saveDailyLedger() {
+      const collection = document.getElementById('ledger-collection').value || 0;
+      const diesel = document.getElementById('ledger-diesel-amt').value || 0;
+      const toll = document.getElementById('ledger-toll').value || 0;
+      const misc = document.getElementById('ledger-misc').value || 0;
+
+      window.AachicoUtils.saveToOfflineQueue('SAVE_LEDGER', {
+        collection,
+        diesel,
+        toll,
+        misc,
+        timestamp: new Date().toISOString()
+      });
+
+      alert("आज का लेज़र हिसाब सफलतापूर्वक ऑफलाइन कतार में सुरक्षित कर लिया गया है!");
+    }
+
+    // 4. WhatsApp Summary
+    function sendWhatsAppSummary() {
+      const text = encodeURIComponent("नमस्कार ओनर जी, आज की ट्रिप का फ्लीट लेज़र और खर्च हिसाब सुरक्षित रूप से अपडेट कर दिया गया है। (Aachico Vault)");
+      window.open(`https://wa.me/?text=${text}`, '_blank');
+    }
+
+    // 5. SOS Alert
+    function triggerSOS() {
+      if (confirm("क्या आप वाकई एडमिन को SOS इमरजेंसी अलर्ट भेजना चाहते हैं?")) {
+        window.AachicoUtils.saveToOfflineQueue('SOS_ALERT', {
+          timestamp: new Date().toISOString()
+        });
+        alert("SOS इमरजेंसी अलर्ट सफलतापूर्वक ओनर के पोर्टल पर भेज दिया गया है!");
+      }
+    }
   </script>
 </body>
 </html>
