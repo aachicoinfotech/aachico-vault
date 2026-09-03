@@ -1,0 +1,58 @@
+/**
+ * Aachico Vault - Stealth Control Room Theme & Styles
+ * Path: css/stealth.css
+ */
+
+body.stealth-mode {
+    background-color: #0b0f19;
+    color: #f3f4f6;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.stealth-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.stealth-card {
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+
+.stealth-badge {
+    background-color: #7f1d1d;
+    color: #fca5a5;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.stealth-btn {
+    background-color: #b91c1c;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.stealth-btn:hover {
+    background-color: #991b1b;
+}
+
+.stealth-input {
+    background-color: #1f2937;
+    border: 1px solid #4b5563;
+    color: #ffffff;
+    padding: 0.5rem;
+    border-radius: 4px;
+    width: 100%;
+}
