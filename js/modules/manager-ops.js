@@ -6,7 +6,7 @@ import { db } from '../config/firebase-init.js';
 import { collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
 /**
- * नई ड्यूटी या बुकिंग ऑलॉट करना
+ * नई ड्यूटी या बुकिंग ऑलॉट करना (फायरबेस + लोकल स्टोरेज फॉलबैक के साथ)
  */
 export async function allotDuty(dutyData) {
   try {
@@ -15,9 +15,9 @@ export async function allotDuty(dutyData) {
       clientPhone: dutyData.clientPhone,
       vehicleNumber: dutyData.vehicleNumber,
       driverName: dutyData.driverName,
-      pickupLocation: dutyData.pickupLocation,
-      dropLocation: dutyData.dropLocation,
-      allotmentDate: dutyData.allotmentDate,
+      pickupLocation: dutyData.pickupLocation || "",
+      dropLocation: dutyData.dropLocation || "",
+      allotmentDate: dutyData.allotmentDate || new Date().toISOString().split('T')[0],
       status: "Assigned",
       createdAt: serverTimestamp()
     });
@@ -25,7 +25,23 @@ export async function allotDuty(dutyData) {
     return { success: true, id: docRef.id, message: "ड्यूटी सफलतापूर्वक ऑलॉट कर दी गई है!" };
   } catch (error) {
     console.error("Error allotting duty: ", error);
-    return { success: false, error: error.message };
+    
+    // यदि फायरबेस फेल हो जाए, तो लोकल स्टोरेज फॉलबैक उपयोग करें
+    try {
+      const localDuties = JSON.parse(localStorage.getItem('aachico_local_duties') || '[]');
+      const newLocalDuty = { 
+        id: 'local_' + Date.now(), 
+        ...dutyData, 
+        status: "Assigned", 
+        createdAt: new Date().toISOString() 
+      };
+      localDuties.push(newLocalDuty);
+      localStorage.setItem('aachico_local_duties', JSON.stringify(localDuties));
+
+      return { success: true, id: newLocalDuty.id, message: "ऑफ़लाइन मोड: ड्यूटी स्थानीय रूप से सहेज ली गई है!" };
+    } catch (localErr) {
+      return { success: false, error: error.message };
+    }
   }
 }
 
@@ -63,7 +79,7 @@ export async function recordMidTripSwap(swapData) {
       createdAt: serverTimestamp()
     });
 
-    return { success: true, id: docRef.id, message: "मिड-ट्रिप स्वैप सफलतापर्वक दर्ज हो गया है!" };
+    return { success: true, id: docRef.id, message: "मिड-ट्रिप स्वैप सफलतापूर्वक दर्ज हो गया है!" };
   } catch (error) {
     console.error("Error recording swap: ", error);
     return { success: false, error: error.message };
@@ -71,7 +87,7 @@ export async function recordMidTripSwap(swapData) {
 }
 
 /**
- * सभी मैनेजर ऑपरेशन्स डेटा लोड करना
+ * सभी मैनेजर ऑपरेशन्स डेटा लोड करना (फायरबेस + लोकल स्टोरेज सिंक)
  */
 export async function fetchManagerOperations() {
   try {
@@ -79,9 +95,16 @@ export async function fetchManagerOperations() {
     let duties = [];
     dutiesSnap.forEach(doc => duties.push({ id: doc.id, ...doc.data() }));
 
-    return { success: true, data: { duties } };
+    // यदि लोकल स्टोरेज में कुछ ऑफलाइन ड्यूटी हैं, उन्हें भी शामिल करें
+    const localDuties = JSON.parse(localStorage.getItem('aachico_local_duties') || '[]');
+    const combinedDuties = [...duties, ...localDuties];
+
+    return { success: true, data: { duties: combinedDuties } };
   } catch (error) {
     console.error("Error fetching manager ops: ", error);
-    return { success: false, error: error.message, data: { duties: [] } };
+    
+    // एरर आने पर केवल लोकल स्टोरेज का डेटा रिटर्न करें
+    const localDuties = JSON.parse(localStorage.getItem('aachico_local_duties') || '[]');
+    return { success: true, error: error.message, data: { duties: localDuties } };
   }
 }
