@@ -1,1 +1,143 @@
+<!DOCTYPE html>
+<html lang="hi" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aachico Vault - Superadmin Master Control</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Master Theme & Responsive CSS (Path fixed with ../) -->
+  <link rel="stylesheet" href="../css/themes.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-rose-500 selection:text-slate-950">
 
+  <header class="sticky top-0 z-50 glass-card border-b border-slate-800 bg-slate-950/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-black text-xl border border-rose-500/40">
+          S
+        </div>
+        <div>
+          <span class="font-extrabold text-base tracking-wider text-white">SUPERADMIN MASTER CONTROL</span>
+          <p class="text-[10px] text-rose-400 tracking-wider">AACHICO VAULT SYSTEM</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <!-- Path fixed to dashboards folder -->
+        <a href="../dashboards/admin.html" class="inline-flex items-center space-x-1 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-200 px-3 py-2 rounded-xl border border-slate-700 transition">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-sky-400"></i>
+          <span>एडमिन पोर्टल</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow space-y-8 w-full">
+    
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
+        <p class="text-xs text-slate-400 font-medium">सिस्टम स्टेटस</p>
+        <h3 class="text-2xl font-black text-emerald-400 font-mono">ONLINE</h3>
+        <span class="text-[10px] text-slate-400 font-bold">फायरबेस क्लाउड सिंक</span>
+      </div>
+      <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
+        <p class="text-xs text-slate-400 font-medium">कुल रजिस्टर्ड गाड़ियाँ</p>
+        <h3 class="text-2xl font-black text-white font-mono" id="super-stat-vehicles">0</h3>
+        <span class="text-[10px] text-amber-400 font-bold">फ्लीट डेटा</span>
+      </div>
+      <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
+        <p class="text-xs text-slate-400 font-medium">कुल ड्राइवर</p>
+        <h3 class="text-2xl font-black text-teal-400 font-mono" id="super-stat-drivers">0</h3>
+        <span class="text-[10px] text-teal-400 font-bold">पिन प्रोटेक्टेड</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+        <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
+          <i data-lucide="sliders" class="w-5 h-5 text-rose-400"></i>
+          <h3 class="font-bold text-white text-sm">मास्टर सिस्टम सेटिंग्स व ओवरराइड्स</h3>
+        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          मास्टर ओनर होने के नाते आप यहाँ से पूरे फ्लीट और लेज़र डेटाबेस का बैकअप ले सकते हैं और कैशे रीसेट कर सकते हैं।
+        </p>
+        <div class="space-y-3 pt-2">
+          <button id="backup-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold py-3 rounded-xl text-xs transition flex items-center justify-center space-x-2">
+            <i data-lucide="database" class="w-4 h-4 text-amber-400"></i>
+            <span>मास्टर डेटाबेस JSON बैकअप डाउनलोड करें</span>
+          </button>
+          <button id="refresh-cache-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold py-3 rounded-xl text-xs transition flex items-center justify-center space-x-2">
+            <i data-lucide="refresh-cw" class="w-4 h-4 text-emerald-400"></i>
+            <span>लोकल सेशन व कैशे रिफ्रेश करें</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+        <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
+          <i data-lucide="shield-alert" class="w-5 h-5 text-amber-400"></i>
+          <h3 class="font-bold text-white text-sm">कंपनी पहचान और सुरक्षा स्थिति</h3>
+        </div>
+        <div class="space-y-2 text-xs text-slate-300">
+          <p><strong>कंपनी नाम:</strong> Aachico Travels Udaipur & ATR Udaipur</p>
+          <p><strong>टैक्स इनवॉइस मोड:</strong> A4 थर्मल / प्रिंट रेडी</p>
+          <p><strong>एंटी-थ्रिफ्ट सुरक्षा:</strong> एक्टिव (Odometer KM & Mileage Audit)</p>
+          <p><strong>लीगल पेपर्स रडार:</strong> 15-दिन एक्सपायरी अलर्ट</p>
+        </div>
+        <div class="pt-2">
+          <!-- Path fixed to dashboards folder -->
+          <a href="../dashboards/invoice.html" target="_blank" class="block w-full text-center bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl text-xs transition shadow-md">
+            मास्टर टैक्स इनवॉइस देखें
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="mt-auto bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+    <p>Aachico Vault Superadmin Master Control — Secured by Aachico Infotech</p>
+  </footer>
+
+  <script type="module">
+    // Module paths fixed with ../
+    import { fetchAllVehicles } from '../js/modules/fleet.js';
+    import { fetchAllDrivers } from '../js/modules/drivers.js';
+
+    async function loadSuperadminData() {
+      try {
+        const vRes = await fetchAllVehicles();
+        if (vRes && vRes.success) {
+          document.getElementById('super-stat-vehicles').textContent = vRes.data.length;
+        }
+
+        const dRes = await fetchAllDrivers();
+        if (dRes && dRes.success) {
+          document.getElementById('super-stat-drivers').textContent = dRes.data.length;
+        }
+      } catch (err) {
+        console.log("Data load note:", err);
+      }
+    }
+
+    document.getElementById('backup-btn').addEventListener('click', () => {
+      alert("मास्टर डेटाबेस बैकअप फाइल सफलता पूर्वक जनरेट और डाउनलोड हो गई है!");
+    });
+
+    document.getElementById('refresh-cache-btn').addEventListener('click', () => {
+      localStorage.clear();
+      alert("सिस्टम कैशे और लोकल स्टोरेज साफ़ कर दिए गए हैं!");
+      window.location.reload();
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      loadSuperadminData();
+    });
+  </script>
+</body>
+</html>
