@@ -34,7 +34,7 @@
           <i data-lucide="users" class="w-3.5 h-3.5 text-teal-400"></i>
           <span>मैनेजर व्यू</span>
         </a>
-        <a href="../portals/superadmin.html" class="inline-flex items-center space-x-1 text-xs font-bold bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 px-3 py-2 rounded-xl border border-rose-500/30 transition">
+        <a href="../portal/superadmin.html" class="inline-flex items-center space-x-1 text-xs font-bold bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 px-3 py-2 rounded-xl border border-rose-500/30 transition">
           <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-rose-400"></i>
           <span>सुपरएडमिन</span>
         </a>
@@ -107,7 +107,7 @@
           <p><strong>एन्क्रिप्शन:</strong> <span class="text-sky-400 font-bold">Multi-Tenant Isolated</span></p>
         </div>
         <div class="pt-2">
-          <a href="../portals/login.html" class="block w-full text-center bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold py-2.5 rounded-xl text-xs transition">
+          <a href="../portal/login.html" class="block w-full text-center bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold py-2.5 rounded-xl text-xs transition">
             लॉगआउट / स्विच अकाउंट
           </a>
         </div>
@@ -121,6 +121,13 @@
   <footer class="mt-auto bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
     <p>Aachico Vault Admin Control Room — Secured Enterprise SaaS</p>
   </footer>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="../js/config/firebase-init.js"></script>
+  <script src="../js/auth.js"></script>
 
   <script type="module">
     import { fetchAllVehicles } from '../js/modules/fleet.js';
@@ -156,6 +163,9 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
+      if (window.AachicoAuth) {
+        window.AachicoAuth.protectPage(['admin', 'superadmin']);
+      }
       loadAdminDashboardData();
     });
   </script>
