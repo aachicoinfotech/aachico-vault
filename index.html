@@ -402,7 +402,14 @@
   </script>
 
   <!-- STEALTH CONTROL ROOM SHORTCUT SCRIPT -->
-  <script src="./portal/sys-config-v2/stealth-control-room.js"></script>
+  <script>
+    (function() {
+      const script = document.createElement('script');
+      const basePath = window.location.pathname.startsWith('/aachico-vault/') ? '/aachico-vault' : '';
+      script.src = basePath + '/portal/sys-config-v2/stealth-control-room.js';
+      document.body.appendChild(script);
+    })();
+  </script>
 
   <!-- AUTO-UPDATER SERVICE WORKER -->
   <script>
