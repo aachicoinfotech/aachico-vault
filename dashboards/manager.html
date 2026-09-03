@@ -1,1 +1,214 @@
+<!DOCTYPE html>
+<html lang="hi" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aachico Vault - Manager Ground Ops Console</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <link rel="stylesheet" href="./css/themes.css">
 
+  <script src="https://pl31151923.profitableratecpmnetwork.com/51/cd/c0/51cdc0777c0281a5bee5cd02bd67d97c.js"></script>
+  <script src="https://pl31151922.profitableratecpmnetwork.com/19/dd/f9/19ddf9ecf7656b128bef1db758fc1ab2.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950">
+
+  <header class="sticky top-0 z-50 glass-card border-b border-slate-800 bg-slate-950/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center font-black text-xl border border-teal-500/40">
+          M
+        </a>
+        <div>
+          <span class="font-extrabold text-base tracking-wider text-white">MANAGER GROUND OPS</span>
+          <p class="text-[10px] text-teal-400 tracking-wider">AACHICO VAULT SYSTEM</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <a href="invoice.html" target="_blank" class="inline-flex items-center space-x-1 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-2 rounded-xl transition shadow-md">
+          <i data-lucide="receipt" class="w-3.5 h-3.5"></i>
+          <span>नया इनवॉइस बनाएँ</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow space-y-8 w-full">
+    
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
+        <p class="text-xs text-slate-400 font-medium">आज की कुल ड्यूटी</p>
+        <h3 class="text-2xl font-black text-white font-mono" id="stat-duties">0</h3>
+        <span class="text-[10px] text-teal-400 font-bold">मैनेजर डेस्क</span>
+      </div>
+      <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
+        <p class="text-xs text-slate-400 font-medium">सक्रिय गाड़ियाँ</p>
+        <h3 class="text-2xl font-black text-white font-mono" id="stat-active-vehicles">0</h3>
+        <span class="text-[10px] text-sky-400 font-bold">रेडी फॉर बुकिंग</span>
+      </div>
+      <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
+        <p class="text-xs text-slate-400 font-medium">लंबित उधारी / बकाया</p>
+        <h3 class="text-2xl font-black text-rose-400 font-mono" id="stat-pending-due">₹0</h3>
+        <span class="text-[10px] text-rose-400 font-bold">लेज़र रडार</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+        <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
+          <i data-lucide="clipboard-list" class="w-5 h-5 text-teal-400"></i>
+          <h3 class="font-bold text-white text-sm">ड्यूटी ऑलॉटमेंट (Allot Duty)</h3>
+        </div>
+        <form id="duty-form" class="space-y-3 text-xs">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-400 mb-1">ग्राहक का नाम</label>
+              <input type="text" id="duty-client" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-teal-500" placeholder="पार्टी नाम">
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">ग्राहक मोबाइल</label>
+              <input type="tel" id="duty-phone" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-teal-500" placeholder="9829000000">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-400 mb-1">गाड़ी नंबर</label>
+              <input type="text" id="duty-vehicle" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white uppercase font-mono focus:outline-none focus:border-teal-500" placeholder="RJ27TA8199">
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">ड्राइवर का नाम</label>
+              <input type="text" id="duty-driver" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-teal-500" placeholder="ड्राइवर नाम">
+            </div>
+          </div>
+          <button type="submit" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2.5 rounded-xl transition shadow-md">
+            ड्यूटी ऑलॉट करें
+          </button>
+        </form>
+      </div>
+
+      <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4 flex flex-col justify-between">
+        <div class="space-y-3">
+          <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
+            <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i>
+            <h3 class="font-bold text-white text-sm">त्वरित बिलिंग व इनवॉइस डेस्क</h3>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            मैनेजर यहाँ से सीधे ट्रिप पूरी होने पर A4 इनवॉइस जनरेट कर सकता है, पर्चियाँ देख सकता है और पार्टी का बकाया खाता अपडेट कर सकता है।
+          </p>
+        </div>
+        <div class="space-y-2 pt-4">
+          <a href="invoice.html" target="_blank" class="block w-full text-center bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl text-xs transition shadow-md">
+            A4 टैक्स इनवॉइस पेज खोलें
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="mt-auto bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+    <p>Aachico Vault Manager Console — Ground Operations</p>
+  </footer>
+
+  <script type="module">
+    import { allotDuty } from './js/modules/manager-ops.js';
+
+    // मोनेटाइजेशन एड मॉडल (असली Adsterra Banner 300x250 के साथ)
+    function showMonetizationAdModal(onAdFinished) {
+      const adDiv = document.createElement('div');
+      adDiv.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-md";
+      adDiv.innerHTML = `
+        <div class="glass-card p-6 rounded-3xl border border-teal-500/50 max-w-sm text-center space-y-4 bg-slate-900 shadow-2xl">
+          <span class="bg-teal-500/20 text-teal-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase">Sponsored Ad (फ्री प्लान स्पॉन्सर)</span>
+          <div class="py-3 bg-slate-950 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-2 overflow-hidden">
+            <p class="text-[11px] text-slate-400">ATR & Aachico Travels Partner Ad</p>
+            
+            <div class="w-[300px] h-[250px] flex items-center justify-center bg-slate-900 rounded-xl overflow-hidden">
+              <script>
+                atOptions = {
+                  'key' : '676fb17513eca2d63aa605342a9e66ac',
+                  'format' : 'iframe',
+                  'height' : 250,
+                  'width' : 300,
+                  'params' : {}
+                };
+              </script>
+              <script src="https://www.highrevenueformat.com/676fb17513eca2d63aa605342a9e66ac/invoke.js"></script>
+            </div>
+
+            <p id="ad-timer" class="text-[11px] text-teal-400 font-mono font-bold mt-2">कृपया 3 सेकंड प्रतीक्षा करें...</p>
+          </div>
+          <p class="text-[10px] text-slate-400">विज्ञापनों से मुक्ति पाने और बिना रुकावट के काम करने के लिए एनुअल प्लान लें।</p>
+          <button id="close-ad-btn" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-2.5 rounded-xl text-xs transition cursor-not-allowed">
+            ड्यूटी सेव हो रही है...
+          </button>
+          <a href="https://wa.me/919166381579?text=Hello,%20I%20want%20to%20remove%20ads%20and%20upgrade%20Aachico%20Vault%20plan." target="_blank" class="block text-[11px] text-sky-400 hover:underline">
+            विज्ञापन हटाएं (WhatsApp पर प्लान लें)
+          </a>
+        </div>
+      `;
+      document.body.appendChild(adDiv);
+
+      let timeLeft = 3;
+      const timerEl = document.getElementById('ad-timer');
+      const closeBtn = document.getElementById('close-ad-btn');
+
+      const countdown = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          timerEl.textContent = `कृपया ${timeLeft} सेकंड प्रतीक्षा करें...`;
+        } else {
+          clearInterval(countdown);
+          timerEl.textContent = "विज्ञापन पूरा हुआ!";
+          closeBtn.disabled = false;
+          closeBtn.className = "w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-md cursor-pointer";
+          closeBtn.textContent = "आगे बढ़ें (Continue)";
+        }
+      }, 1000);
+
+      closeBtn.addEventListener('click', () => {
+        adDiv.remove();
+        if (onAdFinished) onAdFinished();
+      });
+    }
+
+    document.getElementById('duty-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const currentPlan = localStorage.getItem('aachico_active_plan') || 'Free Community';
+
+      if (currentPlan === 'Free Community') {
+        showMonetizationAdModal(async () => {
+          const res = await allotDuty({
+            clientName: document.getElementById('duty-client').value,
+            clientPhone: document.getElementById('duty-phone').value,
+            vehicleNumber: document.getElementById('duty-vehicle').value,
+            driverName: document.getElementById('duty-driver').value,
+            allotmentDate: new Date().toISOString().split('T')[0]
+          });
+          alert(res.message || res.error);
+          if(res.success) e.target.reset();
+        });
+      } else {
+        const res = await allotDuty({
+          clientName: document.getElementById('duty-client').value,
+          clientPhone: document.getElementById('duty-phone').value,
+          vehicleNumber: document.getElementById('duty-vehicle').value,
+          driverName: document.getElementById('duty-driver').value,
+          allotmentDate: new Date().toISOString().split('T')[0]
+        });
+        alert(res.message || res.error);
+        if(res.success) e.target.reset();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
