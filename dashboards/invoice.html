@@ -1,171 +1,61 @@
-<!DOCTYPE html>
-<html lang="hi" class="scroll-smooth">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aachico Vault - A4 Tax Invoice & Billing Slip</title>
-  
-  <!-- Tailwind CSS & Lucide Icons -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  
-  <!-- Master Theme & Responsive CSS -->
-  <link rel="stylesheet" href="./css/themes.css">
+// ==========================================================================
+// Aachico Vault - Master Central Database Sync & Offline Queue Engine
+// ==========================================================================
 
-  <!-- Adsterra Monetization Scripts (Social Bar & Popunder) -->
-  <script src="https://pl31151923.profitableratecpmnetwork.com/51/cd/c0/51cdc0777c0281a5bee5cd02bd67d97c.js"></script>
-  <script src="https://pl31151922.profitableratecpmnetwork.com/19/dd/f9/19ddf9ecf7656b128bef1db758fc1ab2.js"></script>
+import { db } from '../config/firebase-init.js';
+import { collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+/**
+ * सेंट्रल डेटाबेस सिंक और ऑफलाइन-फर्स्ट क्यू मैनेजर
+ */
+export const MasterDatabaseSync = {
   
-  <style>
-    @media print {
-      body {
-        background: white !important;
-        color: black !important;
-      }
-      .no-print {
-        display: none !important;
-      }
-      .invoice-container {
-        border: none !important;
-        box-shadow: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        width: 100% !important;
+  // किसी भी मॉड्यूल का डेटा फायरबेस या लोकल स्टोरेज में सिंक करना
+  async syncRecord(collectionName, recordData) {
+    try {
+      const docRef = await addDoc(collection(db, collectionName), {
+        ...recordData,
+        syncedAt: serverTimestamp(),
+        source: "Aachico Vault Web App"
+      });
+      return { success: true, id: docRef.id, message: "डेटा क्लाउड पर सफलतापूर्वक सिंक हो गया है!" };
+    } catch (error) {
+      console.warn("Cloud sync failed, falling back to local queue:", error);
+      
+      try {
+        const queueKey = `aachico_offline_queue_${collectionName}`;
+        const existingQueue = JSON.parse(localStorage.getItem(queueKey) || '[]');
+        const offlineRecord = { id: 'offline_' + Date.now(), ...recordData, createdAt: new Date().toISOString() };
+        
+        existingQueue.push(offlineRecord);
+        localStorage.setItem(queueKey, JSON.stringify(existingQueue));
+        
+        return { success: true, id: offlineRecord.id, message: "ऑफ़लाइन मोड: डेटा लोकल कतार में सुरक्षित सहेज लिया गया है!" };
+      } catch (localErr) {
+        return { success: false, error: localErr.message };
       }
     }
-  </style>
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen py-8 px-4 flex flex-col items-center">
+  },
 
-  <!-- Top Action Bar (No Print) -->
-  <div class="no-print max-w-3xl w-full flex justify-between items-center mb-6">
-    <a href="admin.html" class="inline-flex items-center space-x-1.5 text-xs font-bold text-slate-400 hover:text-white transition">
-      <i data-lucide="arrow-left" class="w-4 h-4"></i>
-      <span>वापस एडमिन पैनल</span>
-    </a>
-    <div class="flex items-center space-x-3">
-      <button onclick="window.print()" class="inline-flex items-center space-x-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition shadow-md">
-        <i data-lucide="printer" class="w-4 h-4"></i>
-        <span>प्रिंट / PDF सेव करें</span>
-      </button>
-    </div>
-  </div>
+  // रिमोट और लोकल डेटा को एक साथ फेच करना
+  async fetchRecords(collectionName) {
+    try {
+      const q = query(collection(db, collectionName), orderBy("syncedAt", "desc"));
+      const querySnapshot = await getDocs(q);
+      
+      const records = [];
+      querySnapshot.forEach((doc) => {
+        records.push({ id: doc.id, ...doc.data() });
+      });
 
-  <!-- A4 Invoice Wrapper -->
-  <div class="invoice-container max-w-3xl w-full glass-card p-8 rounded-3xl border border-slate-800 bg-white text-slate-900 space-y-6 shadow-2xl">
-    
-    <!-- Header: Company Info (Dynamic from Admin Profile) -->
-    <div class="flex justify-between items-start border-b border-slate-200 pb-6">
-      <div>
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight" id="invoice-comp-name">AACHICO TRAVELS UDAIPUR</h1>
-        <p class="text-xs text-slate-600">प्रिमियम टैक्सी फ्लीट, टूर एंड ट्रेवल्स ऑपरेटर</p>
-        <p class="text-xs text-slate-500 mt-1"><span id="invoice-comp-address">उदयपुर, राजस्थान</span> | हेल्पलाइन: <span id="invoice-comp-phone">+91 9166381579</span></p>
-        <p class="text-[11px] text-slate-500 font-mono mt-0.5" id="invoice-comp-gst-box">GSTIN: <span id="invoice-comp-gst">N/A</span></p>
-      </div>
-      <div class="text-right">
-        <span class="inline-block bg-amber-100 text-amber-800 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">TAX INVOICE</span>
-        <p class="text-xs font-mono text-slate-600 mt-2">इन्वॉइस संख्या: <strong id="inv-no">#ACV-2026-001</strong></p>
-        <p class="text-xs font-mono text-slate-600">दिनांक: <strong id="inv-date">02/09/2026</strong></p>
-      </div>
-    </div>
-
-    <!-- Client & Vehicle Details -->
-    <div class="grid grid-cols-2 gap-4 text-xs bg-slate-50 p-4 rounded-2xl border border-slate-200">
-      <div class="space-y-1">
-        <p class="text-slate-500 font-semibold uppercase tracking-wider text-[10px]">ग्राहक विवरण (Client Details):</p>
-        <p class="font-bold text-slate-900 text-sm" id="client-name">श्रीमान् / कंपनी नाम: [पार्टी का नाम]</p>
-        <p class="text-slate-600" id="client-phone">मोबाईल: -</p>
-      </div>
-      <div class="space-y-1 text-right">
-        <p class="text-slate-500 font-semibold uppercase tracking-wider text-[10px]">गाड़ी व ड्यूटी विवरण:</p>
-        <p class="font-bold text-slate-900" id="vehicle-info">गाड़ी नंबर: [RJ27TA8199]</p>
-        <p class="text-slate-600" id="duty-route">रूट / विवरण: उदयपुर लोकल / आउटस्टेशन</p>
-      </div>
-    </div>
-
-    <!-- Itemized Table -->
-    <table class="w-full text-xs text-left border-collapse">
-      <thead>
-        <tr class="border-b border-slate-300 text-slate-500 uppercase tracking-wider text-[10px]">
-          <th class="py-3 px-2">विवरण (Description)</th>
-          <th class="py-3 px-2 text-center">KM / दिन</th>
-          <th class="py-3 px-2 text-right">दर (Rate)</th>
-          <th class="py-3 px-2 text-right">कुल राशि (Amount)</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-slate-100 text-slate-800 font-medium">
-        <tr>
-          <td class="py-3 px-2">टैक्सी किराया (Vehicle Hire Charges / KM)</td>
-          <td class="py-3 px-2 text-center" id="total-km">0 KM</td>
-          <td class="py-3 px-2 text-right" id="rate-per-km">₹12/KM</td>
-          <td class="py-3 px-2 text-right font-bold" id="base-amount">₹0.00</td>
-        </tr>
-        <tr>
-          <td class="py-3 px-2">टोल टैक्स, पार्किंग व ड्राइवर भत्ता (Toll/Parking/Driver Allowance)</td>
-          <td class="py-3 px-2 text-center">-</td>
-          <td class="py-3 px-2 text-right">-</td>
-          <td class="py-3 px-2 text-right font-bold" id="extra-amount">₹0.00</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- Total Calculations -->
-    <div class="border-t border-slate-200 pt-4 flex justify-between items-center">
-      <div class="text-[11px] text-slate-500">
-        <p>* भुगतान चेक, UPI या बैंक ट्रांसफर द्वारा स्वीकार्य है।</p>
-        <p>* विवाद की स्थिति में न्यायक्षेत्र उदयपुर (राज.) होगा।</p>
-      </div>
-      <div class="text-right space-y-1">
-        <p class="text-xs text-slate-500">कुल देय राशि (Grand Total):</p>
-        <p class="text-2xl font-black text-slate-900 font-mono" id="grand-total">₹0.00</p>
-      </div>
-    </div>
-
-    <!-- Signatures & Footer -->
-    <div class="pt-12 flex justify-between items-end border-t border-slate-100 text-xs">
-      <div>
-        <p class="font-bold text-slate-700">पार्टी के हस्ताक्षर (Customer Sign)</p>
-        <div class="h-12 border-b border-dashed border-slate-300 w-40 mt-2"></div>
-      </div>
-      <div class="text-right">
-        <p class="font-bold text-slate-700" id="sign-company-name">वास्ते Aachico Travels Udaipur</p>
-        <div class="h-12 border-b border-dashed border-slate-300 w-40 mt-2 ml-auto"></div>
-        <p class="text-[10px] text-slate-400 mt-1">अधिकृत हस्ताक्षरकर्ता (Authorized Signatory)</p>
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      lucide.createIcons();
-
-      // एडमिन पैनल से सेव की गई कंपनी प्रोफाइल को इनवॉइस पर लोड करना
-      const savedName = localStorage.getItem('aachico_comp_name');
-      const savedPhone = localStorage.getItem('aachico_comp_phone');
-      const savedGst = localStorage.getItem('aachico_comp_gst');
-      const savedAddress = localStorage.getItem('aachico_comp_address');
-
-      if (savedName) {
-        document.getElementById('invoice-comp-name').textContent = savedName.toUpperCase();
-        document.getElementById('sign-company-name').textContent = `वास्ते ${savedName}`;
-      }
-      if (savedPhone) {
-        document.getElementById('invoice-comp-phone').textContent = `+91 ${savedPhone}`;
-      }
-      if (savedAddress) {
-        document.getElementById('invoice-comp-address').textContent = savedAddress;
-      }
-      if (savedGst) {
-        document.getElementById('invoice-comp-gst').textContent = savedGst;
-      } else {
-        document.getElementById('invoice-comp-gst-box').style.display = 'none';
-      }
-
-      // आज की तारीख ऑटोमैटिक सेट करना
-      const today = new Date().toLocaleDateString('hi-IN');
-      document.getElementById('inv-date').textContent = today;
-    });
-  </script>
-</body>
-</html>
+      // लोकल कतार के रिकॉर्ड्स भी जोड़ें
+      const localQueue = JSON.parse(localStorage.getItem(`aachico_offline_queue_${collectionName}`) || '[]');
+      
+      return { success: true, data: [...records, ...localQueue] };
+    } catch (error) {
+      console.error(`Error fetching ${collectionName}:`, error);
+      const localQueue = JSON.parse(localStorage.getItem(`aachico_offline_queue_${collectionName}`) || '[]');
+      return { success: true, data: localQueue, message: "ऑफ़लाइन मोड डेटा दिखाया जा रहा है।" };
+    }
+  }
+};
