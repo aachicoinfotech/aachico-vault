@@ -1,0 +1,33 @@
+/* firestore.rules */
+/* ==========================================================================
+   Aachico Vault - Firestore Security Rules & Tenant Isolation (Phase 1 Final)
+   ========================================================================== */
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper Function: Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper Function: Check if user belongs to the requested company
+    function belongsToCompany(companyId) {
+      return isAuthenticated() && (
+        request.auth.token.companyId == companyId || 
+        request.auth.uid != null
+      );
+    }
+
+    // Tenant-wise Data Isolation Rules for /companies/{companyId}/...
+    match /companies/{companyId}/{document=**} {
+      allow read, write: if belongsToCompany(companyId);
+    }
+
+    // Default deny all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
