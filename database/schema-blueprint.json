@@ -1,1 +1,65 @@
 
+{
+  "project": "Aachico Vault",
+  "architecture": "Multi-Tenant SaaS with Database Isolation",
+  "version": "1.0.0",
+  "collections_or_tables": {
+    "companies": {
+      "description": "Stores tenant company profiles, subscription plans, category, and wallet balances.",
+      "fields": {
+        "tenantId": "string (Primary Key / Unique ID)",
+        "companyName": "string",
+        "category": "string (taxi | transporter | hybrid)",
+        "ownerName": "string",
+        "ownerPhone": "string (WhatsApp linked)",
+        "subscriptionPlan": "string (e.g., T1, TR1, H1)",
+        "subscriptionExpiry": "timestamp",
+        "walletBalance": "number (Points / INR)",
+        "isActive": "boolean",
+        "createdAt": "timestamp"
+      }
+    },
+    "vehicles": {
+      "description": "Stores fleet vehicle details, documents, and compliance tracking.",
+      "fields": {
+        "vehicleId": "string (Primary Key)",
+        "tenantId": "string (Foreign Key)",
+        "vehicleNumber": "string",
+        "vehicleType": "string",
+        "rcExpiry": "timestamp",
+        "insuranceExpiry": "timestamp",
+        "pucExpiry": "timestamp",
+        "fitnessExpiry": "timestamp",
+        "currentOdometer": "number",
+        "status": "string (Active | Blocked | Maintenance)"
+      }
+    },
+    "trips": {
+      "description": "Stores individual trip entries, tolls, and billing data.",
+      "fields": {
+        "tripId": "string (Primary Key)",
+        "tenantId": "string (Foreign Key)",
+        "vehicleId": "string (Foreign Key)",
+        "driverId": "string (Foreign Key)",
+        "startOdometer": "number",
+        "endOdometer": "number",
+        "tollsAmount": "number",
+        "freightOrFare": "number",
+        "tripDate": "timestamp",
+        "status": "string"
+      }
+    },
+    "wallets_ledger": {
+      "description": "Tracks all micro-payments, pay-per-use deductions, and WhatsApp top-ups.",
+      "fields": {
+        "transactionId": "string (Primary Key)",
+        "tenantId": "string (Foreign Key)",
+        "type": "string (CREDIT | DEBIT)",
+        "amount": "number",
+        "mode": "string (WHATSAPP_APPROVAL | REWARD_AD | PAY_PER_USE)",
+        "referenceNote": "string",
+        "timestamp": "timestamp"
+      }
+    }
+  }
+}
