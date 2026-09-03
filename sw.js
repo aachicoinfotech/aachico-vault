@@ -1,8 +1,9 @@
+/* sw.js */
 /* ==========================================================================
-   Aachico Vault - Service Worker (Auto-Update Cache v2)
+   Aachico Vault - Service Worker (Auto-Update Cache v3 - Phase 1 Final)
    ========================================================================== */
 
-const CACHE_NAME = 'aachico-vault-v2';
+const CACHE_NAME = 'aachico-vault-v3';
 const ASSETS_TO_CACHE = [
   './index.html',
   './admin.html',
@@ -11,6 +12,8 @@ const ASSETS_TO_CACHE = [
   './superadmin.html',
   './invoice.html',
   './css/themes.css',
+  './css/components.css',
+  './js/config/firebase-init.js',
   './manifest.json'
 ];
 
@@ -40,16 +43,15 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch Event
+// Fetch Event with Cache-First & Offline Fallback Strategy
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      return cachedResponse || fetch(event.request);
-    }).catch(() => {
-      // Fallback if offline
-      if (event.request.mode === 'navigate') {
-        return caches.match('./index.html');
-      }
+      return cachedResponse || fetch(event.request).catch(() => {
+        if (event.request.mode === 'navigate') {
+          return caches.match('./index.html');
+        }
+      });
     })
   );
 });
