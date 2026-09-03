@@ -1,0 +1,114 @@
+{
+  "currency": "INR",
+  "categories": {
+    "taxi": {
+      "name": "Taxi Fleet Operators",
+      "plans": [
+        {
+          "planId": "T1",
+          "name": "Taxi Starter",
+          "durationMonths": 1,
+          "vehicleLimit": 3,
+          "priceINR": 299,
+          "features": ["Basic Trip Logging", "4-Card Cash Ledger", "WhatsApp Invoice"]
+        },
+        {
+          "planId": "T2",
+          "name": "Taxi Pro (Monthly)",
+          "durationMonths": 1,
+          "vehicleLimit": 10,
+          "priceINR": 799,
+          "features": ["GPS Tracking", "Legal Radar", "Driver Scorecard"]
+        },
+        {
+          "planId": "T3",
+          "name": "Taxi Pro (Half-Yearly 5+1)",
+          "durationMonths": 6,
+          "vehicleLimit": 10,
+          "priceINR": 3995,
+          "features": ["GPS Tracking", "Legal Radar", "Driver Scorecard", "1 Month Free"]
+        },
+        {
+          "planId": "T4",
+          "name": "Taxi Enterprise (Annual 11+1)",
+          "durationMonths": 12,
+          "vehicleLimit": 25,
+          "priceINR": 8789,
+          "features": ["All Pro Features", "Priority WhatsApp Support", "Custom Branding"]
+        }
+      ]
+    },
+    "transporter": {
+      "name": "Heavy Transporters & Truckers",
+      "plans": [
+        {
+          "planId": "TR1",
+          "name": "Trucker Basic",
+          "durationMonths": 1,
+          "vehicleLimit": 2,
+          "priceINR": 499,
+          "features": ["Freight Ledger", "Tyre & Maintenance Log", "Diesel Tracker"]
+        },
+        {
+          "planId": "TR2",
+          "name": "Transporter Fleet (Monthly)",
+          "durationMonths": 1,
+          "vehicleLimit": 10,
+          "priceINR": 1299,
+          "features": ["IoT GPS Telematics", "Fastag Auto-Sync", "GST Tax Engine"]
+        },
+        {
+          "planId": "TR3",
+          "name": "Transporter Fleet (Half-Yearly 5+1)",
+          "durationMonths": 6,
+          "vehicleLimit": 10,
+          "priceINR": 6495,
+          "features": ["IoT GPS Telematics", "Fastag Auto-Sync", "GST Tax Engine", "1 Month Free"]
+        },
+        {
+          "planId": "TR4",
+          "name": "Transporter Enterprise (Annual 11+1)",
+          "durationMonths": 12,
+          "vehicleLimit": 30,
+          "priceINR": 14289,
+          "features": ["Full IoT Suite", "AI Predictive Maintenance", "Multi-Manager Access"]
+        }
+      ]
+    },
+    "hybrid": {
+      "name": "Hybrid Logistics & Taxi Providers",
+      "plans": [
+        {
+          "planId": "H1",
+          "name": "Hybrid Flex (Monthly)",
+          "durationMonths": 1,
+          "vehicleLimit": 15,
+          "priceINR": 1599,
+          "features": ["Combined Taxi & Truck Modules", "Advanced P&L", "Full Compliance Hub"]
+        },
+        {
+          "planId": "H2",
+          "name": "Hybrid Ultimate (Annual 11+1)",
+          "durationMonths": 12,
+          "vehicleLimit": 50,
+          "priceINR": 17589,
+          "features": ["Unlimited Access", "Dedicated Support", "Stealth Control Integration"]
+        }
+      ]
+    }
+  },
+  "micro_pricing": {
+    "pay_per_use": {
+      "priceINR": 10,
+      "description": "Per report or single trip advanced feature unlock"
+    },
+    "one_day_pass": {
+      "priceINR": 20,
+      "description": "24-hour unlimited access pass for locked advanced modules"
+    },
+    "monthly_addon": {
+      "priceINR": 39,
+      "description": "Continuous running service monthly add-on"
+    }
+  }
+}
