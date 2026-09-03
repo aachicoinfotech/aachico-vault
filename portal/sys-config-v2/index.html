@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aachico Vault | Stealth Control Room (SuperAdmin)</title>
+    <link rel="stylesheet" href="/css/stealth.css">
+</head>
+<body class="stealth-mode">
+    <div class="stealth-container">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid #374151; padding-bottom: 1rem;">
+            <div>
+                <h1>Aachico Vault — Stealth Control Room</h1>
+                <p style="color: #9ca3af; font-size: 0.875rem;">Secured Multi-Tenant Global SuperAdmin Terminal</p>
+            </div>
+            <div>
+                <span class="stealth-badge">God-View Active</span>
+            </div>
+        </header>
+
+        <main style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Tenant Global Overview Card -->
+            <div class="stealth-card">
+                <h3>Global Tenant Overview</h3>
+                <p style="color: #9ca3af; font-size: 0.875rem; margin-bottom: 1rem;">Monitor active company subscriptions and database partitions.</p>
+                <div id="tenant-list-container">
+                    <p style="color: #6b7280;">Loading isolated tenants...</p>
+                </div>
+            </div>
+
+            <!-- WhatsApp Wallet Approval & Top-up Card -->
+            <div class="stealth-card">
+                <h3>WhatsApp Wallet Approval Hub</h3>
+                <p style="color: #9ca3af; font-size: 0.875rem; margin-bottom: 1rem;">Process manual recharge requests from WhatsApp screenshots.</p>
+                <form id="wallet-approval-form" onsubmit="handleWalletApprovalSubmit(event)">
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.875rem; margin-bottom: 0.5rem;">Tenant ID / Company Name</label>
+                        <input type="text" id="approval-tenant-id" class="stealth-input" placeholder="e.g., tenant_udaipur_01" required>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.875rem; margin-bottom: 0.5rem;">Recharge Amount (INR)</label>
+                        <input type="number" id="approval-amount" class="stealth-input" placeholder="500" required>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.875rem; margin-bottom: 0.5rem;">WhatsApp Ref / Transaction ID</label>
+                        <input type="text" id="approval-ref" class="stealth-input" placeholder="UPI-REF-987654321" required>
+                    </div>
+                    <button type="submit" class="stealth-btn">Approve & Credit Wallet</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Load Stealth Engine Script -->
+    <script src="stealth-control-room.js"></script>
+    <script>
+        function handleWalletApprovalSubmit(event) {
+            event.preventDefault();
+            const tenantId = document.getElementById('approval-tenant-id').value;
+            const amount = document.getElementById('approval-amount').value;
+            const ref = document.getElementById('approval-ref').value;
+
+            if (window.superAdminApproveWalletTopup) {
+                window.superAdminApproveWalletTopup(tenantId, amount, ref);
+                document.getElementById('wallet-approval-form').reset();
+            } else {
+                alert('Stealth control room engine not fully initialized.');
+            }
+        }
+    </script>
+</body>
+</html>
