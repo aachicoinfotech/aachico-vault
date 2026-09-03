@@ -74,31 +74,34 @@
         <p class="text-xs text-slate-400 font-mono" id="assigned-vehicle-display">डिवाइस बाइंडिंग: सुरक्षित (Connected)</p>
       </div>
 
+      <!-- Night Boost Alert Notice (Dynamic) -->
+      <div id="night-boost-notice" class="hidden glass-card p-3 rounded-2xl border border-amber-500/40 bg-amber-500/10 text-amber-300 text-xs flex items-center space-x-2">
+        <i data-lucide="moon" class="w-4 h-4 shrink-0"></i>
+        <span>रात का समय है: स्पष्ट मीटर फोटो के लिए फ्लैश लाइट/ब्राइटनेस का उपयोग करें।</span>
+      </div>
+
       <!-- Odometer Audit Box -->
       <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4 bg-slate-900/80">
         <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
           <i data-lucide="camera" class="w-5 h-5 text-teal-400"></i>
-          <h3 class="font-bold text-white text-sm">ओडोमीटर फोटो व रीडिंग ऑडिट</h3>
+          <h3 class="font-bold text-white text-sm">एंटी-चीटिंग ओडोमीटर और फोटो ऑडिट</h3>
         </div>
         
         <form id="odometer-form" onsubmit="submitOdometerAudit(event)" class="space-y-3 text-xs">
           <div>
-            <label class="block text-slate-400 mb-1 font-medium">रीडिंग प्रकार</label>
-            <select id="reading-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-3 text-white focus:outline-none focus:border-teal-500">
-              <option value="Start">ट्रिप शुरू (Start KM)</option>
-              <option value="End">ट्रिप समाप्त (End KM)</option>
-            </select>
+            <label class="block text-slate-400 mb-1 font-medium">स्टार्ट किलोमीटर (Start KM)</label>
+            <input type="number" id="start-km" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-3 text-white font-mono focus:outline-none focus:border-teal-500" placeholder="45000">
           </div>
           <div>
-            <label class="block text-slate-400 mb-1 font-medium">वर्तमान मीटर KM</label>
-            <input type="number" id="odometer-km" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-3 text-white font-mono focus:outline-none focus:border-teal-500" placeholder="45200">
+            <label class="block text-slate-400 mb-1 font-medium">एंड किलोमीटर (End KM)</label>
+            <input type="number" id="end-km" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-3 text-white font-mono focus:outline-none focus:border-teal-500" placeholder="45200">
           </div>
           <div>
             <label class="block text-slate-400 mb-1 font-medium">मीटर की लाइव फोटो (इन-एप कैमरा अनिवार्य)</label>
             <input type="file" accept="image/*" capture="environment" id="meter-photo-file" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-300 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-teal-500/20 file:text-teal-300 hover:file:bg-teal-500/30">
           </div>
           <button type="submit" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-3 rounded-xl transition shadow-lg shadow-teal-500/20 text-xs">
-            जीपीएस और फोटो वेरीफाई करके सबमिट करें
+            जीपीएस, कंप्रेशन और ऑडिट वेरीफाई करें
           </button>
         </form>
       </div>
@@ -274,6 +277,12 @@
       document.getElementById('dashboard-section').classList.remove('hidden');
       document.getElementById('driver-logout-btn').classList.remove('hidden');
       document.getElementById('welcome-driver-name').textContent = driverName;
+      
+      // नाइट बूस्ट चेक (शाम 7 से सुबह 6 बजे तक)
+      const currentHour = new Date().getHours();
+      if (currentHour >= 19 || currentHour <= 6) {
+        document.getElementById('night-boost-notice').classList.remove('hidden');
+      }
     }
 
     // Check existing session on load
@@ -285,15 +294,32 @@
       }
     });
 
-    // 2. Anti-Cheating Odometer Audit & GPS Verification
+    // 2. Anti-Cheating Odometer Audit & Unified Validation
     async function submitOdometerAudit(event) {
       event.preventDefault();
-      const km = document.getElementById('odometer-km').value;
-      const readingType = document.getElementById('reading-type').value;
+      const startKm = Number(document.getElementById('start-km').value);
+      const endKm = Number(document.getElementById('end-km').value);
       const fileInput = document.getElementById('meter-photo-file');
+
+      // अ) स्मार्ट ओडोमीटर वैलिडेशन (End KM > Start KM)
+      if (endKm <= startKm) {
+        alert("त्रुटि: एंड किलोमीटर हमेशा स्टार्ट किलोमीटर से ज्यादा होना चाहिए!");
+        return;
+      }
 
       if (fileInput.files.length === 0) {
         alert("मीटर की लाइव फोटो अपलोड करना अनिवार्य है।");
+        return;
+      }
+
+      const photoFile = fileInput.files[0];
+
+      // ब) टैम्पर-प्रूफ मेटाडेटा चेकिंग (2 मिनट से पुरानी फाइल को रोकना)
+      const fileTime = photoFile.lastModified;
+      const currentTime = new Date().getTime();
+      const diffMinutes = (currentTime - fileTime) / 60000;
+      if (diffMinutes > 2) {
+        alert("सुरक्षा चेतावनी: यह फोटो लाइव कैमरे से नहीं ली गई है या पुरानी है!");
         return;
       }
 
@@ -301,20 +327,23 @@
 
       const executeAudit = async () => {
         try {
-          // GPS जियो-लोकेशन कैप्चर
-          const location = await window.AachicoUtils.getCurrentLocation();
-          // इमेज ऑटो-कंप्रेशन (50-80 KB)
-          const compressedImage = await window.AachicoUtils.compressImage(fileInput.files[0]);
+          // स) GPS जियो-लोकेशन कैप्चर और इमेज ऑटो-कंप्रेशन (एक साथ पैरेलल प्रोसेस)
+          const [location, compressedImage] = await Promise.all([
+            window.AachicoUtils.getCurrentLocation(),
+            window.AachicoUtils.compressImage(photoFile, 800, 0.6) // 50-80 KB साइज ऑप्टिमाइज़ेशन
+          ]);
 
-          // ऑफलाइन कतार में सेव करना
-          window.AachicoUtils.saveToOfflineQueue('ODOMETER_AUDIT', {
-            readingType,
-            km,
+          // द) ऑफलाइन कतार में ऑडिट डेटा सुरक्षित करना
+          window.AachicoUtils.saveToOfflineQueue('ODOMETER_MASTER_AUDIT', {
+            startKm,
+            endKm,
+            totalRun: endKm - startKm,
             gps: { lat: location.latitude, lng: location.longitude },
+            imageSizeKb: Math.round(compressedImage.size / 1024),
             timestamp: new Date().toISOString()
           });
 
-          alert(`सफलतापूर्वक ऑडिट दर्ज हो गया!\nप्रकार: ${readingType}\nKM: ${km}\nGPS: ${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`);
+          alert(`एंटी-चीटिंग ऑडिट सफल!\nदूरी तय हुई: ${endKm - startKm} KM\nGPS: ${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}\nइमेज कंप्रेस हो गई है।`);
           document.getElementById('odometer-form').reset();
         } catch (err) {
           alert("ऑडिट त्रुटि: " + err.message);
