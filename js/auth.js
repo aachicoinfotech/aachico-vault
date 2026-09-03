@@ -1,12 +1,11 @@
 /**
- * Aachico Vault - Authentication & Session Management Engine
+ * Aachico Vault - Complete Authentication, RBAC & Multi-Device Lock Engine
  * Path: js/auth.js
  */
 
 (function () {
     'use strict';
 
-    // Role-Based Access Control (RBAC) definitions
     const ROLES = {
         SUPERADMIN: 'superadmin',
         ADMIN: 'admin',
@@ -14,20 +13,33 @@
         DRIVER: 'driver'
     };
 
-    // Check active session and validate role permissions
     window.AachicoAuth = {
         getCurrentUser: function () {
             const sessionData = sessionStorage.getItem('aachico_user_session');
             return sessionData ? JSON.parse(sessionData) : null;
         },
 
-        loginUser: function (userData) {
-            // userData format: { uid, email, role, companyId, token }
+        // 1. लॉगिन और मल्टी-डिवाइस टोकन बाइंडिंग
+        loginUser: async function (userData) {
+            // userData format: { uid, email, role, companyId }
+            const sessionToken = 'tok_' + Math.random().toString(36).substring(2) + Date.now();
+            
+            userData.token = sessionToken;
             sessionStorage.setItem('aachico_user_session', JSON.stringify(userData));
-            
-            // Duplicate login lock simulation / Token binding
-            localStorage.setItem('aachico_active_token', userData.token);
-            
+            sessionStorage.setItem('aachico_session_token', sessionToken);
+
+            try {
+                // फायरबेस डेटाबेस में नया एक्टिव सेशन टोकन सेव करें (मल्टी-डिवाइस लॉक)
+                if (window.db) {
+                    await window.db.collection('users').doc(userData.uid).set({
+                        activeSessionToken: sessionToken,
+                        lastLogin: new Date().toISOString()
+                    }, { merge: true });
+                }
+            } catch (error) {
+                console.error("Session token sync failed:", error);
+            }
+
             this.redirectByRole(userData.role);
         },
 
@@ -52,31 +64,59 @@
             }
         },
 
+        // 2. लाइव सेशन वॉचर (किक-आउट लॉजिक: यदि दूसरे डिवाइस पर लॉगिन हुआ हो)
+        initSessionWatcher: function () {
+            const user = this.getCurrentUser();
+            if (!user || !window.db) return;
+
+            // हर 10 सेकंड में फायरबेस से टोकन वैलिडेट करना
+            setInterval(async () => {
+                try {
+                    const docSnapshot = await window.db.collection('users').doc(user.uid).get();
+                    if (docSnapshot.exists) {
+                        const serverToken = docSnapshot.data().activeSessionToken;
+                        const localToken = sessionStorage.getItem('aachico_session_token');
+
+                        if (serverToken && localToken && serverToken !== localToken) {
+                            alert("यह अकाउंट किसी अन्य डिवाइस पर लॉगिन हो चुका है। सुरक्षा कारणों से आपको लॉगआउट किया जा रहा है।");
+                            this.logout();
+                        }
+                    }
+                } catch (err) {
+                    console.error("Session Watcher Error:", err);
+                }
+            }, 10000);
+        },
+
+        // 3. रोल-आधारित पेज प्रोटेक्शन (RBAC)
         protectPage: function (allowedRoles) {
             const user = this.getCurrentUser();
             const basePath = window.location.pathname.startsWith('/aachico-vault/') ? '/aachico-vault' : '';
 
             if (!user || !allowedRoles.includes(user.role)) {
-                console.warn("Unauthorized access blocked. Redirecting to login...");
+                console.warn("Unauthorized access. Redirecting to login...");
                 window.location.href = basePath + '/login.html';
+                return;
             }
+
+            // पेज सही होने पर मल्टी-डिवाइस वॉचर शुरू कर दें
+            this.initSessionWatcher();
         },
 
         logout: function () {
-            sessionStorage.removeItem('aachico_user_session');
-            localStorage.removeItem('aachico_active_token');
+            sessionStorage.clear();
             const basePath = window.location.pathname.startsWith('/aachico-vault/') ? '/aachico-vault' : '';
             window.location.href = basePath + '/login.html';
         }
     };
 
-    // Auto-destruct session on inactivity (15 minutes)
+    // 4. इनएक्टिविटी ऑटो-लॉगआउट (15 मिनट)
     let inactivityTimer;
     function resetInactivityTimer() {
         clearTimeout(inactivityTimer);
         inactivityTimer = setTimeout(() => {
             if (window.AachicoAuth.getCurrentUser()) {
-                alert("Session expired due to inactivity.");
+                alert("इनएक्टिविटी के कारण आपका सत्र (Session) समाप्त हो गया है।");
                 window.AachicoAuth.logout();
             }
         }, 900000); // 15 minutes
