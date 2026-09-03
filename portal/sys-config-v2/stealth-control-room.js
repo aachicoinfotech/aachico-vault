@@ -1,5 +1,5 @@
 /**
- * Aachico Vault - Stealth Control Room Engine
+ * Aachico Vault - Stealth Control Room Engine (Updated for GitHub Pages & Local)
  * Path: portal/sys-config-v2/stealth-control-room.js
  */
 
@@ -13,12 +13,21 @@
         code: 'KeyS'
     };
 
+    // Helper to get correct base path for GitHub Pages or Localhost
+    function getBasePath() {
+        const path = window.location.pathname;
+        if (path.startsWith('/aachico-vault/')) {
+            return '/aachico-vault';
+        }
+        return '';
+    }
+
     // Zero-Footprint Session Validator
     function validateStealthAccess() {
         const token = sessionStorage.getItem('aachico_stealth_token');
         if (!token) {
             console.warn("Unauthorized stealth access attempt. Redirecting...");
-            window.location.href = '/login.html';
+            window.location.href = getBasePath() + '/portal/login.html';
             return false;
         }
         return true;
@@ -42,8 +51,8 @@
         const secureToken = 'st_' + Math.random().toString(36).substring(2) + Date.now();
         sessionStorage.setItem('aachico_stealth_token', secureToken);
         
-        // Redirect to hidden path
-        window.location.href = '/portal/sys-config-v2/';
+        // Redirect to hidden path dynamically matching the repository/root
+        window.location.href = getBasePath() + '/portal/sys-config-v2/';
     }
 
     // SuperAdmin Wallet Manual Top-up Override (WhatsApp Flow Integration)
@@ -77,7 +86,7 @@
         function logout() {
             sessionStorage.removeItem('aachico_stealth_token');
             if (window.location.pathname.includes('sys-config-v2')) {
-                window.location.href = '/login.html';
+                window.location.href = getBasePath() + '/portal/login.html';
             }
         }
 
