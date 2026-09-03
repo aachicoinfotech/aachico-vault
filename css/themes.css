@@ -1,14 +1,16 @@
 /* ==========================================================================
-   Aachico Vault - Master Theme & Responsive CSS Architecture
+   Aachico Vault - Master Theme & Responsive CSS Architecture (Phase 1 Final)
    Supported Devices: PC, Laptop, Tablet, Mobile, Mac, iPhone
    ========================================================================== */
 
-/* 1. Global CSS Variables for Custom Themes & Multi-Device Scaling */
+/* 1. Global CSS Variables for Custom Themes, Multi-Device Scaling & Dynamic Branding */
 :root {
+  /* Default Dark / Luxury Slate Theme */
   --bg-primary: #020617;
   --bg-secondary: #0f172a;
   --bg-card: rgba(15, 23, 42, 0.92);
   --bg-card-hover: rgba(30, 41, 59, 0.95);
+  --bg-glass-overlay: rgba(2, 6, 23, 0.75);
   
   --border-color: rgba(255, 255, 255, 0.08);
   --border-hover: rgba(245, 158, 11, 0.4);
@@ -16,24 +18,34 @@
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
+  --text-inverse: #0f172a;
   
+  /* Brand Accent Variables (Customizable per company owner) */
   --accent-amber: #f59e0b;
   --accent-teal: #14b8a6;
   --accent-emerald: #10b981;
   --accent-rose: #f43f5e;
   --accent-sky: #0ea5e9;
+  --accent-primary: var(--accent-amber);
 
   --glass-blur: blur(14px);
   --shadow-standard: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
   --shadow-glow: 0 0 20px -5px rgba(245, 158, 11, 0.15);
+  
+  /* Fluid Spacing & Radii */
+  --radius-sm: 0.75rem;
+  --radius-md: 1.25rem;
+  --radius-lg: 1.75rem;
+  --app-bar-height: 70px;
 }
 
-/* Light Theme Variant (If toggled by user/system) */
+/* Light Theme Variant (Toggled via user preference sync) */
 [data-theme="light"] {
   --bg-primary: #f8fafc;
   --bg-secondary: #f1f5f9;
   --bg-card: rgba(255, 255, 255, 0.95);
   --bg-card-hover: rgba(241, 245, 249, 0.98);
+  --bg-glass-overlay: rgba(248, 250, 252, 0.85);
   
   --border-color: rgba(0, 0, 0, 0.08);
   --border-hover: rgba(217, 119, 6, 0.4);
@@ -41,12 +53,25 @@
   --text-main: #0f172a;
   --text-muted: #475569;
   --text-dim: #94a3b8;
+  --text-inverse: #f8fafc;
   
   --shadow-standard: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 20px -5px rgba(217, 119, 6, 0.2);
 }
 
-/* 2. Base Reset & Multi-Device Viewport Optimizations */
-* {
+/* High-Contrast Accessibility Mode */
+[data-accessibility="high-contrast"] {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-card: #121212;
+  --border-color: #ffffff;
+  --text-main: #ffffff;
+  --text-muted: #e0e0e0;
+  --accent-amber: #ffbb00;
+}
+
+/* 2. Base Reset, Fluid Type Scaling & Layout Protection */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -55,6 +80,8 @@
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -66,16 +93,40 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
+  /* Fluid Type Base */
+  font-size: clamp(0.875rem, 0.85rem + 0.15vw, 1rem);
+  line-height: 1.5;
 }
 
-/* 3. Reusable Glass-Card Component Classes */
+/* 3. Table Layout & Text Overflow Protection */
+table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+th, td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-wrap-safe {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+/* 4. Reusable Glass-Morhpism Component Classes */
 .glass-card {
   background: var(--bg-card);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-standard);
-  transition: all 0.25s ease-in-out;
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .glass-card-hover:hover {
@@ -84,14 +135,19 @@ body {
   transform: translateY(-2px);
 }
 
-/* 4. Cross-Device Responsive Layout Adjustments */
+/* 5. Mobile Floating Quick Action Bar Space Reserve & Fixes */
+.has-mobile-nav {
+  padding-bottom: calc(var(--app-bar-height) + 20px);
+}
+
+/* 6. Cross-Device Responsive Layout Adjustments */
 /* Mobile & Small iPhone Fixes */
 @media (max-width: 640px) {
   body {
-    font-size: 14px;
+    font-size: 0.9rem;
   }
   .glass-card {
-    border-radius: 1.25rem;
+    border-radius: var(--radius-sm);
     padding: 1rem;
   }
 }
@@ -99,7 +155,7 @@ body {
 /* Tablet & iPad Viewports */
 @media (min-width: 641px) and (max-width: 1024px) {
   .glass-card {
-    border-radius: 1.5rem;
+    border-radius: var(--radius-md);
     padding: 1.25rem;
   }
 }
@@ -107,12 +163,19 @@ body {
 /* PC, Laptop & Mac Large Displays */
 @media (min-width: 1025px) {
   .glass-card {
-    border-radius: 1.75rem;
+    border-radius: var(--radius-lg);
     padding: 1.5rem;
   }
 }
 
-/* 5. Custom Scrollbar for Mac, Windows PC & Tablets */
+/* 7. Orientation Change Adaptation (Landscape / Portrait Safety) */
+@media (orientation: landscape) and (max-height: 600px) {
+  .mobile-quick-bar {
+    display: none; /* Hide floating bars on short landscape mobile screens to preserve viewport */
+  }
+}
+
+/* 8. Custom Scrollbar for Mac, Windows PC & Tablets */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
